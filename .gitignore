@@ -15,3 +15,5 @@ samples/*.webm
 
 !.env.op
 
+app/static/samples/*.wav
+

@@ -1,0 +1,9 @@
+ts,wav,mode,turn_order,latency_s,words,transcript
+2026-09-07T13:18:32,sample-01.wav,balanced,0,0.448,3,Thanks for joining.
+2026-09-07T13:18:32,sample-01.wav,balanced,1,1.839,9,Can you commit to shipping the fix by Friday?
+2026-09-07T13:18:32,sample-01.wav,balanced,2,0.044,1,Right.
+2026-09-07T13:18:32,sample-01.wav,balanced,3,0.647,8,So is that something you can promise today?
+2026-09-07T13:18:32,sample-01.wav,balanced,4,0.545,9,"To be clear, this is for the staging environment."
+2026-09-07T13:18:32,sample-01.wav,balanced,5,0.649,6,Production would be the following week.
+2026-09-07T13:18:32,sample-01.wav,balanced,6,0.646,1,Great.
+2026-09-07T13:18:32,sample-01.wav,balanced,7,1.651,11,Then can we tell the customer it is done by Friday?

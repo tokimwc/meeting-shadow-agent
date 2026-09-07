@@ -12,7 +12,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-dev = ["pytest>=8.3,<10", "pytest-socket>=0.7"]
+dev = ["pytest>=8.3,<10", "pytest-socket>=0.7", "websockets>=13,<16"]
 
 [tool.pytest.ini_options]
 addopts = "--disable-socket --allow-unix-socket --allow-hosts=127.0.0.1,::1"
