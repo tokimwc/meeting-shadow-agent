@@ -4,7 +4,7 @@ from __future__ import annotations
 import json
 from typing import Any, Protocol
 
-from .models import SUGGESTION_JSON_SCHEMA, SuggestRequest, Suggestion
+from .models import MEMO_ID, SUGGESTION_JSON_SCHEMA, SuggestRequest, Suggestion
 
 SYSTEM = (
     "You assist a Japanese engineer who is listening to an English technical meeting. "
@@ -14,8 +14,8 @@ SYSTEM = (
     "(environment, deadline, scope, authority, effort); "
     "(3) propose exactly one next line for the engineer in English, with a Japanese translation. "
     "The next line must ASK or DEFER. It must never commit to a date, effort, or decision that is not in the premise. "
-    "Every evidence id must be one of the bracketed utterance ids shown in the input (u1, u2, ...). "
-    "The engineer memo has no id; when a point comes from the memo, cite the utterance that made it relevant. "
+    "Every evidence id must be one of the bracketed ids shown in the input: u1, u2, ... for utterances, "
+    "and m0 for the engineer's own memo. Use m0 when a point comes from the memo (e.g. approval needed). "
     "If nothing is unconfirmed, say so and propose a neutral acknowledgement. "
     "Output JSON only, matching the provided schema."
 )
@@ -66,7 +66,7 @@ def warmup(model: JsonModel) -> None:
 
 
 def build_user_prompt(req: SuggestRequest) -> str:
-    lines = [f"Engineer memo (not an utterance, has no id): {req.premise or '(none)'}", "Utterances by others, oldest first:"]
+    lines = [f"[{MEMO_ID}] Engineer's own memo: {req.premise or '(none)'}", "Utterances by others, oldest first:"]
     lines += [f"[{u.id}] {u.text}" for u in req.utterances]
     return "\n".join(lines)
 
@@ -74,7 +74,7 @@ def build_user_prompt(req: SuggestRequest) -> str:
 def suggest(model: JsonModel, req: SuggestRequest) -> Suggestion:
     raw = model.generate_json(system=SYSTEM, user=build_user_prompt(req), schema=SUGGESTION_JSON_SCHEMA)
     s = Suggestion.model_validate(json.loads(raw))
-    known = {u.id for u in req.utterances}
+    known = {u.id for u in req.utterances} | {MEMO_ID}
     cited = set(s.evidence_ids) | {i for u in s.unconfirmed for i in u.evidence_ids}
     if not cited <= known:
         # ponytail: refuse rather than repair. A suggestion with fabricated evidence is worse than none.

@@ -4,7 +4,9 @@ from typing import Annotated
 
 from pydantic import BaseModel, Field, StringConstraints
 
-UtteranceId = Annotated[str, StringConstraints(pattern=r"^u[0-9]{1,6}$")]
+# u<N> = an utterance by others; m0 = the engineer's own premise memo (a legitimate source for "unconfirmed" items)
+MEMO_ID = "m0"
+EvidenceId = Annotated[str, StringConstraints(pattern=r"^(u[0-9]{1,6}|m0)$")]
 
 
 class Utterance(BaseModel):
@@ -22,7 +24,7 @@ class SuggestRequest(BaseModel):
 
 class Unconfirmed(BaseModel):
     item: str = Field(max_length=200)
-    evidence_ids: list[UtteranceId] = Field(min_length=1, max_length=5)
+    evidence_ids: list[EvidenceId] = Field(min_length=1, max_length=5)
 
 
 class Suggestion(BaseModel):
@@ -32,7 +34,7 @@ class Suggestion(BaseModel):
     unconfirmed: list[Unconfirmed] = Field(default_factory=list, max_length=5)
     next_line_en: str = Field(max_length=300)
     next_line_ja: str = Field(max_length=300)
-    evidence_ids: list[UtteranceId] = Field(min_length=1, max_length=5)
+    evidence_ids: list[EvidenceId] = Field(min_length=1, max_length=5)
     commits_to_something: bool = Field(
         description="True if next_line_en promises a date, effort, or authority that is not in the premise."
     )
