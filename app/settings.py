@@ -27,7 +27,8 @@ class Settings:
         if not 60 <= mx <= 10800:
             raise ValueError("MSA_MAX_SESSION_SECONDS must be 60..10800")
         return cls(
-            assemblyai_api_key=e.get("ASSEMBLYAI_API_KEY", ""),
+            # strip: a secret piped into Secret Manager picked up a trailing CRLF once and httpx refused the header
+            assemblyai_api_key=e.get("ASSEMBLYAI_API_KEY", "").strip(),
             google_cloud_project=e.get("GOOGLE_CLOUD_PROJECT", ""),
             gemini_location=e.get("MSA_GEMINI_LOCATION", "global"),
             gemini_model=e.get("MSA_GEMINI_MODEL", "gemini-2.5-flash-lite"),
