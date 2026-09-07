@@ -1,0 +1,12 @@
+.venv/
+__pycache__/
+*.pyc
+.env
+.env.*
+!.env.example
+.cache/
+.pytest_cache/
+samples/*.wav
+samples/*.mp3
+samples/*.webm
+!samples/README.md

@@ -1,0 +1,17 @@
+README.md
+pyproject.toml
+app/__init__.py
+app/main.py
+app/models.py
+app/settings.py
+app/suggest.py
+app/static/app.js
+app/static/index.html
+app/static/pcm-worklet.js
+meeting_shadow_agent.egg-info/PKG-INFO
+meeting_shadow_agent.egg-info/SOURCES.txt
+meeting_shadow_agent.egg-info/dependency_links.txt
+meeting_shadow_agent.egg-info/requires.txt
+meeting_shadow_agent.egg-info/top_level.txt
+tests/test_api.py
+tests/test_suggest.py

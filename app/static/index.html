@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Meeting Shadow Agent</title>
+<style>
+  :root { --bg:#0f1418; --fg:#e6edf3; --muted:#8b98a5; --ok:#2ea043; --warn:#d29922; --err:#f85149; --card:#161b22; --line:#30363d; }
+  body { margin:0; background:var(--bg); color:var(--fg); font:14px/1.5 system-ui, sans-serif; }
+  header { padding:12px 16px; border-bottom:1px solid var(--line); display:flex; gap:12px; align-items:center; flex-wrap:wrap; }
+  header h1 { font-size:16px; margin:0 8px 0 0; }
+  button { background:#21262d; color:var(--fg); border:1px solid var(--line); border-radius:6px; padding:6px 12px; cursor:pointer; }
+  button:disabled { opacity:.4; cursor:default; }
+  main { display:grid; grid-template-columns: 1fr 1fr; gap:16px; padding:16px; }
+  section { background:var(--card); border:1px solid var(--line); border-radius:8px; padding:12px; }
+  h2 { font-size:13px; color:var(--muted); margin:0 0 8px; text-transform:uppercase; letter-spacing:.04em; }
+  textarea { width:100%; box-sizing:border-box; background:#0d1117; color:var(--fg); border:1px solid var(--line); border-radius:6px; padding:8px; }
+  #partial { color:var(--muted); min-height:1.5em; font-style:italic; }
+  ul { padding-left:18px; margin:6px 0; }
+  #turns li.cited { color:#79c0ff; }
+  .ev { color:var(--muted); font-size:12px; }
+  #card { border-left:4px solid var(--ok); }
+  #card.danger { border-left-color:var(--err); }
+  #nextEn { font-size:18px; font-weight:600; }
+  #commitWarn { color:var(--err); }
+  .muted { color:var(--muted); }
+  #log { max-height:160px; overflow:auto; font-family:ui-monospace, monospace; font-size:12px; }
+  .log.ok { color:var(--ok); } .log.warn { color:var(--warn); } .log.err { color:var(--err); }
+  small.note { color:var(--muted); display:block; margin-top:8px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Meeting Shadow Agent</h1>
+  <button id="sample">サンプル会話を試す</button>
+  <button id="meet">Meet タブを選ぶ</button>
+  <button id="stop" disabled>停止</button>
+  <span id="cap" class="muted"></span>
+</header>
+<main>
+  <section>
+    <h2>事前メモ（premise）</h2>
+    <textarea id="premise" rows="3">自分は実装担当。本番反映の約束には社内確認が必要。</textarea>
+    <h2 style="margin-top:12px">聞こえている英語</h2>
+    <div id="partial"></div>
+    <ul id="turns"></ul>
+    <small class="note">相手側の音声だけを扱います。自分のマイクは含めません。会話本文はサーバーに保存されません。音声はブラウザから AssemblyAI へ直接送られ、確定した発話だけが提案生成に使われます。</small>
+  </section>
+  <section id="card">
+    <h2>提案 <span id="latency" class="muted"></span></h2>
+    <p id="summary" class="muted">—</p>
+    <h2>未確定</h2>
+    <ul id="unconfirmed"></ul>
+    <h2>次の一言</h2>
+    <div id="nextEn">—</div>
+    <div id="nextJa" class="muted"></div>
+    <div class="ev">根拠: <span id="evidence"></span></div>
+    <p id="commitWarn" hidden>⚠ この一言は事前メモにない約束を含みます。採用しないでください。</p>
+    <p>
+      <button id="adopt">採用</button>
+      <button id="hold">保留</button>
+      <button id="copy">コピー</button>
+    </p>
+    <small class="note">採用しても自動送信・自動発話はしません。発話するかは常にあなたが決めます。</small>
+  </section>
+  <section style="grid-column: 1 / -1">
+    <h2>ログ</h2>
+    <div id="log"></div>
+  </section>
+</main>
+<script src="/static/app.js"></script>
+</body>
+</html>

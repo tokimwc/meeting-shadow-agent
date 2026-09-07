@@ -1,0 +1,30 @@
+[project]
+name = "meeting-shadow-agent"
+version = "0.1.0"
+description = "Silent meeting assistant: spots unconfirmed conditions in English technical meetings and proposes the one clarifying question, in Japanese."
+requires-python = ">=3.12"
+dependencies = [
+  "fastapi==0.141.1",
+  "google-genai==2.21.0",
+  "httpx>=0.28,<1",
+  "pydantic==2.13.5",
+  "uvicorn==0.52.4",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.3,<10", "pytest-socket>=0.7"]
+
+[tool.pytest.ini_options]
+addopts = "--disable-socket --allow-unix-socket --allow-hosts=127.0.0.1,::1"
+testpaths = ["tests"]
+
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["app*"]
+
+[tool.setuptools.package-data]
+app = ["static/*"]
