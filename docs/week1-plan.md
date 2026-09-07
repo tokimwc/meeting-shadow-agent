@@ -11,6 +11,14 @@ and the latency gate is measured on real audio.
 | G2 turn latency | Turn end (`end_of_turn && turn_is_formatted`) → card rendered ≤ 3 s in 18/20 short exchanges | Tune `max_turn_silence` / `min_turn_silence` first; then model (`gemini-2.5-flash-lite` → alternative); then withdraw. |
 | G3 public run | Same flow works from Cloud Run URL with no login, no key entry, no mic permission for the sample path | Fix before adding any feature. |
 
+## Results so far (2026-09-07)
+
+| Gate | Result |
+|---|---|
+| G1 audio capture | Browser sample path works (AudioWorklet → AAI). Meet tab capture **not yet tested** on a real call. |
+| G2 turn latency | `mode=min_latency`, Gemini 2.5 Flash-Lite, 3 synthetic conversations / 21 turns: **20/21 ≤ 3 s**, median 2.05 s, p90 2.53 s, max 3.07 s (cold first call). Evidence ids valid 21/21, dangerous commitments 0/21. `balanced` was 15/20 (p90 3.21 s). CSV: `docs/eval/e2e-week1.csv`. |
+| G3 public run | Deployed to Cloud Run (asia-northeast1, min 0 / max 1) behind **IAP (Google sign-in required)**. Sample path from a logged-in browser: pending user check. |
+
 ## Task list (owner in brackets)
 
 1. [user] AssemblyAI sign-up via the hackathon credit link; put the key in 1Password (`OpenClaw Runtime` or a new item). Confirm granted credit amount and the data-retention / training opt-out setting in the dashboard.
