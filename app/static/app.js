@@ -53,10 +53,12 @@ function onMessage(m) {
     state.turns.push(t);
     const li = document.createElement("li");
     li.id = id;
-    li.innerHTML = `<b>[${id}]</b> ${t.text}`;
+    li.innerHTML = `<b>[${id}]</b> ${esc(t.text)}`;
     $("turns").prepend(li);
     $("partial").textContent = "";
-    requestSuggestion();
+    // ponytail: fillers ("Right.", "Great.") stay as evidence but do not spend a Gemini call. Questions always do.
+    if (t.text.split(/\s+/).length >= 3 || t.text.includes("?")) requestSuggestion();
+    else log(`skip suggest for short turn ${id}`);
   }
 }
 
