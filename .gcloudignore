@@ -10,4 +10,5 @@ __pycache__/
 docs/
 tests/
 scripts/
-samples/
+/samples/
+# app/static/samples/*.wav must stay in the build context: the demo plays it from the container.
