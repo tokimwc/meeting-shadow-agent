@@ -13,3 +13,5 @@ samples/*.webm
 
 *.egg-info/
 
+!.env.op
+
