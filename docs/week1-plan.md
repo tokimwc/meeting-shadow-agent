@@ -17,7 +17,7 @@ and the latency gate is measured on real audio.
 |---|---|
 | G1 audio capture | Browser sample path works (AudioWorklet → AAI). Meet tab capture **not yet tested** on a real call. |
 | G2 turn latency | `mode=min_latency`, Gemini 2.5 Flash-Lite, 3 synthetic conversations / 21 turns: **20/21 ≤ 3 s**, median 2.05 s, p90 2.53 s, max 3.07 s (cold first call). Evidence ids valid 21/21, dangerous commitments 0/21. `balanced` was 15/20 (p90 3.21 s). CSV: `docs/eval/e2e-week1.csv`. |
-| G3 public run | Deployed to Cloud Run (asia-northeast1, min 0 / max 1) behind **IAP (Google sign-in required)**. Sample path from a logged-in browser: pending user check. |
+| G3 public run | **Pass.** Cloud Run (asia-northeast1, min 0 / max 1) behind IAP (Google sign-in required). Logged-in browser: sample path completes, 9/9 suggestion cards, turn end → card 1.2–1.6 s (image 0.1.5). Deployment pitfalls fixed on the way: CRLF in Secret Manager value, `.gcloudignore` nesting, wheel package-data, PowerShell comma-joining `--set-env-vars`. |
 
 ## Task list (owner in brackets)
 
