@@ -10,3 +10,6 @@ samples/*.wav
 samples/*.mp3
 samples/*.webm
 !samples/README.md
+
+*.egg-info/
+

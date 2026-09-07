@@ -1,9 +1,0 @@
-fastapi==0.141.1
-google-genai==2.21.0
-httpx<1,>=0.28
-pydantic==2.13.5
-uvicorn==0.52.4
-
-[dev]
-pytest<10,>=8.3
-pytest-socket>=0.7
