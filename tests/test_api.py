@@ -58,6 +58,13 @@ def test_suggest_rejects_empty_utterances():
     assert make_client().post("/api/suggest", json={"premise": "", "utterances": []}).status_code == 422
 
 
+def test_suggest_without_project_is_503_not_500():
+    http = httpx.Client(transport=httpx.MockTransport(fake_aai))
+    app = create_app(Settings.from_env(dict(ENV, GOOGLE_CLOUD_PROJECT="")), model=None, http=http)
+    r = TestClient(app).post("/api/suggest", json={"premise": "", "utterances": [{"id": "u1", "text": "hi", "t_ms": 0}]})
+    assert r.status_code == 503
+
+
 def test_settings_reject_out_of_range_token_ttl():
     import pytest
     with pytest.raises(ValueError):

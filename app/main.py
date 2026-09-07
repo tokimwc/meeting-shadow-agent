@@ -82,6 +82,8 @@ def create_app(
     @app.post("/api/suggest", response_model=Suggestion)
     def api_suggest(req: SuggestRequest) -> Suggestion:
         if app.state.model is None:
+            if not st.google_cloud_project:
+                raise HTTPException(503, "GOOGLE_CLOUD_PROJECT not configured")
             app.state.model = GeminiJsonModel(
                 project=st.google_cloud_project, location=st.gemini_location, model=st.gemini_model
             )

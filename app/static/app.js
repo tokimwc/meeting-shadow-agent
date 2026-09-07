@@ -88,13 +88,14 @@ function renderSuggestion(s, ms) {
 
 function esc(x) { return x.replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c])); }
 
-async function startWithStream(stream) {
+async function startWithStream(stream, ctx) {
   state.t0 = performance.now();
   state.turns = []; state.seq = 0; $("turns").innerHTML = "";
   const tok = await getToken();
   $("cap").textContent = `demo sessions left today: ${tok.sessions_left_today}`;
   state.ws = connect(tok.token);
-  state.ctx = new AudioContext();
+  await new Promise((res, rej) => { state.ws.addEventListener("open", res, { once: true }); state.ws.addEventListener("error", rej, { once: true }); });
+  state.ctx = ctx || new AudioContext();
   await state.ctx.audioWorklet.addModule("/static/pcm-worklet.js");
   const src = state.ctx.createMediaStreamSource(stream);
   const node = new AudioWorkletNode(state.ctx, "pcm-worklet");
@@ -120,12 +121,15 @@ async function startMeetTab() {
 
 async function startSample() {
   // Sample audio is pre-recorded; recognition and suggestion run live. No transcript or answer key is preloaded.
+  // Order matters: token + WebSocket + worklet must be wired before playback starts, otherwise the first ~0.5 s
+  // is lost ("Thanks for joining." was heard as "training." in the first browser run).
   const audio = new Audio("/static/samples/sample-01.wav");
+  audio.preload = "auto";
   state.ctx = new AudioContext();
-  await audio.play();
   const dest = state.ctx.createMediaStreamDestination();
   state.ctx.createMediaElementSource(audio).connect(dest);
-  await startWithStream(dest.stream);
+  await startWithStream(dest.stream, state.ctx);
+  await audio.play();
 }
 
 function stop() {
