@@ -14,7 +14,8 @@ SYSTEM = (
     "(environment, deadline, scope, authority, effort); "
     "(3) propose exactly one next line for the engineer in English, with a Japanese translation. "
     "The next line must ASK or DEFER. It must never commit to a date, effort, or decision that is not in the premise. "
-    "Cite utterance ids for every claim and never invent ids. "
+    "Every evidence id must be one of the bracketed utterance ids shown in the input (u1, u2, ...). "
+    "The engineer memo has no id; when a point comes from the memo, cite the utterance that made it relevant. "
     "If nothing is unconfirmed, say so and propose a neutral acknowledgement. "
     "Output JSON only, matching the provided schema."
 )
@@ -56,8 +57,16 @@ class GeminiJsonModel:
         return r.text or ""
 
 
+def warmup(model: JsonModel) -> None:
+    """One tiny call so the first real suggestion is not paying client/connection setup (~3 s measured cold)."""
+    try:
+        model.generate_json(system="Reply with {\"ok\": true}.", user="ping", schema={"type": "object", "properties": {"ok": {"type": "boolean"}}, "required": ["ok"]})
+    except Exception:  # ponytail: warm-up is best effort; a failure here surfaces on the real call anyway
+        pass
+
+
 def build_user_prompt(req: SuggestRequest) -> str:
-    lines = [f"PREMISE (engineer memo): {req.premise or '(none)'}", "UTTERANCES (others, oldest first):"]
+    lines = [f"Engineer memo (not an utterance, has no id): {req.premise or '(none)'}", "Utterances by others, oldest first:"]
     lines += [f"[{u.id}] {u.text}" for u in req.utterances]
     return "\n".join(lines)
 

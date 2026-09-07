@@ -16,7 +16,7 @@ from fastapi.staticfiles import StaticFiles
 
 from .models import SuggestRequest, Suggestion, TokenResponse
 from .settings import Settings
-from .suggest import GeminiJsonModel, JsonModel, suggest
+from .suggest import GeminiJsonModel, JsonModel, suggest, warmup
 
 STATIC = Path(__file__).parent / "static"
 AAI_TOKEN_URL = "https://streaming.assemblyai.com/v3/token"
@@ -72,6 +72,11 @@ def create_app(
         )
         if r.status_code != 200:
             raise HTTPException(502, f"token provider error {r.status_code}")
+        # A session is starting: warm the model in the background so the first suggestion is not a cold call.
+        if app.state.model is None and st.google_cloud_project:
+            app.state.model = GeminiJsonModel(project=st.google_cloud_project, location=st.gemini_location, model=st.gemini_model)
+        if app.state.model is not None:
+            threading.Thread(target=warmup, args=(app.state.model,), daemon=True).start()
         return TokenResponse(
             token=r.json()["token"],
             expires_in_seconds=st.token_expires_seconds,

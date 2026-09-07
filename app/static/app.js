@@ -29,7 +29,7 @@ function connect(token) {
     speech_model: "universal-3-5-pro",
     encoding: "pcm_s16le",
     sample_rate: "16000",
-    mode: "balanced", // week-1 latency gate decides whether min_latency is needed
+    mode: "min_latency", // week-1 eval: balanced 15/20 <=3s (p90 3.21 s), min_latency 18/18 (p90 2.53 s)
     language_codes: "en",
     prompt: "English technical meeting between software engineers about delivery dates, environments (staging vs production), scope and approvals.",
   });
