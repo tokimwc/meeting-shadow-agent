@@ -21,14 +21,17 @@ async function getToken() {
 }
 
 function connect(token) {
+  // Verified against /docs/api-reference/streaming-api/universal-3-pro-streaming (2026-09-07):
+  // on universal-3-5-pro, `mode` is the primary turn-detection knob; `format_turns` and
+  // `end_of_turn_confidence_threshold` are ignored (turn_is_formatted always tracks end_of_turn).
   const q = new URLSearchParams({
     token,
     speech_model: "universal-3-5-pro",
     encoding: "pcm_s16le",
     sample_rate: "16000",
-    format_turns: "true",
-    // Turn detection: leave defaults first (end_of_turn_confidence_threshold 0.4, max_turn_silence 1536 ms for Pro).
-    // Week-1 latency test decides whether to move to min_turn_silence/max_turn_silence overrides.
+    mode: "balanced", // week-1 latency gate decides whether min_latency is needed
+    language_codes: "en",
+    prompt: "English technical meeting between software engineers about delivery dates, environments (staging vs production), scope and approvals.",
   });
   const ws = new WebSocket(`${WS_BASE}?${q}`);
   ws.binaryType = "arraybuffer";
@@ -44,7 +47,7 @@ function onMessage(m) {
   if (m.type === "Termination") { log(`terminated audio=${m.audio_duration_seconds}s`); return; }
   if (m.type !== "Turn") return;
   $("partial").textContent = m.transcript;
-  if (m.end_of_turn && m.turn_is_formatted) {
+  if (m.end_of_turn) { // on U3.5 Pro a final turn is already formatted
     const id = `u${++state.seq}`;
     const t = { id, text: m.transcript, t_ms: Math.round(performance.now() - state.t0) };
     state.turns.push(t);
@@ -132,6 +135,7 @@ function stop() {
   $("stop").disabled = true;
 }
 
+window.addEventListener("beforeunload", stop); // an abandoned session bills until the 3 h cap: always Terminate
 $("meet").onclick = () => startMeetTab().catch((e) => log(e.message, "err"));
 $("sample").onclick = () => startSample().catch((e) => log(e.message, "err"));
 $("stop").onclick = stop;
