@@ -1,5 +1,6 @@
 .git/
 .venv/
+.worktrees/
 .cache/
 .pytest_cache/
 __pycache__/
