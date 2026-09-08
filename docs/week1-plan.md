@@ -8,8 +8,8 @@ and the latency gate is measured on real audio.
 | Gate | Pass condition | If it fails |
 |---|---|---|
 | G1 audio capture | `getDisplayMedia({video:true, audio:true})` on a Google Meet tab in Chrome/Windows yields an audio track carrying the *remote* participants | Try Zoom web client once. If neither works, withdraw from plan A. |
-| G2 turn latency | Turn end (`end_of_turn && turn_is_formatted`) → card rendered ≤ 3 s in 18/20 short exchanges | Tune `max_turn_silence` / `min_turn_silence` first; then model (`gemini-2.5-flash-lite` → alternative); then withdraw. |
-| G3 public run | Same flow works from Cloud Run URL with no login, no key entry, no mic permission for the sample path | Fix before adding any feature. |
+| G2 turn latency | Turn end (`end_of_turn && turn_is_formatted`) → card rendered ≤ 3 s in 18/20 short exchanges | Tune `mode` first; then model (`gemini-2.5-flash-lite` → alternative); then withdraw. |
+| G3 public run | Same flow works from Cloud Run URL with IAP Google sign-in, no key entry, no mic permission for the sample path | Fix before adding any feature. |
 
 ## Results so far (2026-09-07)
 
@@ -26,7 +26,7 @@ and the latency gate is measured on real audio.
 3. [claude] Sample conversation audio `samples/sample-01.wav`: 4 English lines by a synthetic voice (no real person), ~40 s. Script kept in `samples/README.md`.
 4. [user+claude] G1 test on a real Meet call (a second account or a colleague who consents). Measure whether remote audio appears in the tab stream.
 5. [claude] 20-case latency run with the sample clip variants; record `turn end → card` per case in `docs/eval/week1-latency.csv`.
-6. [claude] Cloud Run deploy to a *new* project (not the CutFlow one): min 0 / max 1, secrets via Secret Manager, `MSA_DAILY_SESSION_CAP=200`. Verify `/health` and the sample path from a logged-out browser.
+6. [claude] Cloud Run deploy to a *new* project (not the CutFlow one): min 0 / max 1, secrets via Secret Manager, `MSA_DAILY_SESSION_CAP=200`. Verify `/health` and the sample path from a logged-in browser.
 7. [user] Decision at 09/14: continue A, or withdraw per the gates above.
 
 ## Not in week 1

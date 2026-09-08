@@ -26,6 +26,9 @@
   .muted { color:var(--muted); }
   #log { max-height:160px; overflow:auto; font-family:ui-monospace, monospace; font-size:12px; }
   .log.ok { color:var(--ok); } .log.warn { color:var(--warn); } .log.err { color:var(--err); }
+  button:focus-visible, textarea:focus-visible { outline:2px solid #79c0ff; outline-offset:3px; }
+  #turns { max-height:360px; overflow:auto; }
+  @media (max-width:720px) { main { grid-template-columns:1fr; padding:10px; } }
   small.note { color:var(--muted); display:block; margin-top:8px; }
 </style>
 </head>
@@ -35,12 +38,13 @@
   <button id="sample">サンプル会話を試す</button>
   <button id="meet">Meet タブを選ぶ</button>
   <button id="stop" disabled>停止</button>
+  <span id="status" role="status">サンプル会話で試すか、Meet タブの音声を共有してください。</span>
   <span id="cap" class="muted"></span>
 </header>
 <main>
   <section>
-    <h2>事前メモ（premise）</h2>
-    <textarea id="premise" rows="3">自分は実装担当。本番反映の約束には社内確認が必要。</textarea>
+    <h2><label for="premise">事前メモ（自分の権限・条件）</label></h2>
+    <textarea id="premise" maxlength="1000" rows="3">自分は実装担当。本番反映の約束には社内確認が必要。</textarea>
     <h2 style="margin-top:12px">聞こえている英語</h2>
     <div id="partial"></div>
     <ul id="turns"></ul>
@@ -48,7 +52,7 @@
   </section>
   <section id="card">
     <h2>提案 <span id="latency" class="muted"></span></h2>
-    <p id="summary" class="muted">—</p>
+    <p id="summary">会話を受信すると、ここに確認事項を表示します。</p>
     <h2>未確定</h2>
     <ul id="unconfirmed"></ul>
     <h2>次の一言</h2>
@@ -57,9 +61,9 @@
     <div class="ev">根拠: <span id="evidence"></span></div>
     <p id="commitWarn" hidden>⚠ この一言は事前メモにない約束を含みます。採用しないでください。</p>
     <p>
-      <button id="adopt">採用</button>
-      <button id="hold">保留</button>
-      <button id="copy">コピー</button>
+      <button id="adopt" disabled>採用</button>
+      <button id="hold" disabled>保留</button>
+      <button id="copy" disabled>コピー</button>
     </p>
     <small class="note">採用しても自動送信・自動発話はしません。発話するかは常にあなたが決めます。</small>
   </section>

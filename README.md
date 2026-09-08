@@ -43,4 +43,26 @@ Open http://127.0.0.1:8080/ and either pick a Meet tab (tick "Share tab audio") 
 
 ## Status
 
-Week 1 scaffold. Not yet verified against live AssemblyAI or Gemini. See `docs/week1-plan.md` for the go/no-go gates.
+The September 8 handoff reports G2/G3 passed on the previous deployed version; G1 (remote Meet audio) remains unverified.
+Local quality improvements are in `codex/handoff-quality`, not deployed. See [local handoff](docs/2026-09-08-codex-handoff.md)
+for changes, checks and remaining live evaluation. Historical measurements do not validate this new prompt/client.
+
+The client batches nearby final turns for 450 ms while preserving their evidence ids, skips simple acknowledgements,
+and processes the latest pending context after a model request completes. The displayed latency includes this wait.
+
+Offline regression checks from the worktree:
+
+```powershell
+D:/dev/meeting-shadow-agent/.venv/Scripts/python.exe -m pytest -q -p no:cacheprovider
+node --test tests/client.test.cjs
+```
+
+The audio evaluator requires 20 distinct WAV cases by default and writes only metrics (no transcript or suggested text).
+For the existing three synthetic samples, explicitly choose a three-case smoke run:
+
+```powershell
+op run --env-file .env.op -- D:/dev/meeting-shadow-agent/.venv/Scripts/python.exe -m scripts.e2e_eval samples/sample-01.wav samples/sample-02.wav samples/sample-03.wav --min-cases 3 --out docs/eval/e2e-quality-smoke.csv
+```
+
+Run from the worktree so its updated prompt is imported. This command needs provider credentials and incurs usage.
+A measurement PASS only checks id validity, model-reported commitments and latency; semantic accuracy remains `unreviewed`.
