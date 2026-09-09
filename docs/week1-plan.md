@@ -15,13 +15,13 @@ and the latency gate is measured on real audio.
 
 | Gate | Result |
 |---|---|
-| G1 audio capture | **Pass** (2026-09-09 22:1x JST). A second Google account joined the host's Meet call from a phone and read the sample script aloud. `getDisplayMedia` on the host's Meet tab carried that remote audio to AssemblyAI: 4 finalized turns (`u1`–`u4`), 4 cards, turn end → card 1,965 / 2,583 / 2,659 / 2,681 ms, evidence `u1 u2 u3 u4 m0`, dangerous commitments 0. |
+| G1 audio capture | **Pass** (2026-09-09 22:1x JST). A second Google account joined the host's Meet call from a phone and read the sample script aloud. `getDisplayMedia` on the host's Meet tab carried that remote audio to AssemblyAI: 4 finalized turns (`u1`–`u4`), 4 cards, evidence `u1 u2 u3 u4 m0`, dangerous commitments 0. Browser-reported 1,965 / 2,583 / 2,659 / 2,681 ms — **measured from the arrival of the finalized turn, not from the end of speech**: `app.js` starts the clock at `t_ms`, which is when the AAI turn was received. Add the STT leg (median 0.65 s on 2026-09-07) for a speech-end figure, which puts the slowest case near or over the 3 s gate. Only `scripts/e2e_eval.py` measures speech end → card (`t_stt` = last voiced chunk → `end_of_turn`), so G2's numbers are the ones comparable to the gate. |
 | G2 turn latency | `mode=min_latency`, Gemini 2.5 Flash-Lite, 3 synthetic conversations / 21 turns: **20/21 ≤ 3 s**, median 2.05 s, p90 2.53 s, max 3.07 s (cold first call). Evidence ids valid 21/21, dangerous commitments 0/21. `balanced` was 15/20 (p90 3.21 s). CSV: `docs/eval/e2e-week1.csv`. |
 | G3 public run | **Pass.** Cloud Run (asia-northeast1, min 0 / max 1) behind IAP (Google sign-in required). Logged-in browser: sample path completes, 9/9 suggestion cards, turn end → card 1.2–1.6 s (image 0.1.5). Deployment pitfalls fixed on the way: CRLF in Secret Manager value, `.gcloudignore` nesting, wheel package-data, PowerShell comma-joining `--set-env-vars`. |
 
 Re-checked on image 0.1.7 (revision `meeting-shadow-00009-2q4`, 2026-09-09), which carries the reworked prompt
 and the 450 ms turn batching. Sample path through IAP: 8 turns, 2 acknowledgements skipped, 6 cards, turn end →
-card 1,854–2,023 ms. That figure now *includes* the batching wait, so the model round trip is unchanged. Evidence
+card 1,854–2,023 ms. Same caveat as G1: this is turn arrival → card, not speech end → card. The figure does include the 450 ms batching wait, so the model round trip itself is unchanged. Evidence
 ids `u2 u6 u7 m0`, dangerous commitments 0. The suggestion separated staging from production
 ("I can commit to the staging environment by Friday. For production, I need to confirm internally."), which is the
 quality gap recorded on 2026-09-07. Release steps and their traps: `docs/deploy.md`.
