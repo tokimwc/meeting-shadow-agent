@@ -50,6 +50,13 @@ def build_wav() -> None:
 
 
 def chrome() -> str:
+    # ponytail: Playwright's Chromium ships without proprietary codecs and Meet drops it on a blank page.
+    # Point MSA_GUEST_BROWSER at a real Brave/Chrome binary for anything that has to join a call.
+    override = os.environ.get("MSA_GUEST_BROWSER")
+    if override:
+        if not os.path.exists(override):
+            sys.exit(f"MSA_GUEST_BROWSER does not exist: {override}")
+        return override
     c = sorted(glob.glob(os.path.expanduser("~/AppData/Local/ms-playwright/chromium-*/chrome-win64/chrome.exe")))
     if not c:
         sys.exit("no Playwright Chromium found under ~/AppData/Local/ms-playwright")
