@@ -33,7 +33,7 @@ in the order they were hit:
 
 - **Playwright's bundled Chromium loads Meet as a blank page.** It ships without proprietary codecs, the renderer
   dies, and the CDP target reports an empty URL. Set `MSA_GUEST_BROWSER` to a real Brave or Chrome binary instead:
-  `MSA_GUEST_BROWSER="C:\Program Files\BraveSoftware\Brave-Browser\Applicationrave.exe" python scripts/meet_guest.py <url> --loop`
+  `MSA_GUEST_BROWSER="C:/Program Files/BraveSoftware/Brave-Browser/Application/brave.exe" python scripts/meet_guest.py <url> --loop`
 - **A meeting created by a personal Gmail account will not admit a signed-out guest.** The guest sees "you can't join
   this video call" and is bounced to the Meet home page after 35 s; there is no "ask to join" button to press, and no
   host setting changes this — anonymous join is a Workspace-only feature. The guest profile has to be signed in to a
