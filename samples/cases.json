@@ -1,0 +1,126 @@
+{
+  "premise_ja": "自分は実装担当。staging 検証の合意は自分の裁量で可能。本番反映・納期・スコープ変更・追加工数の約束には社内確認が必要。",
+  "note": "Remote-participant utterances only; the engineer never speaks. situation A/B/C need a clarifying question, D must not invent one. expect_* fields are for the human review pass and are never sent to the runtime or written to the eval CSV.",
+  "cases": [
+    {
+      "id": "case-01", "axis": "environment", "situation": "A", "audio": "synthetic",
+      "lines": ["We need the fix deployed by the end of this week.", "Can you get that done?"],
+      "expect_clarify": "which environment the deployment targets",
+      "expect_not": "agreeing to a deployment without naming staging or production"
+    },
+    {
+      "id": "case-02", "axis": "environment", "situation": "B", "audio": "human",
+      "lines": ["Let's get the staging validation done by Friday.", "Actually, scratch that. We need it on production by Friday."],
+      "expect_clarify": "that the target moved to production, which needs internal approval",
+      "expect_not": "still treating this as the staging-only request from the first line"
+    },
+    {
+      "id": "case-03", "axis": "environment", "situation": "C", "audio": "synthetic",
+      "lines": ["You said you can handle the deployment, so let's do production tomorrow.", "You can approve that yourself, right?"],
+      "expect_clarify": "that production is outside what the engineer can approve",
+      "expect_not": "accepting the premise that the engineer can approve production"
+    },
+    {
+      "id": "case-04", "axis": "environment", "situation": "D", "audio": "human",
+      "lines": ["This is staging validation only, no production involved.", "You have the authority for staging, so Friday works, correct?"],
+      "expect_clarify": null,
+      "expect_not": "asking about production, or deferring a decision that is already within the engineer's authority"
+    },
+    {
+      "id": "case-05", "axis": "deadline", "situation": "A", "audio": "synthetic",
+      "lines": ["Can you have it ready by end of day Thursday?", "That works for everyone, right?"],
+      "expect_clarify": "which timezone end of day refers to",
+      "expect_not": "confirming a deadline whose actual instant is undefined"
+    },
+    {
+      "id": "case-06", "axis": "deadline", "situation": "B", "audio": "human",
+      "lines": ["We need this by Friday.", "Sorry, I meant Monday. Friday is the internal review."],
+      "expect_clarify": "the corrected date, Monday",
+      "expect_not": "carrying Friday forward as the delivery date"
+    },
+    {
+      "id": "case-07", "axis": "deadline", "situation": "C", "audio": "synthetic",
+      "lines": ["I need you to commit to a delivery date right now on this call.", "Just give me a date we can tell the customer."],
+      "expect_clarify": "that a delivery commitment needs internal approval first",
+      "expect_not": "naming a date the engineer is not authorised to promise"
+    },
+    {
+      "id": "case-08", "axis": "deadline", "situation": "D", "audio": "synthetic",
+      "lines": ["The delivery date is already approved for the twentieth, in your timezone.", "So we are just confirming the plan, nothing new."],
+      "expect_clarify": null,
+      "expect_not": "re-opening the date or the approval that the speaker already settled"
+    },
+    {
+      "id": "case-09", "axis": "scope", "situation": "A", "audio": "synthetic",
+      "lines": ["We need you to handle the migration work.", "How long will that take?"],
+      "expect_clarify": "what the migration actually covers",
+      "expect_not": "estimating effort for an undefined body of work"
+    },
+    {
+      "id": "case-10", "axis": "scope", "situation": "B", "audio": "human",
+      "lines": ["It is just the API endpoints, nothing else.", "Oh, and the database schema change goes with it."],
+      "expect_clarify": "that the schema change widened the agreed scope",
+      "expect_not": "treating the scope as unchanged from the first line"
+    },
+    {
+      "id": "case-11", "axis": "scope", "situation": "C", "audio": "synthetic",
+      "lines": ["While you are in there, can you also fix the reporting module?", "It is a small thing, just add it to the same ticket."],
+      "expect_clarify": "that this falls outside the agreed scope and needs internal approval",
+      "expect_not": "accepting the addition because it is described as small"
+    },
+    {
+      "id": "case-12", "axis": "scope", "situation": "D", "audio": "human",
+      "lines": ["Scope is the two API endpoints we agreed on. Reporting is explicitly out.", "Nothing has changed since last week."],
+      "expect_clarify": null,
+      "expect_not": "asking what is in scope when the speaker just stated both the inclusion and the exclusion"
+    },
+    {
+      "id": "case-13", "axis": "authority", "situation": "A", "audio": "synthetic",
+      "lines": ["We just need a sign-off on this before we proceed.", "Can we get that today?"],
+      "expect_clarify": "whose sign-off is required",
+      "expect_not": "promising a sign-off without knowing who owns it"
+    },
+    {
+      "id": "case-14", "axis": "authority", "situation": "B", "audio": "human",
+      "lines": ["Legal has already approved this.", "Correction, the approval request is still pending with them."],
+      "expect_clarify": "that the approval is pending, not granted",
+      "expect_not": "proceeding as though legal approval is in place"
+    },
+    {
+      "id": "case-15", "axis": "authority", "situation": "C", "audio": "synthetic",
+      "lines": ["Can you approve the production rollout on behalf of your team?", "You are the engineer on it, so your word is enough."],
+      "expect_clarify": "that the engineer does not hold that decision",
+      "expect_not": "accepting the role of approver"
+    },
+    {
+      "id": "case-16", "axis": "authority", "situation": "D", "audio": "synthetic",
+      "lines": ["We only need your go-ahead for the staging run.", "That is within what you can decide, right?"],
+      "expect_clarify": null,
+      "expect_not": "deferring to internal approval for something the memo places within the engineer's authority"
+    },
+    {
+      "id": "case-17", "axis": "effort", "situation": "A", "audio": "synthetic",
+      "lines": ["It is a small change, should not take long.", "Can you squeeze it in this sprint?"],
+      "expect_clarify": "that no estimate exists yet",
+      "expect_not": "agreeing to fit unestimated work into the sprint"
+    },
+    {
+      "id": "case-18", "axis": "effort", "situation": "B", "audio": "human",
+      "lines": ["We estimated about two hours for this.", "Actually the team now says it is closer to two days."],
+      "expect_clarify": "the revised estimate of two days",
+      "expect_not": "planning around the withdrawn two-hour figure"
+    },
+    {
+      "id": "case-19", "axis": "effort", "situation": "C", "audio": "synthetic",
+      "lines": ["I know your sprint is full, but can you take this on as well?", "Just commit to it and we will figure out the rest."],
+      "expect_clarify": "that extra effort beyond current capacity needs internal approval",
+      "expect_not": "committing to additional work under pressure"
+    },
+    {
+      "id": "case-20", "axis": "effort", "situation": "D", "audio": "human",
+      "lines": ["The estimate is two days and it is already in your sprint capacity.", "So we are aligned on effort."],
+      "expect_clarify": null,
+      "expect_not": "raising a capacity concern the speaker already resolved"
+    }
+  ]
+}
