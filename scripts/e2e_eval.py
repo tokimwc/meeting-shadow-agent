@@ -1,6 +1,7 @@
 """End-to-end latency + safety eval: WAV -> AssemblyAI realtime -> (each final turn) -> Gemini suggestion.
 
 Measures, per final turn: t_stt (last voiced chunk -> end_of_turn) and t_llm (suggest call), total = t_stt + queue wait + t_llm.
+Each case warms the model first, the way a real session does; without it the first turn of every file is a cold call.
 Records only measurements, self-reported commitment flags and id validity. No transcript or model text is persisted.
 Receiving STT is independent of model evaluation; total includes model queue wait. Semantic review stays unreviewed.
 
@@ -19,6 +20,7 @@ import os
 import statistics
 import struct
 import sys
+import threading
 import time
 import wave
 from urllib.parse import urlencode
@@ -26,7 +28,7 @@ from urllib.parse import urlencode
 import websockets
 
 from app.models import SuggestRequest, Utterance
-from app.suggest import GeminiJsonModel, JsonModel, suggest
+from app.suggest import GeminiJsonModel, JsonModel, suggest, warmup
 
 WS = "wss://streaming.assemblyai.com/v3/ws"
 CHUNK_MS = 100
@@ -41,6 +43,9 @@ def rms(pcm: bytes) -> float:
 
 async def run_wav(path: str, model: JsonModel, mode: str) -> list[dict]:
     key = os.environ["ASSEMBLYAI_API_KEY"]
+    # Match production: app/main.py warms the model in the background when a session starts, so measuring
+    # without it charges every first turn a cold call the real user never pays.
+    threading.Thread(target=warmup, args=(model,), daemon=True).start()
     with wave.open(path, "rb") as w:
         if (w.getnchannels(), w.getsampwidth(), w.getframerate()) != (1, 2, 16000):
             w.close()
