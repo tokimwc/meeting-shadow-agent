@@ -20,3 +20,4 @@ app/static/samples/*.wav
 samples/meet-guest.wav
 .worktrees/
 samples/cases/
+samples/recordings/

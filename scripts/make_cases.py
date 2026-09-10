@@ -1,10 +1,13 @@
-"""Render the synthetic half of samples/cases.json to 16 kHz mono WAV using Windows SAPI.
+"""Assemble the 20 evaluation cases in samples/cases.json as 16 kHz mono WAV.
 
-The human-recorded cases are left to a person; this only touches `"audio": "synthetic"` entries.
+Synthetic cases are rendered with Windows SAPI. Human cases are recorded by a person in whatever
+format is convenient and converted here with ffmpeg.
 
-  python scripts/make_cases.py            # render missing files
+  python scripts/make_cases.py            # render missing synthetic files
   python scripts/make_cases.py --force    # re-render everything
-  python scripts/make_cases.py --list     # print what would be rendered, touch nothing
+  python scripts/make_cases.py --list     # print the plan, touch nothing
+  python scripts/make_cases.py --script   # print the recording script for the human cases
+  python scripts/make_cases.py --import   # convert samples/recordings/case-NN.* into place
 """
 from __future__ import annotations
 
@@ -64,21 +67,66 @@ def check(path: Path) -> str:
         return f"{w.getnframes() / 16000:.1f}s"
 
 
+def convert(src: Path, dst: Path) -> None:
+    r = subprocess.run(["ffmpeg", "-y", "-i", str(src), "-ac", "1", "-ar", "16000",
+                        "-acodec", "pcm_s16le", str(dst)], capture_output=True, text=True)
+    if r.returncode != 0:
+        sys.exit(f"{src.name}: ffmpeg failed\n{r.stderr.strip()[-500:]}")
+
+
+def recording_script(human: list[dict]) -> None:
+    print("Record these as the remote participant. You are the other side of the call, not yourself.\n")
+    print("  - Leave about a second of silence between the two lines: that gap is what ends the turn.")
+    print("  - Normal speaking pace. Do not perform an accent; a natural read is what is being tested.")
+    print("  - Any format ffmpeg reads (m4a from a phone is fine). Name the file after the case id.")
+    print(f"  - Drop them in samples{chr(92)}recordings{chr(92)}, then run: python scripts/make_cases.py --import\n")
+    for c in human:
+        print(f"{c['id']}  ({c['axis']}, {'correction mid-conversation' if c['situation'] == 'B' else 'already settled'})")
+        for line in c["lines"]:
+            print(f'    "{line}"')
+        print()
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--force", action="store_true", help="re-render files that already exist")
     ap.add_argument("--list", action="store_true", help="print the plan and exit")
+    ap.add_argument("--script", action="store_true", help="print the recording script for the human cases")
+    ap.add_argument("--import", dest="do_import", action="store_true",
+                    help="convert samples/recordings/case-NN.* to 16 kHz mono WAV in samples/cases/")
     a = ap.parse_args()
 
     cases = json.loads(CASES.read_text(encoding="utf-8"))["cases"]
     synthetic = [c for c in cases if c["audio"] == "synthetic"]
     human = [c for c in cases if c["audio"] == "human"]
 
+    if a.script:
+        recording_script(human)
+        return 0
+
     if a.list:
-        for c in synthetic:
-            print(f"{c['id']}  {c['axis']:11} {c['situation']}  {len(c['lines'])} lines")
-        print(f"\n{len(synthetic)} synthetic, {len(human)} to record by hand: "
-              f"{', '.join(c['id'] for c in human)}")
+        for c in cases:
+            path = OUT / f"{c['id']}.wav"
+            state = check(path) if path.exists() else "MISSING"
+            print(f"{c['id']}  {c['axis']:11} {c['situation']}  {c['audio']:9} {state}")
+        missing = [c["id"] for c in cases if not (OUT / f"{c['id']}.wav").exists()]
+        print(f"\n{len(cases) - len(missing)}/{len(cases)} ready" +
+              (f", missing: {', '.join(missing)}" if missing else ""))
+        return 0
+
+    if a.do_import:
+        src_dir = ROOT / "samples" / "recordings"
+        if not src_dir.exists():
+            sys.exit(f"no {src_dir}. Record the human cases first: python scripts/make_cases.py --script")
+        OUT.mkdir(parents=True, exist_ok=True)
+        for c in human:
+            found = [p for p in src_dir.glob(f"{c['id']}.*") if p.suffix.lower() != ".wav" or p.parent != OUT]
+            if not found:
+                print(f"{c['id']}  no recording found in {src_dir.name}/")
+                continue
+            dst = OUT / f"{c['id']}.wav"
+            convert(found[0], dst)
+            print(f"{c['id']}  {found[0].name} -> {dst.name}  {check(dst)}")
         return 0
 
     OUT.mkdir(parents=True, exist_ok=True)
