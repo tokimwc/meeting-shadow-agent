@@ -1,7 +1,7 @@
 """End-to-end latency + safety eval: WAV -> AssemblyAI realtime -> (each final turn) -> Gemini suggestion.
 
 Measures, per final turn: t_stt (last voiced chunk -> end_of_turn) and t_llm (suggest call), total = t_stt + queue wait + t_llm.
-Each case warms the model first, the way a real session does; without it the first turn of every file is a cold call.
+Each case warms the model first, the way a real session does; without it every file's first turn is a cold call.
 Records only measurements, self-reported commitment flags and id validity. No transcript or model text is persisted.
 Receiving STT is independent of model evaluation; total includes model queue wait. Semantic review stays unreviewed.
 

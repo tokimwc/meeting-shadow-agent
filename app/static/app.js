@@ -5,7 +5,7 @@
 
 const WS_BASE = "wss://streaming.assemblyai.com/v3/ws";
 const $ = (id) => document.getElementById(id);
-const state = { ws: null, ctx: null, stream: null, turns: [], seq: 0, t0: 0, busy: false, lastSuggestedId: null, pending: false, timer: null, stopTimer: null, generation: 0, audio: null };
+const state = { ws: null, ctx: null, stream: null, turns: [], seq: 0, t0: 0, busy: false, lastSuggestedId: null, pending: false, stopTimer: null, generation: 0, audio: null };
 
 function log(msg, cls = "") {
   const el = document.createElement("div");
@@ -58,11 +58,9 @@ function onMessage(m) {
     $("turns").prepend(li);
     $("partial").textContent = "";
     // ponytail: fillers ("Right.", "Great.") stay as evidence but do not spend a Gemini call. Questions always do.
-    // Keep evidence ids immutable; merge adjacent fragments into one request, not one utterance.
     if (!/^(right|great|okay|ok|yes|yeah|thanks)[.! ]*$/i.test(t.text.trim())) {
       state.pending = true;
-      clearTimeout(state.timer);
-      state.timer = setTimeout(() => { state.timer = null; requestSuggestion(); }, 450);
+      requestSuggestion();
     }
     while (state.turns.length > 40) state.turns.shift();
     while ($("turns").children.length > 40) $("turns").lastElementChild.remove();
@@ -89,7 +87,7 @@ async function requestSuggestion() {
     if (generation === state.generation) {
       state.busy = false;
       $("status").textContent = "音声を受信中";
-      if (state.pending && !state.timer) requestSuggestion();
+      if (state.pending) requestSuggestion();
     }
   }
 }
@@ -160,8 +158,8 @@ async function startSample() {
 
 function stop() {
   state.generation++;
-  clearTimeout(state.timer); clearTimeout(state.stopTimer);
-  state.timer = null; state.pending = false; state.busy = false;
+  clearTimeout(state.stopTimer);
+  state.pending = false; state.busy = false;
   state.audio?.pause(); state.audio = null;
   const ws = state.ws;
   if (ws?.readyState === 1) ws.send(JSON.stringify({ type: "Terminate" }));
