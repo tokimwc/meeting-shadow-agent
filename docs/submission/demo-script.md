@@ -51,6 +51,17 @@ session stops itself after `MSA_MAX_SESSION_SECONDS`.
 Mute the host speakers. Tab audio capture does not depend on output volume, and the loop is worse
 than the silence.
 
+## What has to come out in editing
+
+No voice reaches the video, but Meet puts both accounts' display names on screen. Two places, both
+blurred in the edit:
+
+- the name label on each participant tile
+- the account avatar and name in the Meet window's top-right
+
+Keep the participant panel closed while recording, so there is no third place to catch. Check the
+final cut at full size before uploading — a name that is legible for two frames is still published.
+
 ## If a card goes wrong on camera
 
 Keep it. A suggestion that misreads a turn is a better submission than a take that hides it — the
