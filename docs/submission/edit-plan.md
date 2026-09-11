@@ -42,7 +42,7 @@ meeting code and the avatar initial are left as they are, deliberately.
 ## Cover image
 
 `docs/submission/cover.html`, rendered headless at 2× into
-`docs/submission/assets/cover-2400x1260.png` (1200×630 at 1×, the usual share-card ratio):
+`docs/submission/assets/cover-3200x1800.png` (1600×900 at 1×, the 16:9 lablab recommends):
 
 ```
 "$env:LOCALAPPDATA/AppData/Local/ms-playwright/chromium-1234/chrome-win64/chrome.exe" \
