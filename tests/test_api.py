@@ -69,3 +69,10 @@ def test_settings_reject_out_of_range_token_ttl():
     import pytest
     with pytest.raises(ValueError):
         Settings.from_env(dict(ENV, MSA_TOKEN_EXPIRES_SECONDS="601"))
+
+
+def test_static_and_index_revalidate():
+    """A redeploy must reach a browser that already opened the demo once."""
+    with TestClient(create_app()) as c:
+        for path in ("/", "/static/app.js"):
+            assert c.get(path).headers["cache-control"] == "no-cache", path

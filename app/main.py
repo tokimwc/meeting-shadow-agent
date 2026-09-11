@@ -42,6 +42,23 @@ class DailyCounter:
             return self.cap - self._n
 
 
+NO_CACHE = {"cache-control": "no-cache"}
+
+
+class RevalidatingStatic(StaticFiles):
+    """Serve static files with `no-cache` so a deploy actually reaches browsers.
+
+    StaticFiles sets ETag and Last-Modified but no Cache-Control, which lets a browser treat the file as
+    fresh and skip revalidation entirely. A judge who opened the demo once would keep running the old
+    client after a redeploy. `no-cache` still allows 304s, so this costs a conditional request, not bytes.
+    """
+
+    async def get_response(self, path: str, scope):
+        response = await super().get_response(path, scope)
+        response.headers.setdefault("cache-control", "no-cache")
+        return response
+
+
 def create_app(
     settings: Settings | None = None, model: JsonModel | None = None, http: httpx.Client | None = None
 ) -> FastAPI:
@@ -99,9 +116,9 @@ def create_app(
 
     @app.get("/")
     def index() -> FileResponse:
-        return FileResponse(STATIC / "index.html")
+        return FileResponse(STATIC / "index.html", headers=NO_CACHE)
 
-    app.mount("/static", StaticFiles(directory=STATIC), name="static")
+    app.mount("/static", RevalidatingStatic(directory=STATIC), name="static")
     return app
 
 
