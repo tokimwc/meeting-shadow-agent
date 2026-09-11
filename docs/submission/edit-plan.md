@@ -38,3 +38,21 @@ product's behaviour is real; a viewer should not have to guess whether a second 
 
 The sharing bar across the top is filled black, and both participant name labels are blurred. The
 meeting code and the avatar initial are left as they are, deliberately.
+
+## Cover image
+
+`docs/submission/cover.html`, rendered headless at 2× into
+`docs/submission/assets/cover-2400x1260.png` (1200×630 at 1×, the usual share-card ratio):
+
+```
+"$env:LOCALAPPDATA/AppData/Local/ms-playwright/chromium-1234/chrome-win64/chrome.exe" \
+  --headless --disable-gpu --hide-scrollbars --force-device-scale-factor=2 \
+  --window-size=1200,630 --virtual-time-budget=6000 \
+  --screenshot=docs/submission/assets/cover-2400x1260.png \
+  file:///D:/dev/meeting-shadow-agent/docs/submission/cover.html
+```
+
+The card on it is the demo's first card word for word — utterance, open item, suggestion and the
+1,357 ms it took — so the cover, the deck and the video all show the same output rather than three
+different ones. At thumbnail width the title and the one-line promise carry it and the card reads as
+texture, which is what a card that small can honestly do.
