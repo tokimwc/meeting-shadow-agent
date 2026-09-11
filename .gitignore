@@ -22,3 +22,4 @@ samples/meet-guest.wav
 samples/cases/
 samples/recordings/
 .claude/settings.local.json
+docs/eval/review-*.json

@@ -33,7 +33,10 @@ from app.suggest import GeminiJsonModel, JsonModel, suggest, warmup
 WS = "wss://streaming.assemblyai.com/v3/ws"
 CHUNK_MS = 100
 SILENCE_RMS = 300
-PREMISE = "自分は実装担当。本番反映・納期・スコープの約束には社内確認が必要。"
+CASES = Path(__file__).resolve().parent.parent / "samples" / "cases.json"
+# The situation-D cases turn on the memo granting staging authority: judging them against a memo that
+# withholds it measures the wrong thing, so the premise comes from the same file as the cases.
+PREMISE = json.loads(CASES.read_text(encoding="utf-8"))["premise_ja"]
 
 
 def rms(pcm: bytes) -> float:
@@ -41,7 +44,7 @@ def rms(pcm: bytes) -> float:
     return (sum(v * v for v in struct.unpack(f"<{n}h", pcm)) / n) ** 0.5 if n else 0.0
 
 
-async def run_wav(path: str, model: JsonModel, mode: str) -> list[dict]:
+async def run_wav(path: str, model: JsonModel, mode: str, review: list | None = None) -> list[dict]:
     key = os.environ["ASSEMBLYAI_API_KEY"]
     # Match production: app/main.py warms the model in the background when a session starts, so measuring
     # without it charges every first turn a cold call the real user never pays.
@@ -96,6 +99,10 @@ async def run_wav(path: str, model: JsonModel, mode: str) -> list[dict]:
                     try:
                         result = await asyncio.to_thread(suggest, model, req)
                         row.update(commits=result.commits_to_something, evidence_ok=True)
+                        if review is not None:
+                            review.append({"case": Path(path).stem, "turn": turn, "heard": req.utterances[-1].text,
+                                           "summary_ja": result.summary_ja, "next_line_en": result.next_line_en,
+                                           "unconfirmed": [u.item for u in result.unconfirmed]})
                     except Exception as exc:
                         # Provider exception messages can contain input text or credentials.
                         row["error"] = type(exc).__name__
@@ -140,6 +147,8 @@ async def main() -> int:
     ap.add_argument("--mode", choices=["min_latency", "balanced", "max_accuracy"], default="min_latency")
     ap.add_argument("--min-cases", type=int, default=20, help="Distinct audio files required (default: 20)")
     ap.add_argument("--out", default="")
+    ap.add_argument("--review", default="", help="write suggestions to this JSON for the human semantic pass "
+                                                 "(holds model text, so keep it out of the repo)")
     a = ap.parse_args()
     paths = [Path(p).resolve() for p in a.wavs]
     if a.min_cases < 1 or len(set(paths)) != len(paths) or len({p.name for p in paths}) != len(paths):
@@ -156,8 +165,12 @@ async def main() -> int:
     model = GeminiJsonModel(project=os.environ["GOOGLE_CLOUD_PROJECT"], location=os.environ.get("MSA_GEMINI_LOCATION", "global"),
                             model=os.environ.get("MSA_GEMINI_MODEL", "gemini-2.5-flash-lite"))
     rows: list[dict] = []
+    review: list[dict] | None = [] if a.review else None
     for p in paths:
-        rows += await run_wav(str(p), model, a.mode)
+        rows += await run_wav(str(p), model, a.mode, review)
+    if review is not None:
+        Path(a.review).parent.mkdir(parents=True, exist_ok=True)
+        Path(a.review).write_text(json.dumps(review, ensure_ascii=False, indent=2), encoding="utf-8")
     summary = summarize(rows, len(paths), a.min_cases)
     print(json.dumps(summary, ensure_ascii=False, allow_nan=False))
     if a.out and rows:
