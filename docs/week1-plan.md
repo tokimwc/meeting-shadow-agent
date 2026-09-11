@@ -26,6 +26,17 @@ ids `u2 u6 u7 m0`, dangerous commitments 0. The suggestion separated staging fro
 ("I can commit to the staging environment by Friday. For production, I need to confirm internally."), which is the
 quality gap recorded on 2026-09-07. Release steps and their traps: `docs/deploy.md`.
 
+Image 0.1.9 (revision `meeting-shadow-00011-n4k`) removes the 450 ms batching and stops browsers pinning a stale
+client. Sample path through IAP, signed in as an account that does not own the project: 9 turns, 7 cards,
+1,488–1,774 ms from turn arrival, down from 1,967–2,169 ms on 0.1.7 — the batching wait was the whole difference.
+The suggestion now commits to what the memo permits and defers only the rest ("I can confirm the fix for the staging
+environment by Friday. For production, I need to check internally...").
+
+Two caveats worth carrying into the submission. The browser figure is still turn arrival → card, not speech end →
+card. And `Cache-Control: no-cache` does not reach a browser that already cached an older client: it fixes every
+deploy from 0.1.9 onward, and a first-time visitor is unaffected, but a tab holding 0.1.7 kept running it until its
+cache was cleared by hand.
+
 ## Running G1 again
 
 The fake-mic guest in `scripts/meet_guest.py` did not work as originally planned. Three things got in the way,
