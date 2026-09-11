@@ -45,11 +45,11 @@ meeting code and the avatar initial are left as they are, deliberately.
 `docs/submission/assets/cover-3200x1800.png` (1600×900 at 1×, the 16:9 lablab recommends):
 
 ```
-"$env:LOCALAPPDATA/AppData/Local/ms-playwright/chromium-1234/chrome-win64/chrome.exe" \
-  --headless --disable-gpu --hide-scrollbars --force-device-scale-factor=2 \
-  --window-size=1200,630 --virtual-time-budget=6000 \
-  --screenshot=docs/submission/assets/cover-2400x1260.png \
-  file:///D:/dev/meeting-shadow-agent/docs/submission/cover.html
+& "$env:LOCALAPPDATA/ms-playwright/chromium-1234/chrome-win64/chrome.exe" `
+  --headless --disable-gpu --hide-scrollbars --force-device-scale-factor=2 `
+  --window-size=1600,900 --virtual-time-budget=6000 `
+  --screenshot=docs/submission/assets/cover-3200x1800.png `
+  "file:///$PWD/docs/submission/cover.html"
 ```
 
 The card on it is the demo's first card word for word — utterance, open item, suggestion and the
