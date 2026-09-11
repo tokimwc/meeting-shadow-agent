@@ -108,17 +108,24 @@
   }
   .memo b { color: var(--ink); font-weight: 500; }
 
-  /* Slide 2's card is the product's whole argument set in type: one clause commits, one defers. */
+  /* Both cards are transcribed from the recorded demo, so the slide shows only what the video shows. */
+  .seq { display: grid; grid-template-columns: 1fr 1fr; gap: 2.4cqw; }
+  .step { display: flex; flex-direction: column; gap: 1cqw; }
+  .step .heard { font-family: var(--mono); font-size: 1.25cqw; color: var(--ink); line-height: 1.45; }
+  .step .heard .uid { color: var(--ink-3); font-size: 1.05cqw; margin-right: 0.6cqw; }
   .card {
     background: var(--paper); border: 1px solid var(--rule); border-left: 3px solid var(--ink);
-    padding: 2cqw 2.2cqw; max-width: 56cqw; display: flex; flex-direction: column; gap: 1.1cqw;
+    padding: 1.5cqw 1.7cqw; display: flex; flex-direction: column; gap: 0.9cqw; flex: 1;
   }
-  .card-line { font-size: 1.75cqw; line-height: 1.5; }
-  .clause { padding: 0.1em 0.28em; border-radius: 2px; }
-  .clause.commit { background: var(--commit-bg); color: var(--commit); }
-  .clause.defer  { background: var(--defer-bg);  color: var(--defer); }
-  .cites { font-family: var(--mono); font-size: 1.1cqw; color: var(--ink-3); letter-spacing: 0.06em; }
-  .legend { display: flex; gap: 2.4cqw; margin-top: 1.8cqw; font-size: 1.25cqw; color: var(--ink-2); }
+  .open-item { font-family: var(--mono); font-size: 1.15cqw; }
+  .open-item em {
+    font-style: normal; padding: 0.12em 0.34em; border-radius: 2px;
+  }
+  .open-item.defer em  { background: var(--defer-bg);  color: var(--defer); }
+  .open-item.commit em { background: var(--commit-bg); color: var(--commit); }
+  .card-line { font-size: 1.45cqw; line-height: 1.45; color: var(--ink); }
+  .cites { font-family: var(--mono); font-size: 1.02cqw; color: var(--ink-3); letter-spacing: 0.06em; margin-top: auto; }
+  .legend { display: flex; gap: 2.4cqw; margin-top: 1.6cqw; font-size: 1.2cqw; color: var(--ink-2); }
   .legend i { font-style: normal; font-weight: 500; }
   .legend .commit i { color: var(--commit); }
   .legend .defer  i { color: var(--defer); }
@@ -218,20 +225,33 @@
       <div class="eyebrow">What it does</div>
       <h2>One sentence, ready before you need it</h2>
       <p>At the end of each of their turns, a card appears with one English sentence for the engineer to
-        say. Its shape comes from a memo written before the meeting.</p>
+        say. What it treats as still open comes from a memo written before the meeting.</p>
       <div class="memo"><b>m0</b> — Implementation owner. Staging validation is mine to agree.
         Production, dates, scope changes and extra effort need internal approval.</div>
-      <div class="card">
-        <div class="card-line">“<span class="clause commit">I can confirm the staging validation by Friday.</span>
-          <span class="clause defer">For the production rollout, I need to check internally.</span>”</div>
-        <div class="cites">cites u1 · m0</div>
+      <div class="seq">
+        <div class="step">
+          <div class="heard"><span class="uid">u1</span>“Can you confirm the production rollout for Friday?”</div>
+          <div class="card">
+            <div class="open-item defer">still open: <em>production rollout for Friday</em></div>
+            <div class="card-line">“Can you confirm the timezone for the production rollout on Friday?”</div>
+            <div class="cites">cites u1 · m0 — 1,357 ms after the turn ended</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="heard"><span class="uid">u2</span>“Actually I meant staging validation with no delivery commitment.”</div>
+          <div class="card">
+            <div class="open-item commit">still open: <em>scope for staging validation</em></div>
+            <div class="card-line">“Could you clarify the scope for the staging validation?”</div>
+            <div class="cites">cites u1 u2 — 1,234 ms after the turn ended</div>
+          </div>
+        </div>
       </div>
       <div class="legend">
-        <span class="commit"><i>Inside the memo</i> — the sentence commits</span>
-        <span class="defer"><i>Outside it</i> — the sentence defers, naming what needs approval</span>
+        <span class="defer"><i>Outside the memo</i> — the engineer cannot settle it alone</span>
+        <span class="commit"><i>Inside it</i> — theirs to agree</span>
       </div>
-      <p style="margin-top:auto">It never speaks, never joins the call, never sends anything.
-        <strong>The engineer reads and decides.</strong></p>
+      <p style="margin-top:auto">The speaker corrects themselves and the open item moves with them. It never
+        speaks, never joins the call, never sends anything. <strong>The engineer reads and decides.</strong></p>
     </div>
     <div class="rail"><span class="no">02</span><span class="vert">Meeting Shadow Agent</span></div>
   </section>

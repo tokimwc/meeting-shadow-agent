@@ -34,15 +34,23 @@ sentence for the engineer to say.
 
 It never speaks. It never joins the call. It never sends anything. The engineer reads and decides.
 
-The card's shape comes from a memo written before the meeting:
+What it treats as still open comes from a memo written before the meeting:
 
 > Implementation owner. Staging validation is mine to agree. Production, dates, scope changes and
 > extra effort need internal approval.
 
-Inside that line → a sentence that commits. Outside it → a sentence that defers, naming the specific
-thing that needs approval.
+Both cards on this slide are transcribed from the recorded demo — nothing composed:
 
-*Visual:* a real screenshot of the card from the demo take, not a mock.
+| | |
+|---|---|
+| u1 "Can you confirm the production rollout for Friday?" | still open: **production rollout for Friday** → "Can you confirm the timezone for the production rollout on Friday?" |
+| u2 "Actually I meant staging validation with no delivery commitment." | still open: **scope for staging validation** → "Could you clarify the scope for the staging validation?" |
+
+The speaker corrects themselves and the open item moves with them: production leaves the card once it
+is no longer what is being asked for.
+
+*Visual:* the two cards side by side, the open item coloured by whether the memo places it inside the
+engineer's authority.
 
 ---
 
