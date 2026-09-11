@@ -37,7 +37,7 @@ The guest is a real Brave window whose microphone is the WAV. Playwright's own C
 a blank page, so the override is not optional.
 
 ```
-set MSA_GUEST_BROWSER=C:\Program Files\BraveSoftware\Brave-Browser\Applicationrave.exe
+set MSA_GUEST_BROWSER=C:\Program Files\BraveSoftware\Brave-Browser\Application\brave.exe
 python scripts/meet_guest.py <meet-url> --wav samples/demo-lines.wav --profile .cache/meet-guest
 ```
 
