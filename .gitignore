@@ -21,3 +21,4 @@ samples/meet-guest.wav
 .worktrees/
 samples/cases/
 samples/recordings/
+.claude/settings.local.json
