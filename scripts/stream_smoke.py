@@ -22,6 +22,9 @@ from urllib.parse import urlencode
 
 import websockets
 
+# AssemblyAI returns em dashes; a Windows cp932 console raises on them and kills the run mid-stream.
+sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+
 WS = "wss://streaming.assemblyai.com/v3/ws"
 CHUNK_MS = 100
 SILENCE_RMS = 300  # int16 RMS; SAPI/room noise floor is far below this

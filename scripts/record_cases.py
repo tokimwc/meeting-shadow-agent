@@ -93,7 +93,8 @@ def main() -> int:
         todo = [c for c in human if not (OUT / f"{c['id']}.wav").exists()]
 
     if not todo:
-        print("Nothing to record. Use `python scripts/make_cases.py --list` to check the set.")
+        print("Every human case already has a recording. To redo them, name the ids:")
+        print(f"  python scripts/record_cases.py {' '.join(c['id'] for c in human)}")
         return 0
 
     OUT.mkdir(parents=True, exist_ok=True)

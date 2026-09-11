@@ -82,7 +82,7 @@
     },
     {
       "id": "case-14", "axis": "authority", "situation": "B", "audio": "human",
-      "lines": ["Legal has already approved this.", "Correction, the approval request is still pending with them."],
+      "lines": ["The legal team has already approved this.", "Correction, the approval request is still pending with them."],
       "expect_clarify": "that the approval is pending, not granted",
       "expect_not": "proceeding as though legal approval is in place"
     },
