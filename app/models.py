@@ -23,16 +23,25 @@ class SuggestRequest(BaseModel):
 
 
 class Unconfirmed(BaseModel):
-    item: str = Field(max_length=200)
-    evidence_ids: list[EvidenceId] = Field(min_length=1, max_length=5)
+    item: str = Field(max_length=200,
+                      description="Something the OTHER side raised and left open. Not a category from the memo.")
+    evidence_ids: list[EvidenceId] = Field(
+        min_length=1, max_length=5,
+        description="Must include the u-id of the utterance that raised this. m0 alone is not enough: "
+                    "the memo says what needs approval, it is not evidence that anyone asked for it.")
 
 
 class Suggestion(BaseModel):
     """Model output contract. Every claim must cite utterance ids that exist in the request."""
 
     summary_ja: str = Field(max_length=300)
-    unconfirmed: list[Unconfirmed] = Field(default_factory=list, max_length=5)
-    next_line_en: str = Field(max_length=300)
+    unconfirmed: list[Unconfirmed] = Field(
+        default_factory=list, max_length=5,
+        description="Empty when the utterances leave nothing open. Most useful item first.")
+    next_line_en: str = Field(
+        max_length=300,
+        description="Asks about unconfirmed[0], naming it concretely. When unconfirmed is empty, "
+                    "acknowledge in one sentence and ask nothing.")
     next_line_ja: str = Field(max_length=300)
     evidence_ids: list[EvidenceId] = Field(min_length=1, max_length=5)
     commits_to_something: bool = Field(

@@ -53,3 +53,11 @@ def test_unknown_id_inside_unconfirmed_is_refused():
     bad = dict(GOOD, unconfirmed=[{"item": "x", "evidence_ids": ["u2"]}])
     with pytest.raises(ValueError, match="u2"):
         suggest(FakeModel(bad), REQ)
+
+
+def test_memo_only_unconfirmed_item_is_dropped():
+    """The memo says what needs approval; it is not evidence that anyone asked for it."""
+    payload = dict(GOOD, unconfirmed=[{"item": "本番反映", "evidence_ids": ["m0"]},
+                                      {"item": "納期", "evidence_ids": ["u1", "m0"]}])
+    s = suggest(FakeModel(payload), REQ)
+    assert [u.item for u in s.unconfirmed] == ["納期"]
