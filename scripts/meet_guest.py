@@ -49,6 +49,12 @@ def build_wav(sources: list[str] | None = None) -> None:
     out.close()
 
 
+def cycle_seconds() -> float:
+    import wave
+    with wave.open(WAV, "rb") as w:
+        return w.getnframes() / w.getframerate()
+
+
 def chrome() -> str:
     # ponytail: Playwright's Chromium ships without proprietary codecs and Meet drops it on a blank page.
     # Point MSA_GUEST_BROWSER at a real Brave/Chrome binary for anything that has to join a call.
@@ -121,8 +127,11 @@ def main() -> int:
     if not a.url:
         ap.error("meet url required")
     proc = launch(a.url, profile, loop=a.loop)
-    print("guest browser open. In that window: type a name, click 'Ask to join'. In the host: admit it.")
-    print("audio starts 5 s after the mic opens and runs ~113 s. Close the window to end.")
+    print("guest browser open. Join in that window; admit it from the host if asked.")
+    # Meet opens the microphone on its pre-join screen, so the audio starts before anyone clicks join.
+    # Racing that is the reason --loop exists: set the capture up first, then record any whole cycle.
+    print(f"one pass is {cycle_seconds():.0f} s (5 s of silence, then the lines)."
+          + (" Looping until you close the window." if a.loop else " Plays once. Close the window to end."))
     proc.wait()
     return 0
 
