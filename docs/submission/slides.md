@@ -1,7 +1,9 @@
-# Five slides
+# Seven slides
 
-Five, because the judges watch the video first and open the deck to check what the video claimed.
-Each slide answers one question a sceptic would ask.
+The judges watch the video first and open the deck to check what the video claimed, so each slide
+answers one question a sceptic would ask. Slides 5 and 6 exist because the submission guidelines ask
+for market scope, revenue and a competitor analysis, and Business Value is one of the four judging
+axes the first draft left empty.
 
 ---
 
@@ -96,7 +98,56 @@ across every run.
 
 ---
 
-## 5 — What it does not show
+## 5 — Who pays
+
+**Title:** What one skipped conversation costs
+
+The cost being avoided, as arithmetic rather than a claim:
+
+| | |
+|---|---|
+| A scope change agreed on a call and never renegotiated | ~2 engineer-weeks |
+| At a loaded cost of $100k/yr | $3,800 |
+| A seat at $15/month | $180/yr — one prevented commitment covers 21 seat-years |
+
+Market, with the cited figure and the assumed narrowing kept visibly apart:
+
+| | | |
+|---|---|---|
+| Developers worldwide | **28.7 M** | 2026 estimate; SlashData counts 47 M and we use the lower one |
+| *Assumed* — work in English, not natively | ≈ 14 M | Half. Our assumption. The US alone holds 4.4 M |
+| *Assumed* — on external delivery calls | ≈ 2.9 M | One in five → **$520 M** serviceable against a $5.2 B total |
+
+Revenue: per seat at $15/month, inside the $10–30 band meeting assistants already occupy; an org tier
+where the memo is maintained centrally as a delegation policy. Not a revenue stream: conversations
+are never resold or used to train anything of ours.
+
+*Visual:* the dashed rules mark the two rungs that are assumptions, so a judge can see at a glance
+which number is cited and which is ours.
+
+---
+
+## 6 — Where this sits
+
+**Title:** Evidence grounding is not the differentiator
+
+Four agents in this same hackathon already tie their output back to what was said — VerbaTrace AI,
+QuoteReady, Voice Action Gate, Saakshi. Naming them is the point: the category is crowded and
+pretending otherwise would be the easiest thing for a judge to check.
+
+Every one of them **acts** — questions the other party, writes a record, or blocks a call. This one
+does not. It prepares **the user's own next sentence**, shaped by a boundary the user declared before
+the meeting, and hands it over to be said or discarded.
+
+Stated plainly: neither evidence grounding nor latency is a moat. What is defensible is the authority
+memo as the shaping input, and the discipline of never acting.
+
+*Visual:* the competitor list in mono, the differentiator in the one colour the deck reserves for
+what the engineer may settle.
+
+---
+
+## 7 — What it does not show
 
 **Title:** The limits, stated plainly
 

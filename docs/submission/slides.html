@@ -130,6 +130,52 @@
   .legend .commit i { color: var(--commit); }
   .legend .defer  i { color: var(--defer); }
 
+
+  /* Slides 5 and 6: every number is either cited or shown as arithmetic from a stated assumption. */
+  .econ { display: flex; align-items: stretch; gap: 0; margin-bottom: 1.9cqw; }
+  .econ div { flex: 1; padding: 0 1.8cqw 0 0; }
+  .econ div + div { border-left: 1px solid var(--rule); padding-left: 1.8cqw; }
+  .econ dt {
+    font-family: var(--mono); font-size: 1.02cqw; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--ink-3); margin-bottom: 0.6cqw;
+  }
+  .econ dd { margin: 0; font-family: var(--mono); font-size: 1.9cqw; color: var(--ink); font-variant-numeric: tabular-nums; }
+  .econ dd small { display: block; font-family: var(--sans); font-size: 1.15cqw; color: var(--ink-2); margin-top: 0.5cqw; line-height: 1.4; }
+  .econ .lead dd { color: var(--commit); }
+
+  .funnel { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2.2cqw; margin-bottom: 1.4cqw;
+           padding-right: 4.5cqw; }
+  .rung { border-top: 2px solid var(--rule); padding-top: 1.2cqw; }
+  .rung.assumed { border-top-style: dashed; border-top-color: var(--defer); }
+  .rung b {
+    display: block; font-family: var(--mono); font-size: 1.02cqw; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--ink-3); font-weight: 400; margin-bottom: 0.6cqw;
+  }
+  .rung.assumed b { color: var(--defer); }
+  .rung .val { font-family: var(--mono); font-size: 1.9cqw; color: var(--ink); font-variant-numeric: tabular-nums; }
+  .rung p { font-size: 1.2cqw; margin: 0.5cqw 0 0; max-width: none; }
+
+  .streams { display: flex; gap: 2.6cqw; margin-top: auto; padding-top: 1.5cqw; padding-right: 4.5cqw;
+             border-top: 1px solid var(--rule); }
+  .streams div { flex: 1; }
+  .streams b { display: block; font-size: 1.3cqw; color: var(--ink); font-weight: 500; margin-bottom: 0.5cqw; }
+  .streams span { font-size: 1.18cqw; color: var(--ink-2); line-height: 1.45; }
+  .src { font-family: var(--mono); font-size: 0.92cqw; color: var(--ink-3); margin-top: 0.9cqw; }
+
+  .rivals { display: flex; flex-direction: column; gap: 1cqw; margin-bottom: 1.8cqw; }
+  .rivals li { display: grid; grid-template-columns: 14cqw 1fr; gap: 1.6cqw; align-items: baseline;
+                padding-right: 4.5cqw; }
+  .rivals { list-style: none; padding: 0; }
+  .rivals b { font-family: var(--mono); font-size: 1.15cqw; color: var(--ink); font-weight: 500; }
+  .rivals span { font-size: 1.3cqw; color: var(--ink-2); line-height: 1.45; }
+  .usp {
+    border-left: 3px solid var(--commit); background: var(--commit-bg); padding: 1.6cqw 1.9cqw;
+    margin-right: 4.5cqw;
+    font-size: 1.5cqw; line-height: 1.5; color: var(--ink);
+  }
+  .usp b { font-weight: 500; }
+  .caveat { font-size: 1.25cqw; color: var(--ink-3); margin-top: auto; padding-top: 1.4cqw; max-width: 60cqw; }
+
   .flow { display: flex; align-items: stretch; gap: 0; margin: 0.6cqw 0 2.6cqw; }
   .node {
     border: 1px solid var(--rule); padding: 1.2cqw 1.4cqw; flex: 1;
@@ -150,7 +196,7 @@
   }
   .guard p { font-size: 1.35cqw; margin: 0; max-width: none; }
 
-  table { border-collapse: collapse; width: 100%; font-size: 1.35cqw; }
+  table { border-collapse: collapse; width: calc(100% - 4.5cqw); font-size: 1.35cqw; }
   caption {
     caption-side: top; text-align: left; font-family: var(--mono); font-size: 1.1cqw;
     letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-3); padding-bottom: 1cqw;
@@ -318,6 +364,71 @@
       </dl>
     </div>
     <div class="rail"><span class="no">04</span><span class="vert">Meeting Shadow Agent</span></div>
+  </section>
+
+  <section class="slide">
+    <div class="body">
+      <div class="eyebrow">Who pays</div>
+      <h2>What one skipped conversation costs</h2>
+      <dl class="econ">
+        <div>
+          <dt>Absorbed silently</dt>
+          <dd>2 wks<small>A scope change agreed on a call, never renegotiated</small></dd>
+        </div>
+        <div>
+          <dt>At a loaded cost of $100k/yr</dt>
+          <dd>$3,800<small>What those two engineer-weeks cost the team</small></dd>
+        </div>
+        <div class="lead">
+          <dt>A seat at $15/month</dt>
+          <dd>$180/yr<small>One prevented commitment covers twenty-one seat-years</small></dd>
+        </div>
+      </dl>
+      <div class="funnel">
+        <div class="rung">
+          <b>Developers worldwide</b>
+          <span class="val">28.7 M</span>
+          <p>2026 estimate. SlashData counts 47 M; we use the lower figure.</p>
+        </div>
+        <div class="rung assumed">
+          <b>Assumed · work in English, not natively</b>
+          <span class="val">≈ 14 M</span>
+          <p>Half. Our assumption, not a measurement — the US alone holds 4.4 M.</p>
+        </div>
+        <div class="rung assumed">
+          <b>Assumed · on external delivery calls</b>
+          <span class="val">≈ 2.9 M</span>
+          <p>One in five. At $15 a seat that is a <strong>$520 M</strong> serviceable market against a $5.2 B total.</p>
+        </div>
+      </div>
+      <div class="streams">
+        <div><b>Per seat</b><span>$15/month, inside the $10–30 band meeting assistants already occupy.</span></div>
+        <div><b>Org tier</b><span>The memo is a delegation policy — who may commit to what — maintained centrally.</span></div>
+        <div><b>Not a revenue stream</b><span>Conversations are never resold or used to train anything of ours.</span></div>
+      </div>
+      <div class="src">Sources: future-processing.com (2026), SlashData (2025); Fireflies $10, Granola $14, Otter Business $30</div>
+    </div>
+    <div class="rail"><span class="no">05</span><span class="vert">Meeting Shadow Agent</span></div>
+  </section>
+
+  <section class="slide">
+    <div class="body">
+      <div class="eyebrow">Where this sits</div>
+      <h2>Evidence grounding is not the differentiator</h2>
+      <p>Four agents in this hackathon already tie their output back to what was said:</p>
+      <ul class="rivals">
+        <li><b>VerbaTrace AI</b><span>interviews, detects incomplete answers, converts the conversation into traceable evidence</span></li>
+        <li><b>QuoteReady</b><span>turns vague enquiries into reviewable drafts with transcript evidence and follow-up gaps</span></li>
+        <li><b>Voice Action Gate</b><span>refuses any irreversible action whose arguments cannot be traced to the user's words</span></li>
+        <li><b>Saakshi</b><span>speaks up the moment a customer is about to be misled, and certifies consent</span></li>
+      </ul>
+      <div class="usp">Every one of them <b>acts</b> — questions the other party, writes a record, or blocks a call.
+        This one does not. It prepares <b>the user's own next sentence</b>, shaped by a boundary the user declared
+        before the meeting, and hands it over to be said or discarded.</div>
+      <p class="caveat">Stated plainly: neither evidence grounding nor latency is a moat. What is defensible is the
+        authority memo as the shaping input, and the discipline of never acting.</p>
+    </div>
+    <div class="rail"><span class="no">06</span><span class="vert">Meeting Shadow Agent</span></div>
   </section>
 
   <section class="slide">
