@@ -1,58 +1,65 @@
 # 120-second video: what to record and what to say
 
-Two recordings go into this. The live demo has to be one continuous take at normal speed — no cuts
-in the waiting, no pre-rendered output passed off as live. Everything else is voice-over on slides.
+No human voice goes into this. The remote participant is a synthetic voice played into the call
+through a fake microphone; the narration is separate. The demo itself stays live — tab audio,
+AssemblyAI and Gemini all run for real, in one continuous take at normal speed.
+
+Say so once in the video or its description: **the remote participant is a synthetic voice.** The
+product's behaviour is real and nothing is staged, but a viewer should not have to guess whether a
+second person was in the room.
 
 ## The memo on screen
 
-The app's 事前メモ field is already this text. Do not shorten it for the camera: the whole demo turns
-on the line between what the engineer may settle alone and what they may not.
+The app's 事前メモ field already holds this text. Do not shorten it for the camera: the whole demo
+turns on the line between what the engineer may settle alone and what they may not.
 
 > 自分は実装担当。staging 検証の合意は自分の裁量で可能。本番反映・納期・スコープ変更・追加工数の約束には社内確認が必要。
 
-## The live demo (0:12 – 1:15)
+## The two turns
 
-You are the engineer, silent, watching the cards. The other participant speaks from a phone joined to
-the same Meet call. Two turns, about a second of silence between them, then a pause long enough for
-the card to appear before the correction.
+Rendered by `python scripts/make_cases.py --demo` into `samples/demo-lines.wav`. Both turns were
+verified through AssemblyAI first and come back verbatim, as one turn each.
 
-### Turn 1 — the other side asks for something outside your authority
+| | |
+|---|---|
+| 0:05 | "Can you confirm the **production** rollout for **Friday**?" |
+| | *eight seconds of silence — the card appears and is readable on camera* |
+| 0:22 | "Actually I meant **staging** validation with no delivery commitment." |
+| | *the card updates* |
 
-> Can you confirm the **production** rollout for **Friday**?
-> キャン ユー コンファーム ザ **プロダクション** ロールアウト フォー **フライデー**？
+The first card should commit to the staging side and defer production and the date. The second should
+drop the questions the first raised, because the speaker resolved them. Neither is scripted — that is
+the point of showing it live.
 
-**↓ card appears — wait for it on camera, do not cut ↓**
+## Running it
 
-Expected shape: commits to the staging side, defers production and the date. The card is not
-scripted and may word it differently; that is the point of showing it live.
+The guest is a real Brave window whose microphone is the WAV. Playwright's own Chromium loads Meet as
+a blank page, so the override is not optional.
 
-### Turn 2 — the other side corrects themselves
+```
+set MSA_GUEST_BROWSER=C:\Program Files\BraveSoftware\Brave-Browser\Applicationrave.exe
+python scripts/meet_guest.py <meet-url> --wav samples/demo-lines.wav --profile .cache/meet-guest
+```
 
-> Sorry, I meant **staging** validation, with no delivery commitment.
-> ソーリー、アイ メント **ステイジング** ヴァリデーション、ウィズ ノー デリバリー コミットメント
+`--profile` keeps the guest's browser profile between runs. Sign that window into the second Google
+account **once**: a meeting created by a personal Gmail account will not admit a signed-out guest,
+and without `--profile` every run starts signed out again.
 
-**↓ card updates ↓**
+Audio starts five seconds after the mic opens. Have the Meet tab already shared before then — the
+session stops itself after `MSA_MAX_SESSION_SECONDS`.
 
-Expected shape: the production and deadline questions are gone. It does not keep asking about a
-condition the speaker just resolved.
+Mute the host speakers. Tab audio capture does not depend on output volume, and the loop is worse
+than the silence.
 
-### If a card goes wrong on camera
+## If a card goes wrong on camera
 
 Keep it. A suggestion that misreads a turn is a better submission than a take that hides it — the
-evaluation note already says what fails and how often. Re-record only if the audio never reached
+evaluation note already records what fails and how often. Re-record only if the audio never reached
 AssemblyAI at all.
 
-## Recording notes, paid for already
+## Narration, by segment
 
-- Join the call from a phone on a second Google account. A signed-out guest cannot join a meeting
-  created by a personal Gmail account, and Playwright's Chromium loads Meet as a blank page.
-- Mute the host speakers. Tab audio capture does not depend on output volume, and the loop is worse
-  than the silence.
-- Start speaking as soon as the tab is shared. The session stops itself after `MSA_MAX_SESSION_SECONDS`.
-- Do not stop between the words of a sentence. A pause inside a sentence ends the turn early and the
-  card answers half a request.
-
-## Voice-over, by segment
+Synthesised or on-screen text, not a live read.
 
 **0:00 – 0:12 — the problem**
 An engineer in an English meeting understands every word and still says yes before the conditions are
@@ -66,8 +73,7 @@ moment the correction clears the questions it had raised.
 Tab audio goes straight from the browser to AssemblyAI Universal-3.5 Pro Realtime over WebSocket; the
 server never holds the stream. Each finalized turn goes to Gemini 2.5 Flash-Lite, which must cite the
 utterance ids it used. A suggestion citing an id that was never said is refused, not repaired. The
-agent never speaks, never joins the call, and never sends anything on the engineer's behalf: the
-human decides.
+agent never speaks, never joins the call, and never sends anything on the engineer's behalf.
 
 **1:35 – 1:50 — what was measured**
 Twenty scripted scenarios, twelve synthetic-audio and eight human-recorded, across missing, revised,

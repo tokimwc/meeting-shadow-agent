@@ -32,15 +32,15 @@ setInterval(()=>{an.getFloatTimeDomainData(buf);let r=0;for(const v of buf)r+=v*
 </script></body></html>"""
 
 
-def build_wav() -> None:
-    """5 s lead-in, samples 01..03 with 4 s gaps, 48 kHz mono 16-bit (what Chromium's fake mic expects)."""
+def build_wav(sources: list[str] | None = None) -> None:
+    """5 s lead-in, then each source with a 4 s gap, 48 kHz mono 16-bit (what Chromium's fake mic expects)."""
     import array
     import wave
 
     out = wave.open(WAV, "wb"); out.setnchannels(1); out.setsampwidth(2); out.setframerate(48000)
     sil = lambda s: bytes(2 * int(48000 * s))
     out.writeframes(sil(5))
-    for src in sorted(glob.glob(os.path.join(os.path.dirname(WAV), "sample-0*.wav"))):
+    for src in sources or sorted(glob.glob(os.path.join(os.path.dirname(WAV), "sample-0*.wav"))):
         w = wave.open(src, "rb")
         assert (w.getnchannels(), w.getsampwidth()) == (1, 2), src
         pcm = array.array("h", w.readframes(w.getnframes()))
@@ -97,10 +97,16 @@ def main() -> int:
     ap.add_argument("url", nargs="?")
     ap.add_argument("--selftest", action="store_true")
     ap.add_argument("--loop", action="store_true", help="repeat the WAV forever (default: play once)")
+    ap.add_argument("--wav", help="16 kHz mono WAV to speak instead of the sample conversation")
+    ap.add_argument("--profile", help="keep the guest's browser profile here, so its Google sign-in survives "
+                                      "(default: a fresh temp dir, signed out)")
     a = ap.parse_args()
-    if not os.path.exists(WAV):
-        build_wav()
-    profile = tempfile.mkdtemp(prefix="meet-guest-")
+    if a.wav or not os.path.exists(WAV):
+        build_wav([os.path.abspath(a.wav)] if a.wav else None)
+    # A meeting made by a personal Gmail account will not admit a signed-out guest, and a fresh profile is
+    # always signed out. Reuse one directory and the sign-in done once carries into every later run.
+    profile = a.profile or tempfile.mkdtemp(prefix="meet-guest-")
+    os.makedirs(profile, exist_ok=True)
     if a.selftest:
         page = os.path.join(profile, "selftest.html")
         open(page, "w").write(SELFTEST_HTML)

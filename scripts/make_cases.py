@@ -74,6 +74,26 @@ def convert(src: Path, dst: Path) -> None:
         sys.exit(f"{src.name}: ffmpeg failed\n{r.stderr.strip()[-500:]}")
 
 
+# The video's two turns. Not eval cases: the gap is sized for the card to appear and be read on camera.
+DEMO_LINES = ["Can you confirm the production rollout for Friday?",
+              "Actually I meant staging validation with no delivery commitment."]
+DEMO_GAP_MS = 8000
+
+
+def render_demo() -> None:
+    path = OUT.parent / "demo-lines.wav"
+    body = f'<break time="{DEMO_GAP_MS}ms"/>'.join(escape(x) for x in DEMO_LINES)
+    doc = ('<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xml:lang="en-US">'
+           f'{body}<break time="{GAP_MS}ms"/></speak>')
+    r = subprocess.run(["powershell", "-NoProfile", "-Command",
+                        PS % {"voice": VOICE, "path": str(path), "ssml": doc}], capture_output=True, text=True)
+    if r.returncode != 0:
+        sys.exit(f"demo: SAPI failed\n{r.stderr.strip()}")
+    print(f"{path}  {check(path)}")
+    for line in DEMO_LINES:
+        print(f'    "{line}"')
+
+
 def recording_script(human: list[dict]) -> None:
     print("Record these as the remote participant. You are the other side of the call, not yourself.\n")
     print("  - Leave about a second of silence between the two lines: that gap is what ends the turn.")
@@ -92,6 +112,7 @@ def main() -> int:
     ap.add_argument("--force", action="store_true", help="re-render files that already exist")
     ap.add_argument("--list", action="store_true", help="print the plan and exit")
     ap.add_argument("--script", action="store_true", help="print the recording script for the human cases")
+    ap.add_argument("--demo", action="store_true", help="render samples/demo-lines.wav for the video")
     ap.add_argument("--import", dest="do_import", action="store_true",
                     help="convert samples/recordings/case-NN.* to 16 kHz mono WAV in samples/cases/")
     a = ap.parse_args()
@@ -99,6 +120,11 @@ def main() -> int:
     cases = json.loads(CASES.read_text(encoding="utf-8"))["cases"]
     synthetic = [c for c in cases if c["audio"] == "synthetic"]
     human = [c for c in cases if c["audio"] == "human"]
+
+    if a.demo:
+        OUT.parent.mkdir(parents=True, exist_ok=True)
+        render_demo()
+        return 0
 
     if a.script:
         recording_script(human)

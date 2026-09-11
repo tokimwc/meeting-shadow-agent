@@ -23,3 +23,5 @@ samples/cases/
 samples/recordings/
 .claude/settings.local.json
 docs/eval/review-*.json
+samples/demo-lines.wav
+.cache/
