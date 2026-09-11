@@ -32,14 +32,14 @@ setInterval(()=>{an.getFloatTimeDomainData(buf);let r=0;for(const v of buf)r+=v*
 </script></body></html>"""
 
 
-def build_wav(sources: list[str] | None = None) -> None:
-    """5 s lead-in, then each source with a 4 s gap, 48 kHz mono 16-bit (what Chromium's fake mic expects)."""
+def build_wav(sources: list[str] | None = None, lead: float = 5) -> None:
+    """Lead-in silence, then each source with a 4 s gap, 48 kHz mono 16-bit (what the fake mic expects)."""
     import array
     import wave
 
     out = wave.open(WAV, "wb"); out.setnchannels(1); out.setsampwidth(2); out.setframerate(48000)
     sil = lambda s: bytes(2 * int(48000 * s))
-    out.writeframes(sil(5))
+    out.writeframes(sil(lead))
     for src in sources or sorted(glob.glob(os.path.join(os.path.dirname(WAV), "sample-0*.wav"))):
         w = wave.open(src, "rb")
         assert (w.getnchannels(), w.getsampwidth()) == (1, 2), src
@@ -106,9 +106,12 @@ def main() -> int:
     ap.add_argument("--wav", help="16 kHz mono WAV to speak instead of the sample conversation")
     ap.add_argument("--profile", help="keep the guest's browser profile here, so its Google sign-in survives "
                                       "(default: a fresh temp dir, signed out)")
+    # Meet opens the microphone on its pre-join screen, so the clock starts before the guest is admitted.
+    # A long lead-in buys time to join, share the tab and start recording before the first line plays.
+    ap.add_argument("--lead", type=float, default=5, help="seconds of silence before the first line (default: 5)")
     a = ap.parse_args()
-    if a.wav or not os.path.exists(WAV):
-        build_wav([os.path.abspath(a.wav)] if a.wav else None)
+    if a.wav or a.lead != 5 or not os.path.exists(WAV):
+        build_wav([os.path.abspath(a.wav)] if a.wav else None, a.lead)
     # A meeting made by a personal Gmail account will not admit a signed-out guest, and a fresh profile is
     # always signed out. Reuse one directory and the sign-in done once carries into every later run.
     # Chromium does not reliably honour a relative --user-data-dir: it launched, but wrote its profile
@@ -130,7 +133,7 @@ def main() -> int:
     print("guest browser open. Join in that window; admit it from the host if asked.")
     # Meet opens the microphone on its pre-join screen, so the audio starts before anyone clicks join.
     # Racing that is the reason --loop exists: set the capture up first, then record any whole cycle.
-    print(f"one pass is {cycle_seconds():.0f} s (5 s of silence, then the lines)."
+    print(f"one pass is {cycle_seconds():.0f} s ({a.lead:.0f} s of silence, then the lines)."
           + (" Looping until you close the window." if a.loop else " Plays once. Close the window to end."))
     proc.wait()
     return 0
