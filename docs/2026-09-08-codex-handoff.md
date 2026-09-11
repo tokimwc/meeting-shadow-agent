@@ -1,5 +1,10 @@
 # Codex local handoff — 2026-09-08
 
+> Historical. Kept because it records what was tried, not because it describes the current build. The
+> worktree it names is gone, its changes were merged, and the 450 ms turn batching it added was
+> removed in 0.1.9 after the evaluator showed it never merged anything. Current state: `README.md`
+> and `docs/eval/20cases.md`.
+
 Worktree: `D:/dev/meeting-shadow-agent/.worktrees/handoff-quality`
 Branch: `codex/handoff-quality`, based on `ee81038`. Changes are local and uncommitted.
 Synthetic WAV assets are Git-ignored: the existing three evaluation WAVs and static sample were copied from the original checkout into this worktree. A fresh worktree needs those assets provisioned separately.
