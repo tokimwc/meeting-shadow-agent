@@ -105,8 +105,11 @@ def main() -> int:
         build_wav([os.path.abspath(a.wav)] if a.wav else None)
     # A meeting made by a personal Gmail account will not admit a signed-out guest, and a fresh profile is
     # always signed out. Reuse one directory and the sign-in done once carries into every later run.
-    profile = a.profile or tempfile.mkdtemp(prefix="meet-guest-")
+    # Chromium does not reliably honour a relative --user-data-dir: it launched, but wrote its profile
+    # somewhere else and the sign-in did not survive. Resolve before handing it over.
+    profile = os.path.abspath(a.profile) if a.profile else tempfile.mkdtemp(prefix="meet-guest-")
     os.makedirs(profile, exist_ok=True)
+    print(f"guest profile: {profile}")
     if a.selftest:
         page = os.path.join(profile, "selftest.html")
         open(page, "w").write(SELFTEST_HTML)
