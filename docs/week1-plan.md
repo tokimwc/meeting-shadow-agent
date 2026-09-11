@@ -32,6 +32,10 @@ client. Sample path through IAP, signed in as an account that does not own the p
 The suggestion now commits to what the memo permits and defers only the rest ("I can confirm the fix for the staging
 environment by Friday. For production, I need to check internally...").
 
+Image 0.1.10 (revision `meeting-shadow-00012-k6m`, 2026-09-11) carries the suggestion prompt that came
+out of the 20-case evaluation: `docs/eval/20cases.md`. Measurements are unchanged (median 1.90 s, p90
+2.39 s, zero dangerous commitments across 63 turns); what changed is which question the suggestion asks.
+
 Two caveats worth carrying into the submission. The browser figure is still turn arrival → card, not speech end →
 card. And `Cache-Control: no-cache` does not reach a browser that already cached an older client: it fixes every
 deploy from 0.1.9 onward, and a first-time visitor is unaffected, but a tab holding 0.1.7 kept running it until its
