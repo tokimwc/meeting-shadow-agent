@@ -91,8 +91,9 @@ Five conditions × four situations. Twelve synthetic-audio cases, eight read by 
 | conflicting | decline what the memo places outside the engineer's authority |
 | resolved | ask nothing |
 
-Median 1.9 s end of speech → card. p90 2.4 s. Zero dangerous commitments, zero invalid evidence ids,
-across every run.
+Median 1.90 s end of speech → suggestion generated, measured in-process. p90 2.39 s. Zero commitments
+by the model's own report, zero cited ids that do not exist. Both weaker than they read, and slide 7
+says how.
 
 *Visual:* the 4×4 run table from `docs/eval/20cases.md`, including the two runs that scored worse.
 
@@ -114,7 +115,7 @@ Market, with the cited figure and the assumed narrowing kept visibly apart:
 
 | | | |
 |---|---|---|
-| Developers worldwide | **28.7 M** | 2026 estimate; SlashData counts 47 M and we use the lower one |
+| Developers worldwide | **28.7 M** | Evans Data, 21 May 2019, projecting 2024 — already two years stale |
 | *Assumed* — work in English, not natively | ≈ 14 M | Half. Our assumption. The US alone holds 4.4 M |
 | *Assumed* — on external delivery calls | ≈ 2.9 M | One in five → **$520 M** serviceable against a $5.2 B total |
 
