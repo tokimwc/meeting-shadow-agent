@@ -14,10 +14,10 @@ reference, the service account, scaling) is carried over from the previous
 revision, which is also why this avoids the `--set-env-vars` trap below.
 
 ```bash
-gcloud builds submit --tag asia-northeast1-docker.pkg.dev/meeting-shadow-toki-260907/msa/app:0.1.7 \
+gcloud builds submit --tag asia-northeast1-docker.pkg.dev/meeting-shadow-toki-260907/msa/app:0.1.13 \
   --project meeting-shadow-toki-260907 --region asia-northeast1 .
 
-gcloud run deploy meeting-shadow --image asia-northeast1-docker.pkg.dev/meeting-shadow-toki-260907/msa/app:0.1.7 \
+gcloud run deploy meeting-shadow --image asia-northeast1-docker.pkg.dev/meeting-shadow-toki-260907/msa/app:0.1.13 \
   --region asia-northeast1 --project meeting-shadow-toki-260907
 ```
 
@@ -29,7 +29,9 @@ gcloud meta list-files-for-upload
 ```
 
 `app/static/samples/sample-01.wav` must be in the list; `samples/` (root),
-`.venv/` and `.worktrees/` must not.
+`.venv/`, `.worktrees/` and `.claude/` must not. Read the whole list, not just those names:
+`.claude/settings.local.json` reached the 0.1.13 context because it is gitignored rather than
+`.gcloudignore`d, and the two files are unrelated.
 
 Verify, in this order:
 
@@ -80,3 +82,12 @@ Each of these cost a debugging session once. Details are in the vault
 - **Do not name a health endpoint `/healthz`.** Cloud Run reserves some paths
   ending in `z`; they return a Google Front End 404 before reaching the
   container. This service uses `/health`.
+
+## Releases
+
+| Version | Revision | What changed |
+|---|---|---|
+| 0.1.7 | `meeting-shadow-00008-698` | prompt separation, 450 ms turn batching, eval hardening, a11y |
+| 0.1.13 | `meeting-shadow-00014-26t` | the authority contract and the verdict on the card |
+
+Rolling back 0.1.13 means naming `meeting-shadow-00013-88w`.
