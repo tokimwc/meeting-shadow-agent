@@ -90,8 +90,11 @@ Each of these cost a debugging session once. Details are in the vault
 | 0.1.7 | `meeting-shadow-00008-698` | prompt separation, 450 ms turn batching, eval hardening, a11y |
 | 0.1.13 | `meeting-shadow-00014-26t` | the authority contract and the verdict on the card |
 | 0.1.14 | `meeting-shadow-00015-v4c` | structured events, so adoption can be measured |
+| 0.1.14 | `meeting-shadow-00016-277` | session cap 90 s to 300 s, daily cap 200 to 40 (config only) |
 
-Rolling back 0.1.14 means naming `meeting-shadow-00014-26t`.
+Rolling back means naming `meeting-shadow-00015-v4c`. Note that `--update-env-vars` was used, not
+`--set-env-vars`: the latter replaces the whole set and would have dropped the Secret Manager
+reference along with everything else.
 
 ## Reading the events
 
