@@ -9,6 +9,22 @@ Meeting Shadow Agent
 Watches an English meeting you are in and hands you the one line to say before you agree to something
 you cannot approve.
 
+## Links
+
+| Field | URL |
+|---|---|
+| Try it (no sign-in) | https://tokimwc.github.io/meeting-shadow-agent/replay/ |
+| Repository | https://github.com/tokimwc/meeting-shadow-agent |
+| Evaluation notes | https://github.com/tokimwc/meeting-shadow-agent/tree/master/docs/eval |
+
+Give the judges the **replay**, not the live app. The live app is behind Google IAP because it mints
+AssemblyAI streaming tokens, so a judge without an allow-listed account sees a Google sign-in and
+stops. The replay is one static page, needs nothing, and shows the recorded runs verbatim — including
+the one that gets it wrong.
+
+If the form's demo field is a dropdown of hosting platforms with no "other", put the repository in it
+and lead the description with the replay link.
+
 ## Long description
 
 A Japanese engineer on an English delivery call understands every word and still says yes too early.
@@ -18,6 +34,12 @@ effort: four conditions that were never settled, and a "sure, Friday works" that
 Meeting Shadow Agent listens to the other participants and, at the end of each of their turns,
 proposes one English sentence for the engineer to say. It never speaks, never joins the call, never
 sends anything. The engineer reads the card and decides.
+
+**You can watch that happen without signing in:**
+https://tokimwc.github.io/meeting-shadow-agent/replay/ replays four runs from the evaluation — the
+transcripts as AssemblyAI produced them, the suggestions as Gemini produced them, and the measured
+seconds. Nothing is generated when you press play, which is also why the run that gets it wrong is
+still in there.
 
 What makes the suggestion usable is a short memo the engineer writes before the meeting, naming what
 they may settle alone and what they may not. A request that falls inside that authority gets a
