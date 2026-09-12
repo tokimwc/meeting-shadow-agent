@@ -9,9 +9,10 @@ the audio. That is deliberate: the question is what the memo does to the suggest
 speech recognition in the path would mix transcription error into the answer. It also makes the run
 free and repeatable. What it does not test is the pipeline — `scripts/e2e_eval.py` does that.
 
-Situations C and D are the ones where the memo decides the answer: C asks for something the shipped
-memo withholds, D asks for something it grants. A and B turn on what was said rather than on who may
-agree to it, so they are not run here.
+Situations A, C and D are the ones where the memo decides the answer: C asks for something the
+shipped memo withholds, D asks for something it grants, and A asks for something whose side of the
+memo was never named — which is a memo effect too, since a narrower memo makes more of those
+undecidable. B turns on what was said rather than on who may agree to it, so it is not run here.
 
   python scripts/memo_ablation.py --list            # the memos and cases, no provider calls
   op run --env-file .env.op -- python -m scripts.memo_ablation --out docs/eval/memo.csv
@@ -42,7 +43,7 @@ MEMOS: dict[str, str] = {
 
 
 def selected(cases: list[dict]) -> list[dict]:
-    return [c for c in cases if c["situation"] in ("C", "D")]
+    return [c for c in cases if c["situation"] in ("A", "C", "D")]
 
 
 def main() -> int:

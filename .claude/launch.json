@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "msa",
+      "runtimeExecutable": "op",
+      "runtimeArgs": ["run", "--env-file", ".env.op", "--", ".venv/Scripts/uvicorn.exe", "app.main:factory", "--factory", "--port", "8080"],
+      "port": 8080
+    }
+  ]
+}

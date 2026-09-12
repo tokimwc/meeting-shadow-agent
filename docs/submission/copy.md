@@ -47,6 +47,29 @@ where a non-native reading of "Oh, and the database schema change goes with it" 
 "Oh. End of day. Cause visit." — the words a decision turns on are exactly the ones an accent puts at
 risk.
 
+**Who pays, and why.** The engineer feels the pain; the delivery manager pays for it. An
+over-commitment made in one sentence on a Tuesday call turns into unbilled weekends, a renegotiation,
+or a margin write-off, and it is discovered weeks later when the schedule slips rather than at the
+moment it was made. The buyer is a Japanese SI, SES or product company whose engineers take English
+delivery calls with overseas clients and vendors — the segment where the engineer is technically
+senior, linguistically competent, and still structurally outranked in the conversation. Pricing
+follows that: a per-seat monthly fee set against a single avoided over-commitment, with a running
+cost of one AssemblyAI streaming session plus a handful of Flash-Lite calls per meeting, which is
+cents. We have not sized the market and are not going to quote a number we cannot source.
+
+**Why this is not a notes tool.** Otter, tl;dv and Fireflies transcribe and summarise after the
+meeting, which is the wrong end of the problem: the damage is done in the sentence the engineer
+already said. The real-time assistants built into Teams and Meet are in the right place at the right
+time but have no idea what this particular engineer is allowed to agree to, so the best they can
+offer is a neutral paraphrase. The memo is the whole differentiator, and it is a differentiator
+precisely because it is not derivable from the transcript — it is the one input only the engineer's
+own organisation has.
+
+**What would kill this, and is not yet measured.** Whether an engineer can read a card and adapt a
+sentence while a call is running. We have measured that the card is correct and that it arrives in
+about two seconds; we have not measured whether a human under conversational pressure uses it. That
+is the next study, and it needs engineers who did not build this, on meetings we did not script.
+
 The agent's job is to be ready with the sentence. Saying it is still the engineer's.
 
 ## Tags

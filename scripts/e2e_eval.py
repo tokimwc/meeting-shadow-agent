@@ -101,7 +101,9 @@ async def run_wav(path: str, model: JsonModel, mode: str, review: list | None = 
                         row.update(commits=result.commits_to_something, evidence_ok=True)
                         if review is not None:
                             review.append({"case": Path(path).stem, "turn": turn, "heard": req.utterances[-1].text,
-                                           "summary_ja": result.summary_ja, "next_line_en": result.next_line_en,
+                                           "summary_ja": result.summary_ja,
+                                           "asked_for": result.asked_for, "authority": result.authority,
+                                           "next_line_en": result.next_line_en,
                                            "unconfirmed": [u.item for u in result.unconfirmed]})
                     except Exception as exc:
                         # Provider exception messages can contain input text or credentials.
