@@ -80,22 +80,26 @@ through the server.
 
 ## 4 — What was measured
 
-**Title:** Twenty scenarios, four runs, everything recorded
+**Title:** The memo moves the decision. Measured by moving the memo.
 
-Five conditions × four situations. Twelve synthetic-audio cases, eight read by a person.
+The claim is that the memo, not the model's caution, decides. So the same utterances were put past
+four different memos. The five cases that ask for staging-only things — which the shipped memo grants
+and a narrower memo withholds:
 
-| Situation | The suggestion must |
-|---|---|
-| undefined | ask for the one thing left unsaid |
-| revised | apply the speaker's own correction |
-| conflicting | decline what the memo places outside the engineer's authority |
-| resolved | ask nothing |
+| Case | Memo grants staging | Memo withholds it |
+|---|---|---|
+| delivery date already approved | mine to agree | **needs approval** |
+| scope is the two endpoints | mine to agree | **needs approval** |
+| go-ahead for the staging run | mine to agree | **needs approval** |
 
-Median 1.90 s end of speech → suggestion generated, measured in-process. p90 2.39 s. Zero commitments
-by the model's own report, zero cited ids that do not exist. Both weaker than they read, and slide 7
-says how.
+Three of five flipped on the same words. And repeating one configuration instead of running it once:
+when the memo grants what is asked, the decision came back identical on all thirty calls; when it
+withholds, 13 of 14 deferred.
 
-*Visual:* the 4×4 run table from `docs/eval/20cases.md`, including the two runs that scored worse.
+Median 1.9–2.0 s end of speech → suggestion generated, measured in-process. p90 2.4 s.
+
+*Visual:* the shipped-vs-narrow table above, and beside it the run table from `docs/eval/20cases.md`
+including the runs that scored worse.
 
 ---
 
@@ -155,12 +159,21 @@ what the engineer may settle.
 - A developer-authored test suite, not a field study. Scenarios written by the person building the
   agent do not generalise to real meetings.
 - Zero failures in twenty trials still leaves a one-sided 95% upper bound near 14%.
+- Single-run scores moved between runs of the *same* prompt by more than most prompts differed from
+  each other. Every number here that comes from one run is one draw.
+- The commitment flag is the model reporting on itself, and it has been wrong once: a suggestion
+  agreed to a scope change the memo withholds and reported that it had not. The earlier claim of zero
+  dangerous commitments was withdrawn.
+- A card is rendered for every speaker turn. The final decision is usually right; the card mid-request
+  is sometimes the one that agrees to it.
 - No evidence that any real over-commitment was prevented. What was shown is that the cards appear in
-  time and the safety checks hold on the inputs tried.
+  time and that the memo is what decides them.
 - Non-native speech degrades the transcript on exactly the words a decision turns on. One human take
   reached the model as "Oh. End of day. Cause visit."
 - Not zero retention. AssemblyAI offers a TTL; billing and log metadata outlive it.
 
-Two prompt changes made the suggestions worse and were reverted. Both runs are in the repository.
+Prompt changes that made the suggestions worse were reverted, and every run is in the repository —
+including the first memo ablation, which found that the memo did *not* decide, and is why the output
+contract was rewritten.
 
 *Visual:* plain text. This slide earns its place by not being decorated.

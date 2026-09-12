@@ -36,16 +36,30 @@ Run behind IAP.
 crossing five conditions (environment, deadline, scope, authority, effort) with four situations:
 a condition left undefined, a condition the speaker revises mid-sentence, a request that conflicts
 with the memo, and a conversation where everything is already settled. Median 1.9 s from end of
-speech to card, p90 2.4 s. Zero dangerous commitments and zero invalid evidence ids across four full
-runs.
+speech to suggestion, p90 2.4 s, measured in-process.
+
+The claim worth testing is not the latency, it is that the *memo* decides rather than the model
+simply being cautious. So the same utterances were put past four different memos. The five requests
+that ask for staging-only things — granted by the shipped memo, withheld by a narrower one — flipped
+from "yours to agree" to "needs internal approval" in three of five cases on identical words.
+Repeating one configuration rather than running it once: when the memo grants what is asked, the
+decision came back the same on all thirty calls; when it withholds, thirteen of fourteen answered
+calls deferred.
 
 **What it does not show.** This is a developer-authored test suite, not a field study. Zero failures
 in twenty trials leaves a one-sided 95% upper bound near 14%, and scenarios built by the person
-building the agent do not generalise to real meetings. The evaluation note in the repository records
-every run, including the two prompt changes that made things worse and were reverted, and the case
-where a non-native reading of "Oh, and the database schema change goes with it" reached the model as
-"Oh. End of day. Cause visit." — the words a decision turns on are exactly the ones an accent puts at
-risk.
+building the agent do not generalise to real meetings. Single-run scores moved between runs of the
+*same* prompt by more than most prompts differed from each other, so anything reported from one run
+is one draw. The safety flag is the model reporting on itself and has been wrong once: a suggestion
+agreed to a scope change the memo withholds and reported that it had not, and the earlier claim of
+zero dangerous commitments was withdrawn. A card is rendered for every speaker turn, and the one on
+screen halfway through a request sometimes agrees to it even when the final decision is right.
+
+The evaluation notes in the repository record every run: the prompt changes that made things worse
+and were reverted, the first memo ablation that found the memo did *not* decide and is why the output
+contract was rewritten, and the case where a non-native reading of "Oh, and the database schema
+change goes with it" reached the model as "Oh. End of day. Cause visit." — the words a decision turns
+on are exactly the ones an accent puts at risk.
 
 **Who pays, and why.** The engineer feels the pain; the delivery manager pays for it. An
 over-commitment made in one sentence on a Tuesday call turns into unbilled weekends, a renegotiation,

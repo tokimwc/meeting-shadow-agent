@@ -214,16 +214,16 @@
   .fig dt { font-family: var(--mono); font-size: 1.05cqw; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-3); }
   .fig dd { margin: 0.4cqw 0 0; font-family: var(--mono); font-size: 2cqw; color: var(--ink); font-variant-numeric: tabular-nums; }
 
-  .limits { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 1cqw;
+  .limits { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.7cqw;
              max-width: 62cqw; }
   .limits li { display: grid; grid-template-columns: 13cqw 1fr; gap: 1.8cqw; align-items: baseline; }
   .limits b {
     font-family: var(--mono); font-size: 1.05cqw; letter-spacing: 0.12em; text-transform: uppercase;
     color: var(--ink-3); font-weight: 400;
   }
-  .limits span { font-size: 1.28cqw; line-height: 1.45; color: var(--ink-2); }
+  .limits span { font-size: 1.14cqw; line-height: 1.4; color: var(--ink-2); }
   .limits code { font-family: var(--mono); font-size: 0.92em; color: var(--ink); }
-  .closing { margin-top: auto; padding-top: 1.4cqw; border-top: 1px solid var(--rule); font-size: 1.25cqw;
+  .closing { margin-top: auto; padding-top: 1cqw; border-top: 1px solid var(--rule); font-size: 1.12cqw;
               color: var(--ink-2); max-width: 58cqw; padding-right: 4.5cqw; }
 
   @media print {
@@ -298,8 +298,8 @@
         <span class="defer"><i>Outside the memo</i> — the engineer cannot settle it alone</span>
         <span class="commit"><i>Inside it</i> — theirs to agree</span>
       </div>
-      <p style="margin-top:auto">The speaker corrects themselves and the open item moves with them. It never
-        speaks, never joins the call, never sends anything. <strong>The engineer reads and decides.</strong></p>
+      <p style="margin-top:auto;margin-bottom:0">The speaker corrects themselves and the open item moves with
+        them. <strong>The engineer reads and decides.</strong></p>
     </div>
     <div class="rail"><span class="no">02</span><span class="vert">Meeting Shadow Agent</span></div>
   </section>
@@ -341,28 +341,28 @@
   <section class="slide">
     <div class="body">
       <div class="eyebrow">What was measured</div>
-      <h2>Twenty scenarios, four runs, everything recorded</h2>
+      <h2>The memo moves the decision. Measured by moving the memo.</h2>
       <table>
-        <caption>Five conditions × four situations · 12 synthetic-audio, 8 human-recorded</caption>
+        <caption>The same utterances, judged against two memos · staging-only requests</caption>
         <thead>
           <tr>
-            <th>Prompt revision</th>
-            <th class="n">Undefined</th><th class="n">Revised</th>
-            <th class="n">Conflicting</th><th class="n">Resolved</th><th class="n">Total</th>
+            <th>What the other side asks for</th>
+            <th class="n">Memo grants staging</th><th class="n">Memo withholds it</th>
           </tr>
         </thead>
         <tbody>
-          <tr><th>Baseline</th><td class="n">0/5</td><td class="n">5/5</td><td class="n">4/5</td><td class="n">1/5</td><td class="n">10/20</td></tr>
-          <tr><th>Evidence must be an utterance</th><td class="n">2/5</td><td class="n">4/5</td><td class="n">3/5</td><td class="n">2/5</td><td class="n">11/20</td></tr>
-          <tr class="ship"><th>Ask what was left undefined</th><td class="n">4/5</td><td class="n">4/5</td><td class="n">3/5</td><td class="n">2/5</td><td class="n">13/20</td></tr>
-          <tr><th>Principle without examples</th><td class="n">1/5</td><td class="n">4/5</td><td class="n">2/5</td><td class="n">2/5</td><td class="n">9/20</td></tr>
+          <tr class="ship"><th>Go-ahead for the staging run</th><td class="n">mine to agree</td><td class="n">needs approval</td></tr>
+          <tr class="ship"><th>Scope is the two endpoints</th><td class="n">mine to agree</td><td class="n">needs approval</td></tr>
+          <tr class="ship"><th>Delivery date already approved</th><td class="n">mine to agree</td><td class="n">needs approval</td></tr>
+          <tr><th>Staging validation on Friday</th><td class="n">mine to agree</td><td class="n">no card</td></tr>
+          <tr><th>Two days, already in capacity</th><td class="n">mine to agree</td><td class="n">mine to agree</td></tr>
         </tbody>
       </table>
       <dl class="figures">
-        <div class="fig"><dt>Speech end → suggestion</dt><dd>1.90 s</dd></div>
-        <div class="fig"><dt>p90</dt><dd>2.39 s</dd></div>
-        <div class="fig"><dt>Self-reported commitments</dt><dd>0</dd></div>
-        <div class="fig"><dt>Ids that do not exist</dt><dd>0</dd></div>
+        <div class="fig"><dt>Decision flipped on the same words</dt><dd>3 of 5</dd></div>
+        <div class="fig"><dt>Memo grants it: same answer, 30 repeats</dt><dd>30/30</dd></div>
+        <div class="fig"><dt>Memo withholds it: deferred</dt><dd>13/14</dd></div>
+        <div class="fig"><dt>Speech end → suggestion</dt><dd>1.9 s</dd></div>
       </dl>
     </div>
     <div class="rail"><span class="no">04</span><span class="vert">Meeting Shadow Agent</span></div>
@@ -446,10 +446,14 @@
           the agent do not generalise to real meetings.</span></li>
         <li><b>Zero is not proof</b><span>Zero failures in twenty trials leaves a one-sided 95% upper bound
           near 14% — and only for independent trials, which cases written by the builder are not.</span></li>
-        <li><b>Self-graded</b><span>The commitment count is a field the model fills in about its own output.
-          Nothing independent checks it. The id check proves the citation exists, not that it supports the
-          claim.</span></li>
-        <li><b>Not end-to-end</b><span>1.90 s is end of speech → suggestion generated, measured in-process.
+        <li><b>Self-graded, and wrong once</b><span>The commitment flag is a field the model fills in about
+          its own output. One suggestion agreed to a scope change the memo withholds and reported that it had
+          not; the earlier claim of zero dangerous commitments was withdrawn.</span></li>
+        <li><b>One run is one draw</b><span>Single-run scores moved between runs of the <i>same</i> prompt by
+          more than most prompts differed from each other. Only the repeated measurements are claims.</span></li>
+        <li><b>Wrong card mid-request</b><span>A card is rendered for every speaker turn. The final decision
+          is usually right; the one on screen halfway through sometimes agrees to the request.</span></li>
+        <li><b>Not end-to-end</b><span>1.9 s is end of speech → suggestion generated, measured in-process.
           Card-on-screen is not measured.</span></li>
         <li><b>No outcome claim</b><span>Nothing here shows a real over-commitment was prevented — only that
           the cards arrive in time and the safety checks hold on the inputs tried.</span></li>
@@ -457,8 +461,9 @@
           turns on. One human take reached the model as <code>“Oh. End of day. Cause visit.”</code></span></li>
         <li><b>Not zero retention</b><span>AssemblyAI offers a TTL. Billing and log metadata outlive it.</span></li>
       </ul>
-      <p class="closing">Two prompt changes made the suggestions worse and were reverted. Both runs are in
-        the repository, with the numbers that sent them back.</p>
+      <p class="closing">Prompt changes that made the suggestions worse were reverted, and every run is in
+        the repository — including the first memo ablation, which found the memo did <i>not</i> decide, and is
+        why the output contract was rewritten.</p>
     </div>
     <div class="rail"><span class="no">07</span><span class="vert">Meeting Shadow Agent</span></div>
   </section>
