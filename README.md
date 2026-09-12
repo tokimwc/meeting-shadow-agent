@@ -38,8 +38,9 @@ Two guards, both refusals rather than repairs:
 - **Every claim cites utterance ids.** A response citing an id nobody spoke is rejected, not patched
   up — see `suggest()` in [app/suggest.py](app/suggest.py).
 - **An open item whose only evidence is your memo is dropped.** The memo says what needs approval; it
-  is not evidence that anyone asked for it. This one is a filter rather than a refusal, because a
-  slightly noisy card still beats no card at all.
+  is not evidence that anyone asked for it. If dropping leaves nothing, the whole suggestion is
+  refused, because a card reading "nothing open" beside a question about what was just removed is
+  worse than no card.
 
 A suggestion that would commit to a date, effort or authority not present in your memo is flagged in
 the UI.
@@ -59,16 +60,19 @@ deadline, scope, authority, effort) crossed with four situations — a condition
 speaker revises mid-conversation, a request that conflicts with the memo, and a conversation where
 everything is already settled. Twelve are synthetic audio, eight are read by a person.
 
-Median 1.90 s from the end of speech to the card, p90 2.39 s. Zero dangerous commitments and zero
-invalid evidence ids across four full runs.
+Median 1.90 s from the end of speech to the **suggestion being generated**, p90 2.39 s — measured
+in-process by the evaluator, without the HTTP round trip or rendering. The browser reports a separate
+figure, turn arrival → card, which was 1,234–1,357 ms in the recorded demo. Nothing measures end of
+speech → card on screen.
+
+Across four runs the model reported zero dangerous commitments and cited no ids that did not exist.
+Both of those are weaker than they sound: the commitment flag is the model's own field about its own
+output, and the id check proves a citation exists, not that it supports the claim.
 
 [docs/eval/20cases.md](docs/eval/20cases.md) has all four runs, **including the two prompt changes
 that made the suggestions worse and were reverted**, and what the numbers do not support: this is a
 developer-authored test suite rather than a field study, and zero failures in twenty trials still
 leaves a one-sided 95% upper bound near 14%.
-
-Latency is measured end of speech → card by [scripts/e2e_eval.py](scripts/e2e_eval.py). The figure the
-browser shows is turn *arrival* → card, which is a smaller number and not comparable to the gate.
 
 ## Local development
 
@@ -112,9 +116,11 @@ Deploying: [docs/deploy.md](docs/deploy.md), which also lists the traps already 
   take reached the model as "Oh. End of day. Cause visit." An early take turned `Legal` into `Diego`.
 - **Situation A and situation D pull against each other.** The suggestion must always find the missing
   condition, and must also recognise when nothing is missing; both are steered from one paragraph, and
-  in three of the four settled cases the card asks a question anyway.
-- **The daily session cap is a per-process counter**, which is fine for a demo and not for real
-  exposure.
+  in three of the five settled cases the card asks a question anyway.
+- **The daily session cap is a per-process counter** on token minting only; `/api/suggest` is not
+  behind it. Fine for a demo behind sign-in, not for anonymous exposure.
+- **Whether the memo changes the suggestion is not measured.** All twenty cases share one memo, so
+  nothing separates its effect from the prompt simply being cautious. This is the next thing to test.
 - Only Chrome-family browsers: the capture path is `getDisplayMedia` with tab audio.
 
 ## Licence

@@ -350,17 +350,17 @@
           </tr>
         </thead>
         <tbody>
-          <tr><th>Baseline</th><td class="n">0/5</td><td class="n">5/5</td><td class="n">4/5</td><td class="n">1/4</td><td class="n">10/20</td></tr>
-          <tr><th>Evidence must be an utterance</th><td class="n">2/5</td><td class="n">4/5</td><td class="n">3/5</td><td class="n">2/4</td><td class="n">11/20</td></tr>
-          <tr class="ship"><th>Ask what was left undefined</th><td class="n">4/5</td><td class="n">4/5</td><td class="n">3/5</td><td class="n">2/4</td><td class="n">13/20</td></tr>
-          <tr><th>Principle without examples</th><td class="n">1/5</td><td class="n">4/5</td><td class="n">2/5</td><td class="n">2/4</td><td class="n">9/20</td></tr>
+          <tr><th>Baseline</th><td class="n">0/5</td><td class="n">5/5</td><td class="n">4/5</td><td class="n">1/5</td><td class="n">10/20</td></tr>
+          <tr><th>Evidence must be an utterance</th><td class="n">2/5</td><td class="n">4/5</td><td class="n">3/5</td><td class="n">2/5</td><td class="n">11/20</td></tr>
+          <tr class="ship"><th>Ask what was left undefined</th><td class="n">4/5</td><td class="n">4/5</td><td class="n">3/5</td><td class="n">2/5</td><td class="n">13/20</td></tr>
+          <tr><th>Principle without examples</th><td class="n">1/5</td><td class="n">4/5</td><td class="n">2/5</td><td class="n">2/5</td><td class="n">9/20</td></tr>
         </tbody>
       </table>
       <dl class="figures">
-        <div class="fig"><dt>Median, speech end → card</dt><dd>1.90 s</dd></div>
+        <div class="fig"><dt>Speech end → suggestion</dt><dd>1.90 s</dd></div>
         <div class="fig"><dt>p90</dt><dd>2.39 s</dd></div>
-        <div class="fig"><dt>Dangerous commitments</dt><dd>0</dd></div>
-        <div class="fig"><dt>Invalid evidence ids</dt><dd>0</dd></div>
+        <div class="fig"><dt>Self-reported commitments</dt><dd>0</dd></div>
+        <div class="fig"><dt>Ids that do not exist</dt><dd>0</dd></div>
       </dl>
     </div>
     <div class="rail"><span class="no">04</span><span class="vert">Meeting Shadow Agent</span></div>
@@ -388,7 +388,8 @@
         <div class="rung">
           <b>Developers worldwide</b>
           <span class="val">28.7 M</span>
-          <p>2026 estimate. SlashData counts 47 M; we use the lower figure.</p>
+          <p>Evans Data's 2019 projection <em>for 2024</em> — the freshest hard figure we can cite, and
+            already two years stale.</p>
         </div>
         <div class="rung assumed">
           <b>Assumed · work in English, not natively</b>
@@ -406,7 +407,7 @@
         <div><b>Org tier</b><span>The memo is a delegation policy — who may commit to what — maintained centrally.</span></div>
         <div><b>Not a revenue stream</b><span>Conversations are never resold or used to train anything of ours.</span></div>
       </div>
-      <div class="src">Sources: future-processing.com (2026), SlashData (2025); Fireflies $10, Granola $14, Otter Business $30</div>
+      <div class="src">Sources: Evans Data press release, 21 May 2019 (projection for 2024); SlashData counts 47 M for 2025. Seats: Fireflies $10, Granola $14, Otter Business $30</div>
     </div>
     <div class="rail"><span class="no">05</span><span class="vert">Meeting Shadow Agent</span></div>
   </section>
@@ -422,11 +423,14 @@
         <li><b>Voice Action Gate</b><span>refuses any irreversible action whose arguments cannot be traced to the user's words</span></li>
         <li><b>Saakshi</b><span>speaks up the moment a customer is about to be misled, and certifies consent</span></li>
       </ul>
-      <div class="usp">Every one of them <b>acts</b> — questions the other party, writes a record, or blocks a call.
-        This one does not. It prepares <b>the user's own next sentence</b>, shaped by a boundary the user declared
-        before the meeting, and hands it over to be said or discarded.</div>
-      <p class="caveat">Stated plainly: neither evidence grounding nor latency is a moat. What is defensible is the
-        authority memo as the shaping input, and the discipline of never acting.</p>
+      <div class="usp">Each of them produces something addressed to the <b>conversation</b> — a question put to
+        the other party, a record, a blocked call. This one produces something addressed to <b>the user</b>: the
+        sentence they might say next, shaped by a boundary they declared beforehand, to be said or discarded.
+        The closest thing outside this hackathon is Cluely, which also listens without joining; what it does not
+        do is take a declared authority boundary as the input that shapes the reply.</div>
+      <p class="caveat">Stated plainly: neither evidence grounding nor latency is a moat, several of these keep a
+        human in the loop too, and the memo is what the user says their authority is — not what their employer
+        granted. That the memo changes the reply is the next thing to measure, and it is not measured yet.</p>
     </div>
     <div class="rail"><span class="no">06</span><span class="vert">Meeting Shadow Agent</span></div>
   </section>
@@ -438,8 +442,13 @@
       <ul class="limits">
         <li><b>Not a study</b><span>A developer-authored test suite. Scenarios written by the person building
           the agent do not generalise to real meetings.</span></li>
-        <li><b>Zero is not proof</b><span>Zero failures in twenty trials still leaves a one-sided 95% upper
-          bound near 14%.</span></li>
+        <li><b>Zero is not proof</b><span>Zero failures in twenty trials leaves a one-sided 95% upper bound
+          near 14% — and only for independent trials, which cases written by the builder are not.</span></li>
+        <li><b>Self-graded</b><span>The commitment count is a field the model fills in about its own output.
+          Nothing independent checks it. The id check proves the citation exists, not that it supports the
+          claim.</span></li>
+        <li><b>Not end-to-end</b><span>1.90 s is end of speech → suggestion generated, measured in-process.
+          Card-on-screen is not measured.</span></li>
         <li><b>No outcome claim</b><span>Nothing here shows a real over-commitment was prevented — only that
           the cards arrive in time and the safety checks hold on the inputs tried.</span></li>
         <li><b>Accent cost</b><span>Non-native speech degrades the transcript on exactly the words a decision

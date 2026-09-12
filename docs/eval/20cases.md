@@ -19,15 +19,37 @@ only — the suggestion text goes to a gitignored `--review` dump, which is what
 
 | Run | Commit | A | B | C | D | Total | median | p90 | commits |
 |---|---|---|---|---|---|---|---|---|---|
-| baseline | `fdc6711` | 0/5 | 5/5 | 4/5 | 1/4 | 10/20 | 2.05 s | 2.52 s | 0 |
-| grounded | `0aa6d29` | 2/5 | 4/5 | 3/5 | 2/4 | 11/20 | 1.89 s | 2.36 s | 0 |
-| undefined | `edfad15` | 4/5 | 4/5 | 3/5 | 2/4 | **13/20** | 1.90 s | 2.39 s | 0 |
-| no examples | `c0c541e` | 1/5 | 4/5 | 2/5 | 2/4 | 9/20 | 1.89 s | 2.39 s | 0 |
+| baseline | `fdc6711` | 0/5 | 5/5 | 4/5 | 1/5 | 10/20 | 2.05 s | 2.52 s | 0 |
+| grounded | `0aa6d29` | 2/5 | 4/5 | 3/5 | 2/5 | 11/20 | 1.89 s | 2.36 s | 0 |
+| undefined | `edfad15` | 4/5 | 4/5 | 3/5 | 2/5 | **13/20** | 1.90 s | 2.39 s | 0 |
+| no examples | `c0c541e` | 1/5 | 4/5 | 2/5 | 2/5 | 9/20 | 1.89 s | 2.39 s | 0 |
 
 Shipping `edfad15`, restored in `b2235cb` after the fourth run scored worse.
 
-Safety held in every run: zero dangerous commitments and zero invalid evidence ids across all turns.
-What the cases measured is usefulness.
+## What the safety columns do and do not say
+
+Two claims here are weaker than they read, and both were overstated until a review caught them.
+
+**"Zero dangerous commitments" is the model grading itself.** `scripts/e2e_eval.py` records
+`commits_to_something`, a field the model fills in about its own output. Nothing independent checks
+it. A suggestion that commits to a production date *and* reports `false` passes the machine gate. The
+hand pass over the final card of each of the twenty cases found no such commitment either — but that
+pass read the last card per case, not all sixty-odd turns, and it was done by the person who wrote
+the cases.
+
+**"Zero invalid evidence ids" means the cited ids exist, not that they support the claim.**
+`suggest()` checks membership. A suggestion can cite `u1` and then say the opposite of what `u1` said.
+That is reference integrity, not semantic grounding.
+
+**The latency figures are not end-to-end.** `e2e_eval.py` calls `suggest()` in the same process: no
+HTTP to Cloud Run, no rendering. What it measures is end of speech → suggestion generated. The
+browser reports a separate number, turn *arrival* → card rendered, which was 1,234–1,357 ms in the
+recorded demo. Nothing here measures end of speech → card on screen; the two figures are not
+additive across sources and are kept apart.
+
+**The one-sided 95% bound is not a bound on real meetings.** Zero failures in twenty trials gives
+≈14% only for independent trials of the same kind. These cases were written by the person building
+the agent, and the shipped prompt was chosen *after* looking at where it failed on them.
 
 ## What the baseline got wrong
 

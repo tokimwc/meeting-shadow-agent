@@ -61,3 +61,10 @@ def test_memo_only_unconfirmed_item_is_dropped():
                                       {"item": "納期", "evidence_ids": ["u1", "m0"]}])
     s = suggest(FakeModel(payload), REQ)
     assert [u.item for u in s.unconfirmed] == ["納期"]
+
+
+def test_all_memo_only_items_refuses_rather_than_showing_an_empty_list():
+    """Dropping every item would show "nothing open" beside a question about what was dropped."""
+    payload = dict(GOOD, unconfirmed=[{"item": "本番反映", "evidence_ids": ["m0"]}])
+    with pytest.raises(ValueError, match="memo"):
+        suggest(FakeModel(payload), REQ)

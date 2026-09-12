@@ -92,5 +92,12 @@ def suggest(model: JsonModel, req: SuggestRequest) -> Suggestion:
     # An item citing only m0 is the memo restating what needs approval, not something the other side asked for.
     # The 20-case run showed the model reaching for the memo whenever the utterances left nothing open; dropping
     # these is deterministic, where the instruction not to produce them is not.
-    s.unconfirmed = [u for u in s.unconfirmed if any(i != MEMO_ID for i in u.evidence_ids)]
+    grounded = [u for u in s.unconfirmed if any(i != MEMO_ID for i in u.evidence_ids)]
+    if s.unconfirmed and not grounded:
+        # Dropping every item would leave a card that shows nothing open and still asks about what was
+        # removed. Refuse the whole suggestion rather than display those two halves side by side.
+        raise ValueError("every unconfirmed item cited only the memo")
+    # ponytail: a dropped item while others survive can still leave next_line_en pointing at it. Detecting
+    # that needs to read the sentence, so it is a known hole rather than a silent guarantee.
+    s.unconfirmed = grounded
     return s
