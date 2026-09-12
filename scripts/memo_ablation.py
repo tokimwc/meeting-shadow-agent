@@ -75,17 +75,19 @@ def main() -> int:
         utterances = [Utterance(id=f"u{i+1}", text=t, t_ms=i * 4000) for i, t in enumerate(c["lines"])]
         for name, memo in MEMOS.items():
             row = {"case": c["id"], "axis": c["axis"], "situation": c["situation"], "memo": name,
-                   "commits": None, "unconfirmed": None, "error": ""}
+                   "authority": None, "asked_for_len": None, "commits": None, "unconfirmed": None, "error": ""}
             try:
                 s = suggest(model, SuggestRequest(premise=memo, utterances=utterances))
-                row.update(commits=s.commits_to_something, unconfirmed=len(s.unconfirmed))
+                row.update(authority=s.authority, asked_for_len=len(s.asked_for),
+                           commits=s.commits_to_something, unconfirmed=len(s.unconfirmed))
                 review.append({"case": c["id"], "memo": name, "heard": c["lines"],
+                               "asked_for": s.asked_for, "authority": s.authority,
                                "next_line_en": s.next_line_en, "summary_ja": s.summary_ja,
                                "unconfirmed": [u.item for u in s.unconfirmed]})
             except Exception as exc:  # provider messages can carry input text
                 row["error"] = type(exc).__name__
             rows.append(row)
-            print(f"  {c['id']:8} {name:8} commits={row['commits']} unconfirmed={row['unconfirmed']} {row['error']}")
+            print(f"  {c['id']:8} {name:8} {str(row['authority']):14} commits={row['commits']} {row['error']}")
 
     if a.out:
         Path(a.out).parent.mkdir(parents=True, exist_ok=True)

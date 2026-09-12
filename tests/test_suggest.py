@@ -25,6 +25,8 @@ REQ = SuggestRequest(
 
 GOOD = {
     "summary_ja": "相手は金曜までの対応確約を求めている。",
+    "asked_for": "shipping the fix by Friday",
+    "authority": "needs_approval",
     "unconfirmed": [{"item": "検証環境か本番環境か", "evidence_ids": ["u1"]}],
     "next_line_en": "Is this for the staging environment or production?",
     "next_line_ja": "検証環境ですか、本番環境ですか？",
@@ -68,3 +70,10 @@ def test_all_memo_only_items_refuses_rather_than_showing_an_empty_list():
     payload = dict(GOOD, unconfirmed=[{"item": "本番反映", "evidence_ids": ["m0"]}])
     with pytest.raises(ValueError, match="memo"):
         suggest(FakeModel(payload), REQ)
+
+
+def test_needs_approval_that_commits_anyway_is_refused():
+    """Two fields contradicting each other is catchable without reading the sentence."""
+    bad = dict(GOOD, authority="needs_approval", commits_to_something=True)
+    with pytest.raises(ValueError, match="approval"):
+        suggest(FakeModel(bad), REQ)

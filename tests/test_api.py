@@ -18,7 +18,8 @@ ENV = {
 class FakeModel:
     def generate_json(self, *, system, user, schema):
         return json.dumps({
-            "summary_ja": "要約", "unconfirmed": [], "next_line_en": "Could you clarify the environment?",
+            "summary_ja": "要約", "asked_for": "deploying the fix", "authority": "needs_approval",
+            "unconfirmed": [], "next_line_en": "Could you clarify the environment?",
             "next_line_ja": "環境を教えてください", "evidence_ids": ["u1"], "commits_to_something": False,
         })
 

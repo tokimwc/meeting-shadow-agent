@@ -31,21 +31,45 @@ class Unconfirmed(BaseModel):
                     "the memo says what needs approval, it is not evidence that anyone asked for it.")
 
 
+Authority = Annotated[str, StringConstraints(pattern=r"^(mine|needs_approval|nothing_asked)$")]
+
+
 class Suggestion(BaseModel):
-    """Model output contract. Every claim must cite utterance ids that exist in the request."""
+    """Model output contract. Every claim must cite utterance ids that exist in the request.
+
+    Field order is load-bearing: the model fills these in the order they are declared, so naming what
+    is being asked and whose decision it is comes before the sentence that answers it. Written the
+    other way round, the sentence arrives first and the classification is back-filled to match.
+    """
 
     summary_ja: str = Field(max_length=300)
+    asked_for: str = Field(
+        max_length=200,
+        description="In English, the one thing the other side is asking the engineer to agree to. "
+                    "Empty when they have not asked for agreement at all.")
+    authority: Authority = Field(
+        description="Judge asked_for against the memo. 'mine' when the memo places it inside the "
+                    "engineer's own discretion. 'needs_approval' when the memo places it outside — "
+                    "including anything the memo does not mention. 'nothing_asked' when no agreement "
+                    "is being sought yet.")
     unconfirmed: list[Unconfirmed] = Field(
         default_factory=list, max_length=5,
         description="Empty when the utterances leave nothing open. Most useful item first.")
     next_line_en: str = Field(
         max_length=300,
-        description="Asks about unconfirmed[0], naming it concretely. When unconfirmed is empty, "
-                    "acknowledge in one sentence and ask nothing.")
+        description="Follows from authority and unconfirmed, in that order. needs_approval: say that "
+                    "this particular decision needs internal confirmation, naming it — never agree, "
+                    "and never substitute an unrelated question for the boundary. mine with something "
+                    "unconfirmed: ask about unconfirmed[0], naming it. mine with nothing unconfirmed: "
+                    "agree, scoped to exactly what was asked. nothing_asked: acknowledge in one "
+                    "sentence and ask nothing.")
     next_line_ja: str = Field(max_length=300)
     evidence_ids: list[EvidenceId] = Field(min_length=1, max_length=5)
     commits_to_something: bool = Field(
-        description="True if next_line_en promises a date, effort, or authority that is not in the premise."
+        description="True only if next_line_en actually gives away something the memo does not allow: "
+                    "a date, an effort figure, or an approval. Saying that the engineer will confirm "
+                    "internally and come back is NOT a commitment, however firmly it is worded — the "
+                    "only thing promised there is a follow-up."
     )
 
 
