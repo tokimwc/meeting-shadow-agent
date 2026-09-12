@@ -1,5 +1,9 @@
 # Does the memo change the suggestion? (2026-09-12)
 
+Two runs, hours apart, either side of the authority contract. The first said no. Jump to
+[the second run](#the-second-run-after-the-authority-contract) for the answer that stands; the
+first is kept because it is why the contract was rewritten.
+
 The whole product rests on one claim: the engineer's memo, saying what they may settle alone, shapes
 the sentence they are handed. Every case in `20cases.md` uses the same memo, so nothing there tests
 it. This does.
@@ -78,3 +82,42 @@ Raw results: `docs/eval/memo-ablation.csv` (measurements) and the gitignored `--
 ```powershell
 op run --env-file .env.op -- python -m scripts.memo_ablation --out docs/eval/run.csv --review review.json
 ```
+
+## The second run, after the authority contract
+
+Same script, same four memos, now over situations A, C and D — fifteen cases, sixty calls — against
+the contract that declares `asked_for` and `authority` before the sentence (`4e5cc10`). The question
+is the same: does moving the boundary in the memo move the decision?
+
+**It does, and situation D shows it cleanly.** The five D cases ask for staging-only things, which the
+shipped memo grants and the narrow memo withholds:
+
+| Case | `shipped` | `narrow` |
+|---|---|---|
+| case-04 — staging validation only, Friday | `mine` | refused |
+| case-08 — delivery date already approved | `mine` | **`needs_approval`** |
+| case-12 — scope is the two endpoints, reporting out | `mine` | **`needs_approval`** |
+| case-16 — go-ahead for the staging run | `mine` | **`needs_approval`** |
+| case-20 — two days, already in sprint capacity | `mine` | `mine` |
+
+Three of five flipped in the right direction on the same utterances. One refused. One did not move.
+The first run produced one clean flip in ten cases; this is three in five.
+
+The `broad` memo — staging *and* production are the engineer's, only dates need approval — moves
+situation C less than the raw count suggests. C went from five `needs_approval` under `shipped` to
+three under `broad`, and the three that stayed are defensible: case-03 asks for production
+*tomorrow*, case-07 asks for a delivery date and case-19 for extra effort, all of which `broad` still
+withholds. The two that should move did: case-11, a pure scope addition, became `mine`, and case-15, a
+pure approval request, became `unclear`.
+
+Dropping the memo entirely no longer beats keeping it, which was the first run's worst finding. It
+does not break the product either: situation D still came back `mine` four times out of five with no
+memo at all. Those cases say "you have the authority for staging" and "that is within what you can
+decide" out loud, and with no memo there is nothing for the model to weigh that against. The rule
+that utterances cannot grant authority has nothing to bite on when authority was never written down.
+
+**Eleven of sixty calls were refused** — mostly `suggest()`'s own cross-field check, and concentrated
+on the memos the shipped product does not use. Close to one request in five showing no card at all is
+a product defect in its own right, separate from whether the decisions are correct.
+
+Raw: `docs/eval/ablation-0912b.csv`. The first run is `docs/eval/memo-ablation.csv`.
