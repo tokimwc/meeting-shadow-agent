@@ -25,3 +25,4 @@ samples/recordings/
 docs/eval/review-*.json
 samples/demo-lines.wav
 .cache/
+samples/narration/
