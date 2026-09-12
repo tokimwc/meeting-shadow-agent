@@ -17,9 +17,12 @@ Before the meeting you write a short memo saying what you may settle alone and w
 >
 > *(Implementation owner. Staging validation is mine to agree. Production, dates, scope changes and extra effort need internal approval.)*
 
-A request that falls inside that line gets a sentence that commits. A request outside it gets a
-sentence that defers, naming the specific thing that needs approval rather than a generic "let me get
-back to you".
+The card names the decision before it offers a sentence: what the other side is asking you to agree
+to, and whether it is yours to agree. A request inside the line gets a sentence that commits. One
+outside it gets a sentence that defers, naming the specific thing that needs approval rather than a
+generic "let me get back to you". A request whose side of the line nobody named — "deploy the fix by
+Friday", with no environment — gets neither: it asks which was meant, because agreeing would require
+guessing.
 
 ## How it works
 
@@ -42,8 +45,12 @@ Two guards, both refusals rather than repairs:
   refused, because a card reading "nothing open" beside a question about what was just removed is
   worse than no card.
 
+- **Whose decision it is, and a sentence that gives it away, cannot both stand.** If the suggestion
+  classifies a request as needing approval and also reports that it committed to something, the
+  suggestion is refused rather than shown.
+
 A suggestion that would commit to a date, effort or authority not present in your memo is flagged in
-the UI.
+the UI. That flag is the model's own report about its own sentence; see the limits below.
 
 Audio goes from the browser straight to AssemblyAI. Cloud Run only mints short-lived tokens
 (`expires_in_seconds=60`, `max_session_duration_seconds=90`) and makes short HTTP calls to Gemini; it
@@ -60,19 +67,35 @@ deadline, scope, authority, effort) crossed with four situations — a condition
 speaker revises mid-conversation, a request that conflicts with the memo, and a conversation where
 everything is already settled. Twelve are synthetic audio, eight are read by a person.
 
-Median 1.90 s from the end of speech to the **suggestion being generated**, p90 2.39 s — measured
+Median 1.9–2.0 s from the end of speech to the **suggestion being generated**, p90 2.4 s — measured
 in-process by the evaluator, without the HTTP round trip or rendering. The browser reports a separate
 figure, turn arrival → card, which was 1,234–1,357 ms in the recorded demo. Nothing measures end of
 speech → card on screen.
 
-Across four runs the model reported zero dangerous commitments and cited no ids that did not exist.
-Both of those are weaker than they sound: the commitment flag is the model's own field about its own
-output, and the id check proves a citation exists, not that it supports the claim.
+The claim that survives repetition is narrow, and it is the one the product rests on. Repeating one
+configuration over the cases where the memo decides the answer
+([docs/eval/stability.md](docs/eval/stability.md)): when the memo **grants** what is being asked, the
+decision came back the same on all thirty calls across two contracts. When the memo **withholds** it,
+13 of 14 answered calls deferred. Where the request never named which side of the memo it fell on,
+the answer is safe 11 times in 12 but is usually a deferral rather than the question that would
+settle it.
 
-[docs/eval/20cases.md](docs/eval/20cases.md) has all four runs, **including the two prompt changes
-that made the suggestions worse and were reverted**, and what the numbers do not support: this is a
-developer-authored test suite rather than a field study, and zero failures in twenty trials still
-leaves a one-sided 95% upper bound near 14%.
+Three things the numbers do not support:
+
+- **This is a developer-authored test suite, not a field study.** The cases were written by the
+  person building the agent, and the shipped prompt was chosen after seeing where it failed on them.
+  Zero failures in twenty trials still leaves a one-sided 95% upper bound near 14%.
+- **Single-run scores moved between runs of the same prompt** by more than most of the differences
+  between prompts. Anything here reported from one run should be read as one draw.
+- **The commitment flag has been wrong.** One suggestion agreed to a scope change the memo withholds
+  and reported that it had not
+  ([docs/eval/memo-ablation.md](docs/eval/memo-ablation.md)). The earlier claim of zero dangerous
+  commitments was withdrawn.
+
+[docs/eval/20cases.md](docs/eval/20cases.md) has every run, **including the prompt changes that made
+the suggestions worse and were reverted**, and the failures still open — chiefly that a card is
+rendered for each speaker turn, so a wrong intermediate card reaches you even when the final decision
+is right.
 
 ## Local development
 
@@ -114,13 +137,20 @@ Deploying: [docs/deploy.md](docs/deploy.md), which also lists the traps already 
 
 - **Non-native speech degrades the transcript on exactly the words a decision turns on.** One human
   take reached the model as "Oh. End of day. Cause visit." An early take turned `Legal` into `Diego`.
-- **Situation A and situation D pull against each other.** The suggestion must always find the missing
-  condition, and must also recognise when nothing is missing; both are steered from one paragraph, and
-  in three of the five settled cases the card asks a question anyway.
+- **A card is rendered for every speaker turn, and an early one can be wrong.** The decision is
+  usually right by the end of a request; the card in front of you mid-request is sometimes the one
+  that agrees to it. Nothing in the decision contract addresses this, because it is a property of
+  when the card is shown rather than of what it says.
+- **When the request never names which side of the memo it falls on, the suggestion defers instead of
+  asking.** Safe, but it is not the question that would settle it, and it is worse than the earlier
+  contract was at that one thing.
 - **The daily session cap is a per-process counter** on token minting only; `/api/suggest` is not
   behind it. Fine for a demo behind sign-in, not for anonymous exposure.
-- **Whether the memo changes the suggestion is not measured.** All twenty cases share one memo, so
-  nothing separates its effect from the prompt simply being cautious. This is the next thing to test.
+- **Whether the memo changes the suggestion is measured, and the first answer was no.** Feeding the
+  same utterances past four different memos
+  ([docs/eval/memo-ablation.md](docs/eval/memo-ablation.md)) changed the wording in seven of ten cases
+  and the decision in almost none, and dropping the memo entirely beat keeping it in two. That is what
+  the authority contract was built to fix; re-running the ablation against it is the next step.
 - Only Chrome-family browsers: the capture path is `getDisplayMedia` with tab audio.
 
 ## Licence
