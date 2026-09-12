@@ -9,6 +9,11 @@ decide.
 
 Built for the AssemblyAI Voice Agent Hackathon (lablab.ai, September 2026).
 
+**[docs/replay/](docs/replay/index.html) replays four recorded runs** — the transcripts, the
+suggestions and the measured times exactly as the evaluation captured them, including the one that
+gets it wrong. No sign-in, no microphone, nothing generated when you press play. The live app is
+behind IAP because it mints AssemblyAI tokens.
+
 ## What shapes the suggestion
 
 Before the meeting you write a short memo saying what you may settle alone and what you may not:

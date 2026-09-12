@@ -1,0 +1,473 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Meeting Shadow Agent — Recorded Run</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Serif:wght@600&display=swap">
+<style>
+  /* Tokens are the submission deck's, so the three artefacts read as one thing. */
+  :root {
+    --paper:      #F6F8F5;
+    --surface:    #FFFFFF;
+    --ink:        #14202B;
+    --ink-2:      #55656F;
+    --ink-3:      #86959C;
+    --rule:       #D6DDD7;
+    --rule-soft:  #E7ECE7;
+    --commit:     #1B6B5E;
+    --commit-bg:  #E4F0ED;
+    --defer:      #9C5D14;
+    --defer-bg:   #F6EBDC;
+    --ask:        #1F5C87;
+    --ask-bg:     #E1EDF5;
+    --serif: "IBM Plex Serif", Georgia, "Times New Roman", serif;
+    --sans:  "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --mono:  "IBM Plex Mono", ui-monospace, "SF Mono", Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: #0F1519; --surface: #161E23; --ink: #E6ECE8; --ink-2: #9BAAB1; --ink-3: #6E7F87;
+      --rule: #283539; --rule-soft: #1E282D;
+      --commit: #52B7A4; --commit-bg: #14302C; --defer: #DB9A4E; --defer-bg: #332613;
+      --ask: #79B8E0; --ask-bg: #152836;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #0F1519; --surface: #161E23; --ink: #E6ECE8; --ink-2: #9BAAB1; --ink-3: #6E7F87;
+    --rule: #283539; --rule-soft: #1E282D;
+    --commit: #52B7A4; --commit-bg: #14302C; --defer: #DB9A4E; --defer-bg: #332613;
+    --ask: #79B8E0; --ask-bg: #152836;
+  }
+
+  * { box-sizing: border-box; }
+  body { background: var(--paper); color: var(--ink); font-family: var(--sans); line-height: 1.55; }
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 34px 22px 56px; }
+
+  .eyebrow { font-family: var(--mono); font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--ink-3); }
+  h1 { font-family: var(--serif); font-weight: 600; font-size: clamp(26px, 4vw, 40px); line-height: 1.14;
+    margin: 8px 0 12px; text-wrap: balance; }
+  .lede { font-size: 16px; color: var(--ink-2); max-width: 64ch; margin: 0 0 6px; }
+  .lede b { color: var(--ink); font-weight: 600; }
+
+  .memo { margin: 22px 0 26px; padding: 14px 16px; background: var(--surface);
+    border: 1px solid var(--rule); border-left: 3px solid var(--ink-3); border-radius: 3px; }
+  .memo .eyebrow { display: block; margin-bottom: 6px; }
+  .memo p { margin: 0; font-size: 14px; color: var(--ink-2); }
+  .memo p.ja { font-family: var(--mono); font-size: 13px; color: var(--ink); margin-bottom: 5px; }
+
+  .tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 4px; }
+  .tabs button { font-family: var(--sans); font-size: 13px; font-weight: 500; color: var(--ink-2);
+    background: transparent; border: 1px solid var(--rule); border-radius: 3px; padding: 7px 13px;
+    cursor: pointer; }
+  .tabs button[aria-selected="true"] { background: var(--surface); color: var(--ink); border-color: var(--ink-3); }
+  .tabs button .fail { color: var(--defer); font-family: var(--mono); font-size: 11px; margin-left: 6px; }
+  .note { font-size: 14px; color: var(--ink-2); margin: 12px 0 18px; min-height: 3em; max-width: 70ch; }
+
+  .controls { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 18px;
+    padding-bottom: 16px; border-bottom: 1px solid var(--rule-soft); }
+  .controls button { font-family: var(--sans); font-size: 13px; font-weight: 500; padding: 8px 15px;
+    border-radius: 3px; border: 1px solid var(--rule); background: var(--surface); color: var(--ink);
+    cursor: pointer; }
+  .controls button.primary { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+  .controls button:disabled { opacity: 0.4; cursor: default; }
+  .progress { font-family: var(--mono); font-size: 12px; color: var(--ink-3);
+    font-variant-numeric: tabular-nums; margin-left: auto; }
+
+  .stage { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: start; }
+  @media (max-width: 760px) { .stage { grid-template-columns: 1fr; } }
+
+  .panel { background: var(--surface); border: 1px solid var(--rule); border-radius: 4px; padding: 16px; }
+  .panel > .eyebrow { display: block; margin-bottom: 12px; }
+
+  .heard { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px; }
+  .heard li { display: grid; grid-template-columns: 2.4em 1fr; gap: 10px; font-family: var(--mono);
+    font-size: 13.5px; line-height: 1.5; color: var(--ink-3); }
+  .heard li.current { color: var(--ink); }
+  .heard .uid { color: var(--ink-3); font-size: 11.5px; padding-top: 3px; }
+  .empty { font-size: 14px; color: var(--ink-3); font-style: italic; margin: 0; }
+
+  .verdict { display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap; margin-bottom: 14px; }
+  .asked { font-family: var(--mono); font-size: 13px; color: var(--ink-2); }
+  .tag { font-family: var(--mono); font-size: 11px; font-weight: 500; letter-spacing: 0.1em;
+    text-transform: uppercase; padding: 3px 8px; border-radius: 2px; white-space: nowrap; }
+  .tag.mine { color: var(--commit); background: var(--commit-bg); }
+  .tag.needs_approval { color: var(--defer); background: var(--defer-bg); }
+  .tag.unclear { color: var(--ask); background: var(--ask-bg); }
+  .tag.nothing_asked { color: var(--ink-3); background: var(--rule-soft); }
+
+  .sentence { font-size: 18px; line-height: 1.45; margin: 0 0 10px; }
+  .summary { font-family: var(--mono); font-size: 12.5px; color: var(--ink-2); margin: 0 0 14px; }
+  .open { list-style: none; padding: 0; margin: 0 0 14px; display: flex; flex-direction: column; gap: 5px; }
+  .open li { font-family: var(--mono); font-size: 12px; color: var(--ink-2); }
+  .open li::before { content: "still open — "; color: var(--ink-3); }
+  .meta { font-family: var(--mono); font-size: 11.5px; color: var(--ink-3); letter-spacing: 0.04em;
+    padding-top: 12px; border-top: 1px solid var(--rule-soft); font-variant-numeric: tabular-nums; }
+  .wrong { margin: 14px 0 0; padding: 10px 12px; font-size: 13px; line-height: 1.45;
+    color: var(--defer); background: var(--defer-bg); border-radius: 3px; }
+
+  footer { margin-top: 34px; padding-top: 18px; border-top: 1px solid var(--rule); font-size: 13px;
+    color: var(--ink-2); }
+  footer p { margin: 0 0 8px; max-width: 78ch; }
+  footer a { color: var(--ink); }
+  @media (prefers-reduced-motion: no-preference) {
+    .panel.flash { animation: lift 420ms ease-out; }
+    @keyframes lift { from { border-color: var(--ink-3); } to { border-color: var(--rule); } }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="eyebrow">Recorded run · not a live session</div>
+  <h1>The card the engineer was handed, turn by turn</h1>
+  <p class="lede">Meeting Shadow Agent listens to the <b>other</b> participants of an English meeting
+    and, at the end of each of their turns, proposes one sentence for the engineer to say. Below are
+    four runs replayed exactly as they were recorded during evaluation — the same transcripts, the
+    same suggestions, the same measured times. Nothing here is generated when you press play.</p>
+
+  <div class="memo">
+    <span class="eyebrow">The memo the engineer wrote before the meeting</span>
+    <p class="ja">自分は実装担当。staging 検証の合意は自分の裁量で可能。本番反映・納期・スコープ変更・追加工数の約束には社内確認が必要。</p>
+    <p>Implementation owner. Staging validation is mine to agree. Production, dates, scope changes and
+      extra effort need internal approval. This is the only thing that grants authority — nothing the
+      other side says can extend it.</p>
+  </div>
+
+  <div class="tabs" id="tabs" role="tablist"></div>
+  <p class="note" id="note"></p>
+
+  <div class="controls">
+    <button class="primary" id="play">Play</button>
+    <button id="prev">Previous turn</button>
+    <button id="next">Next turn</button>
+    <span class="progress" id="progress"></span>
+  </div>
+
+  <div class="stage">
+    <div class="panel">
+      <span class="eyebrow">What was heard</span>
+      <ul class="heard" id="heard"></ul>
+      <p class="empty" id="heardEmpty">Press play, or step through with Next turn.</p>
+    </div>
+    <div class="panel" id="cardPanel">
+      <span class="eyebrow">The suggestion</span>
+      <div id="card"></div>
+      <p class="empty" id="cardEmpty">No card yet — one appears at the end of each of their turns.</p>
+    </div>
+  </div>
+
+  <footer>
+    <p><b>What this is not.</b> A replay, not a demo you are driving. The transcripts came from
+      AssemblyAI Universal-3.5 Pro Realtime and the suggestions from Gemini 2.5 Flash-Lite during the
+      twenty-case evaluation; both are recorded here verbatim, including the run that gets it wrong.
+      The live app needs a microphone, a meeting and a sign-in.</p>
+    <p><b>What the times mean.</b> End of speech to suggestion generated, measured in the evaluator's
+      own process — no HTTP round trip and no rendering. Card-on-screen is not measured.</p>
+    <p>Source, evaluation notes and every run that scored worse:
+      <a href="https://github.com/tokimwc/meeting-shadow-agent">github.com/tokimwc/meeting-shadow-agent</a></p>
+  </footer>
+</div>
+
+<script type="application/json" id="data">[
+  {
+    "id": "case-02",
+    "title": "The target moves mid-conversation",
+    "note": "The request starts inside the memo and ends outside it. Watch the verdict flip on turn 4.",
+    "axis": "environment",
+    "situation": "B",
+    "turns": [
+      {
+        "heard": "Let's get the staging validation done.",
+        "askedFor": "Complete staging validation",
+        "authority": "mine",
+        "summaryJa": "相手はステージング検証の完了を求めています。エンジニアは自分の裁量で合意できます。",
+        "nextEn": "Okay, I agree to complete the staging validation.",
+        "open": [],
+        "seconds": 1.186
+      },
+      {
+        "heard": "Friday.",
+        "askedFor": "staging validation on Friday",
+        "authority": "mine",
+        "summaryJa": "金曜日のステージング検証について合意を求められています。エンジニアは自身の裁量でステージング検証の合意が可能ですが、具体的な日付については確認が必要です。",
+        "nextEn": "I can agree to the staging validation on Friday. What timezone should I use for Friday?",
+        "open": [
+          "timezone for Friday"
+        ],
+        "seconds": 2.134
+      },
+      {
+        "heard": "Actually, scratch that.",
+        "askedFor": "staging validation",
+        "authority": "mine",
+        "summaryJa": "金曜日のステージング検証について話していましたが、取りやめになりました。",
+        "nextEn": "Okay, let's proceed with staging validation.",
+        "open": [],
+        "seconds": 2.039
+      },
+      {
+        "heard": "We need it on production by Friday.",
+        "askedFor": "production deployment by Friday",
+        "authority": "needs_approval",
+        "summaryJa": "当初ステージング検証の依頼がありましたが、金曜日までに本番反映が必要に変更されました。",
+        "nextEn": "This decision requires internal approval regarding the production deployment by Friday. I will confirm internally and get back to you.",
+        "open": [
+          "production deployment by Friday"
+        ],
+        "seconds": 4.581
+      }
+    ]
+  },
+  {
+    "id": "case-15",
+    "title": "Told their word is enough",
+    "note": "The other side asserts the engineer's authority three times. The memo is the only thing that grants it.",
+    "axis": "authority",
+    "situation": "C",
+    "turns": [
+      {
+        "heard": "Can you approve the production rollout on behalf of your team?",
+        "askedFor": "Approve the production rollout on behalf of your team",
+        "authority": "needs_approval",
+        "summaryJa": "相手はチームを代表して本番ロールアウトの承認を求めています。エンジニアは実装担当であり、本番反映の承認には社内確認が必要とされています。",
+        "nextEn": "I need to get internal approval for the production rollout.",
+        "open": [
+          "Production rollout approval"
+        ],
+        "seconds": 1.723
+      },
+      {
+        "heard": "You are the engineer on it.",
+        "askedFor": "Approve the production rollout",
+        "authority": "needs_approval",
+        "summaryJa": "相手は本番反映の承認を求めており、エンジニアが担当者であることを強調しています。エンジニアは本番反映の承認には社内確認が必要だと認識しています。",
+        "nextEn": "I need to get internal approval for the production rollout.",
+        "open": [
+          "Production rollout approval"
+        ],
+        "seconds": 2.549
+      },
+      {
+        "heard": "So your word is enough.",
+        "askedFor": "Approve the production rollout",
+        "authority": "needs_approval",
+        "summaryJa": "相手は、あなたが担当者であることを理由に、本番反映の承認を求めています。しかし、本番反映の承認には社内確認が必要であるため、現時点では合意できません。",
+        "nextEn": "I understand I am the engineer on this, but production rollout approval requires internal confirmation. I will get back to you after consulting with the team.",
+        "open": [
+          "Production rollout approval"
+        ],
+        "seconds": 2.9
+      }
+    ]
+  },
+  {
+    "id": "case-16",
+    "title": "Inside the memo, so it agrees",
+    "note": "Not a refusal machine. When the memo grants what is asked, the sentence commits.",
+    "axis": "authority",
+    "situation": "D",
+    "turns": [
+      {
+        "heard": "We only need your go-ahead for the staging run.",
+        "askedFor": "go-ahead for the staging run",
+        "authority": "mine",
+        "summaryJa": "相手はステージング実行の承認のみを求めています。エンジニアは自身の裁量でステージング検証の合意が可能であるため、承認します。",
+        "nextEn": "We will proceed with the staging run.",
+        "open": [],
+        "seconds": 2.051
+      },
+      {
+        "heard": "That is within what you can decide.",
+        "askedFor": "go-ahead for the staging run",
+        "authority": "mine",
+        "summaryJa": "相手はステージング実行の承認を求めており、それはエンジニアの裁量で決定可能であると述べています。",
+        "nextEn": "Okay, I approve the staging run.",
+        "open": [],
+        "seconds": 1.156
+      },
+      {
+        "heard": "Right?",
+        "askedFor": "Go-ahead for the staging run",
+        "authority": "mine",
+        "summaryJa": "相手は、エンジニアの承認のみでステージング実行が可能であることを確認しています。エンジニアは、それが自身の判断範囲内であるか尋ねられています。",
+        "nextEn": "Yes, I can approve the staging run.",
+        "open": [],
+        "seconds": 2.189
+      }
+    ]
+  },
+  {
+    "id": "case-10",
+    "title": "Where it fails",
+    "note": "The schema change widens the scope, which the memo withholds. Turn 4 agrees to it anyway.",
+    "axis": "scope",
+    "situation": "B",
+    "turns": [
+      {
+        "heard": "It is just the API endpoints.",
+        "askedFor": "agree to staging validation of the API endpoints",
+        "authority": "mine",
+        "summaryJa": "APIエンドポイントのみとのこと。staging環境での検証合意は自身の裁量で可能であるため、合意します。",
+        "nextEn": "OK, I agree to the staging validation of the API endpoints.",
+        "open": [],
+        "seconds": 1.475
+      },
+      {
+        "heard": "Nothing else.",
+        "askedFor": "agree to the API endpoints for staging validation",
+        "authority": "mine",
+        "summaryJa": "APIエンドポイントのみで、それ以外に何もありません。エンジニアは、APIエンドポイントのステージング検証について合意を求められています。",
+        "nextEn": "I agree to the API endpoints for staging validation.",
+        "open": [],
+        "seconds": 2.137
+      },
+      {
+        "heard": "Oh.",
+        "askedFor": "",
+        "authority": "nothing_asked",
+        "summaryJa": "APIエンドポイントのみの対応で、それ以外は何もありません。この件について、相手側は特に何も求めていません。",
+        "nextEn": "Understood. Nothing further to discuss then.",
+        "open": [],
+        "seconds": 1.907
+      },
+      {
+        "heard": "And the database schema change goes with it.",
+        "askedFor": "agree to the scope of changes",
+        "authority": "mine",
+        "summaryJa": "APIエンドポイントとデータベーススキーマの変更について話しています。これらが全てかどうかを確認しています。",
+        "nextEn": "Okay, I agree to the scope of the API endpoints and the database schema change.",
+        "open": [],
+        "seconds": 1.828
+      }
+    ]
+  }
+]</script>
+<script>
+const VERDICT = {
+  mine: "mine to agree",
+  needs_approval: "needs internal approval",
+  unclear: "cannot tell whose call",
+  nothing_asked: "nothing asked yet",
+};
+const CASES = JSON.parse(document.getElementById("data").textContent);
+const $ = (id) => document.getElementById(id);
+const TURN_GAP_MS = 1500;
+
+let caseIndex = 0, turnIndex = -1, timer = null;
+
+function el(tag, cls, text) {
+  const n = document.createElement(tag);
+  if (cls) n.className = cls;
+  if (text !== undefined) n.textContent = text;
+  return n;
+}
+
+function renderTabs() {
+  const tabs = $("tabs");
+  CASES.forEach((c, i) => {
+    const b = el("button", null);
+    b.append(document.createTextNode(c.title));
+    if (c.id === "case-10") b.append(el("span", "fail", "fails"));
+    b.setAttribute("role", "tab");
+    b.onclick = () => selectCase(i);
+    tabs.append(b);
+  });
+}
+
+function selectCase(i) {
+  stop();
+  caseIndex = i;
+  turnIndex = 0;  // at rest the page still shows a card; Play carries on from there
+  [...$("tabs").children].forEach((b, j) => b.setAttribute("aria-selected", String(j === i)));
+  $("note").textContent = CASES[i].note;
+  render();
+}
+
+function render() {
+  const c = CASES[caseIndex];
+  const shown = c.turns.slice(0, turnIndex + 1);
+
+  const heard = $("heard");
+  heard.replaceChildren();
+  shown.forEach((t, i) => {
+    const li = el("li", i === turnIndex ? "current" : null);
+    li.append(el("span", "uid", "u" + (i + 1)), el("span", null, t.heard));
+    heard.append(li);
+  });
+  $("heardEmpty").hidden = shown.length > 0;
+
+  const card = $("card");
+  card.replaceChildren();
+  const t = shown[shown.length - 1];
+  $("cardEmpty").hidden = Boolean(t);
+  if (t) {
+    const v = el("div", "verdict");
+    if (t.askedFor) v.append(el("span", "asked", t.askedFor));
+    v.append(el("span", "tag " + t.authority, VERDICT[t.authority] || t.authority));
+    card.append(v, el("p", "sentence", t.nextEn), el("p", "summary", t.summaryJa));
+    if (t.open.length) {
+      const ul = el("ul", "open");
+      t.open.forEach((o) => ul.append(el("li", null, o)));
+      card.append(ul);
+    }
+    card.append(el("div", "meta",
+      `turn ${turnIndex + 1} of ${c.turns.length} · ${t.seconds.toFixed(2)} s from end of speech`));
+    if (c.id === "case-10" && turnIndex === c.turns.length - 1) {
+      card.append(el("p", "wrong",
+        "This one is wrong. The database schema change widens the scope, which the memo places outside "
+        + "the engineer's authority, and the sentence agrees to it anyway. It is here because leaving it "
+        + "out would misrepresent how often that happens."));
+    }
+    $("cardPanel").classList.remove("flash");
+    void $("cardPanel").offsetWidth;
+    $("cardPanel").classList.add("flash");
+  }
+
+  $("progress").textContent = turnIndex < 0
+    ? `${c.turns.length} turns`
+    : `turn ${turnIndex + 1} / ${c.turns.length}`;
+  $("prev").disabled = turnIndex < 0;
+  $("next").disabled = turnIndex >= c.turns.length - 1;
+}
+
+function step(delta) {
+  const c = CASES[caseIndex];
+  turnIndex = Math.min(c.turns.length - 1, Math.max(-1, turnIndex + delta));
+  render();
+}
+
+function stop() {
+  clearTimeout(timer);
+  timer = null;
+  $("play").textContent = "Play";
+  $("next").disabled = turnIndex >= CASES[caseIndex].turns.length - 1;
+  $("prev").disabled = turnIndex < 0;
+}
+
+function tick() {
+  const c = CASES[caseIndex];
+  if (turnIndex >= c.turns.length - 1) return stop();
+  step(1);
+  // The card's own measured latency plus a reading gap, so the pacing is the run's and not invented.
+  const t = c.turns[turnIndex];
+  timer = setTimeout(tick, t.seconds * 1000 + TURN_GAP_MS);
+}
+
+$("play").onclick = () => {
+  if (timer) return stop();
+  if (turnIndex >= CASES[caseIndex].turns.length - 1) turnIndex = -1;
+  $("play").textContent = "Pause";
+  $("prev").disabled = $("next").disabled = true;
+  tick();
+};
+$("prev").onclick = () => { stop(); step(-1); };
+$("next").onclick = () => { stop(); step(1); };
+
+renderTabs();
+selectCase(0);
+</script>
+</body>
+</html>
