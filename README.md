@@ -59,11 +59,41 @@ the UI. That flag is the model's own report about its own sentence; see the limi
 
 Audio goes from the browser straight to AssemblyAI. Cloud Run only mints short-lived tokens
 (`expires_in_seconds=60`, `max_session_duration_seconds=90`) and makes short HTTP calls to Gemini; it
-never holds the stream. Conversation text is not stored — only counts, latency and error class names
-are logged.
+never holds the stream.
 
 This is **not** zero retention. AssemblyAI offers a configurable TTL, and billing and log metadata
 outlive it.
+
+### What is recorded, exactly
+
+There is no database. Nothing here is read back by the app; it is written once, as a JSON line on
+stdout, which Cloud Run forwards to Cloud Logging.
+
+Per suggestion, the server writes: the authority classification, how many open items there were,
+the self-reported commitment flag, how many turns were in the request, and the milliseconds it took.
+On a refusal it writes the reason — and only when that reason is one of ours. Pydantic's
+`ValidationError` is also a `ValueError`, and its message quotes the input that failed, which here is
+the model's own sentences; those are recorded by class name alone, and
+[`Refusal`](app/suggest.py) exists to make that a type distinction rather than a comment.
+
+When a card appears, and when you adopt, hold or copy it, the browser posts the same categories plus
+a random id generated per page load. That id joins the cards of one sitting and identifies nobody.
+The [`Event`](app/models.py) model has no field that will carry text and forbids extra keys, so the
+endpoint cannot become the place transcripts end up.
+
+**Not recorded anywhere:** the utterances, the suggestion, the memo, your identity. This is the one
+question about the product that offline evaluation cannot answer — whether a person under
+conversational pressure actually says the deferral sentence — and the adopt/hold click is the whole
+signal. Keeping the click while discarding the words is the only version of that worth shipping to
+someone whose meetings are confidential.
+
+Adoption rate by classification, which is the number that matters:
+
+```
+gcloud logging read 'jsonPayload.msa_event="card"' --format=json --project meeting-shadow-toki-260907   | jq -r '[.[].jsonPayload | {authority, kind}] | group_by(.authority)[]
+      | {authority: .[0].authority, shown: map(select(.kind=="shown")) | length,
+         adopted: map(select(.kind=="adopted")) | length}'
+```
 
 ## What was measured
 

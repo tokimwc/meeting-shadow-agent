@@ -87,6 +87,28 @@ class Suggestion(BaseModel):
 SUGGESTION_JSON_SCHEMA: dict = Suggestion.model_json_schema()
 
 
+class Event(BaseModel):
+    """What the engineer did with a card.
+
+    Whether a deferral sentence is one a person will actually say is the only thing about this product
+    that cannot be measured offline, and the adopt/hold click is the whole signal. Every field here is
+    a category, a count or a duration on purpose: there is no field this model will carry text in, so
+    the endpoint cannot become a place where conversation content ends up in the logs.
+    """
+
+    session: str = Field(pattern=r"^[0-9a-f]{8,32}$",
+                         description="Random per page load, generated client-side. Not a user id: it "
+                                     "joins the cards of one sitting and identifies nobody.")
+    kind: Annotated[str, StringConstraints(pattern=r"^(shown|adopted|held|copied)$")]
+    authority: Authority
+    turn: int = Field(ge=1, le=999)
+    unconfirmed_count: int = Field(ge=0, le=5)
+    commits: bool
+    latency_ms: int = Field(ge=0, le=60000)
+
+    model_config = {"extra": "forbid"}
+
+
 class TokenResponse(BaseModel):
     token: str
     expires_in_seconds: int

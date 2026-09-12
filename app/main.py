@@ -6,6 +6,8 @@ one-time token minted here. Only finalized turns come back for /api/suggest.
 from __future__ import annotations
 
 import datetime as dt
+import json
+import sys
 import threading
 from pathlib import Path
 
@@ -14,9 +16,9 @@ from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
-from .models import SuggestRequest, Suggestion, TokenResponse
+from .models import Event, SuggestRequest, Suggestion, TokenResponse
 from .settings import Settings
-from .suggest import GeminiJsonModel, JsonModel, suggest, warmup
+from .suggest import GeminiJsonModel, JsonModel, Refusal, suggest, warmup
 
 STATIC = Path(__file__).parent / "static"
 AAI_TOKEN_URL = "https://streaming.assemblyai.com/v3/token"
@@ -43,6 +45,17 @@ class DailyCounter:
 
 
 NO_CACHE = {"cache-control": "no-cache"}
+
+
+def emit(event: str, **fields) -> None:
+    """One JSON line on stdout, which is the whole analytics store.
+
+    Cloud Run already forwards stdout to Cloud Logging and parses a JSON line into `jsonPayload`, so
+    this is queryable and append-only without a database, a client library or an IAM grant. A store
+    the app can read back would be a different decision; nothing here needs one. Only categories,
+    counts and durations are ever passed in — see `Event`.
+    """
+    print(json.dumps({"severity": "INFO", "msa_event": event, **fields}), file=sys.stdout, flush=True)
 
 
 class RevalidatingStatic(StaticFiles):
@@ -109,10 +122,25 @@ def create_app(
             app.state.model = GeminiJsonModel(
                 project=st.google_cloud_project, location=st.gemini_location, model=st.gemini_model
             )
+        t0 = dt.datetime.now()
         try:
-            return suggest(app.state.model, req)
+            s = suggest(app.state.model, req)
         except ValueError as e:
-            raise HTTPException(422, str(e))
+            # The refusal rate measured offline was close to one call in five; this is the same number
+            # in real use, for free. Only a Refusal carries a message of ours - anything else, a
+            # ValidationError included, is recorded and returned by class name alone.
+            reason = str(e)[:120] if isinstance(e, Refusal) else type(e).__name__
+            emit("refused", reason=reason, turns=len(req.utterances))
+            raise HTTPException(422, reason)
+        emit("suggested", authority=s.authority, unconfirmed_count=len(s.unconfirmed),
+             commits=s.commits_to_something, turns=len(req.utterances),
+             ms=int((dt.datetime.now() - t0).total_seconds() * 1000))
+        return s
+
+    @app.post("/api/event", status_code=204)
+    def api_event(ev: Event) -> None:
+        """What the engineer did with a card. Categories only; the model forbids anything else."""
+        emit("card", **ev.model_dump())
 
     @app.get("/")
     def index() -> FileResponse:

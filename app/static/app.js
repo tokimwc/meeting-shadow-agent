@@ -92,8 +92,30 @@ async function requestSuggestion() {
   }
 }
 
+// Whether a person will actually say a deferral sentence is the one thing about this product that
+// cannot be measured offline, and the adopt/hold click is the whole signal. What is sent is the
+// classification and the choice - never the sentence, the transcript or the memo. `session` is random
+// per page load: it joins the cards of one sitting and identifies nobody.
+// 16 hex characters either way: crypto is absent in a plain (non-secure, or non-browser) context, and
+// Math.random() stringifies to decimals that can carry an exponent, which the server's pattern rejects.
+const SESSION = typeof crypto !== "undefined" && crypto.randomUUID
+  ? crypto.randomUUID().replace(/-/g, "").slice(0, 32)
+  : Array.from({ length: 4 }, () => Math.floor(Math.random() * 0x10000).toString(16).padStart(4, "0")).join("");
+let lastCard = null;
+
+function sendEvent(kind) {
+  if (!lastCard) return;
+  // Fire and forget: telemetry must never delay or break the card.
+  fetch("/api/event", { method: "POST", headers: { "content-type": "application/json" },
+    body: JSON.stringify({ session: SESSION, kind, ...lastCard }) }).catch(() => {});
+}
+
 function renderSuggestion(s, ms) {
   for (const id of ["adopt", "hold", "copy"]) $(id).disabled = false;
+  lastCard = { authority: s.authority, turn: Math.min(999, state.turns.length),
+               unconfirmed_count: s.unconfirmed.length, commits: s.commits_to_something,
+               latency_ms: Math.max(0, Math.min(60000, ms)) };
+  sendEvent("shown");
   $("latency").textContent = `${ms} ms (turn end → card)`;
   $("summary").textContent = s.summary_ja;
   // The tag says whose decision this is. Without it the card is just a sentence, and the reader cannot
@@ -220,8 +242,12 @@ $("meet").onclick = () => start(startMeetTab);
 $("sample").onclick = () => start(startSample);
 $("stop").onclick = stop;
 $("copy").onclick = async () => {
-  try { await navigator.clipboard.writeText($("nextEn").textContent); log("コピーしました", "ok"); }
+  try { await navigator.clipboard.writeText($("nextEn").textContent); sendEvent("copied"); log("コピーしました", "ok"); }
   catch { log("コピーできませんでした。文章を選択してコピーしてください。", "err"); }
 };
-$("adopt").onclick = () => { state.lastSuggestedId = state.turns.at(-1)?.id; log("adopted (not sent anywhere)"); };
-$("hold").onclick = () => log("held");
+$("adopt").onclick = () => {
+  state.lastSuggestedId = state.turns.at(-1)?.id;
+  sendEvent("adopted");
+  log("採用しました（送信も発話もしていません）");
+};
+$("hold").onclick = () => { sendEvent("held"); log("保留しました"); };

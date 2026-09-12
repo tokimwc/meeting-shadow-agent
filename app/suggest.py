@@ -49,6 +49,15 @@ SYSTEM = (
 )
 
 
+class Refusal(ValueError):
+    """A suggestion this code decided not to show, with a message safe to log and to return.
+
+    The distinction matters because pydantic's ValidationError is also a ValueError, and its message
+    quotes the offending input - which here is the model's own sentences, derived from the meeting.
+    Only messages raised as a Refusal are written down; anything else is recorded by class name.
+    """
+
+
 class JsonModel(Protocol):
     def generate_json(self, *, system: str, user: str, schema: dict[str, Any]) -> str: ...
 
@@ -106,17 +115,17 @@ def suggest(model: JsonModel, req: SuggestRequest) -> Suggestion:
     cited = set(s.evidence_ids) | {i for u in s.unconfirmed for i in u.evidence_ids}
     if not cited <= known:
         # ponytail: refuse rather than repair. A suggestion with fabricated evidence is worse than none.
-        raise ValueError(f"model cited unknown utterance ids: {sorted(cited - known)}")
+        raise Refusal(f"model cited unknown utterance ids: {sorted(cited - known)}")
     # An item citing only m0 is the memo restating what needs approval, not something the other side asked for.
     # The 20-case run showed the model reaching for the memo whenever the utterances left nothing open; dropping
     # these is deterministic, where the instruction not to produce them is not.
     if s.authority in ("needs_approval", "unclear") and s.commits_to_something:
-        raise ValueError(f"model says authority is {s.authority} and committed to it anyway")
+        raise Refusal(f"model says authority is {s.authority} and committed to it anyway")
     grounded = [u for u in s.unconfirmed if any(i != MEMO_ID for i in u.evidence_ids)]
     if s.unconfirmed and not grounded:
         # Dropping every item would leave a card that shows nothing open and still asks about what was
         # removed. Refuse the whole suggestion rather than display those two halves side by side.
-        raise ValueError("every unconfirmed item cited only the memo")
+        raise Refusal("every unconfirmed item cited only the memo")
     # ponytail: a dropped item while others survive can still leave next_line_en pointing at it. Detecting
     # that needs to read the sentence, so it is a known hole rather than a silent guarantee.
     s.unconfirmed = grounded

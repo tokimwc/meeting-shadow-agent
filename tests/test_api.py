@@ -77,3 +77,40 @@ def test_static_and_index_revalidate():
     with TestClient(create_app()) as c:
         for path in ("/", "/static/app.js"):
             assert c.get(path).headers["cache-control"] == "no-cache", path
+
+
+EVENT = {"session": "0123456789abcdef", "kind": "adopted", "authority": "mine", "turn": 3,
+         "unconfirmed_count": 0, "commits": False, "latency_ms": 1420}
+
+
+def test_event_accepts_categories_and_nothing_else(capsys):
+    """The endpoint exists to record a choice, not to become a place text reaches the logs."""
+    c = make_client()
+    assert c.post("/api/event", json=EVENT).status_code == 204
+    logged = json.loads(capsys.readouterr().out.strip().splitlines()[-1])
+    assert logged["msa_event"] == "card" and logged["kind"] == "adopted"
+    assert not any(isinstance(v, str) and len(v) > 40 for v in logged.values())
+
+    for bad in ({**EVENT, "heard": "Can you approve production?"},   # no smuggling a transcript in
+                {**EVENT, "kind": "Can you approve production?"},    # nor through a known field
+                {**EVENT, "session": "not-hex"},
+                {**EVENT, "authority": "whatever"},
+                {**EVENT, "latency_ms": -1}):
+        assert c.post("/api/event", json=bad).status_code == 422
+
+
+def test_refusal_message_is_logged_but_a_validation_error_is_not(capsys):
+    """A pydantic ValidationError is a ValueError whose message quotes the model's own sentences."""
+    class Malformed:
+        def generate_json(self, *, system, user, schema):
+            return json.dumps({"summary_ja": "x", "asked_for": "y", "authority": "mine",
+                               "unconfirmed": [], "next_line_en": "Production on Friday, agreed.",
+                               "next_line_ja": "y", "evidence_ids": [], "commits_to_something": False})
+
+    http = httpx.Client(transport=httpx.MockTransport(fake_aai))
+    c = TestClient(create_app(Settings.from_env(ENV), model=Malformed(), http=http))
+    r = c.post("/api/suggest", json={"premise": "m", "utterances": [{"id": "u1", "text": "hi", "t_ms": 0}]})
+    assert r.status_code == 422
+    assert r.json()["detail"] == "ValidationError"
+    logged = json.loads(capsys.readouterr().out.strip().splitlines()[-1])
+    assert logged == {"severity": "INFO", "msa_event": "refused", "reason": "ValidationError", "turns": 1}
