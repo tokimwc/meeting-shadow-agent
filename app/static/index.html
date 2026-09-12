@@ -22,6 +22,13 @@
   #card { border-left:4px solid var(--ok); }
   #card.danger { border-left-color:var(--err); }
   #nextEn { font-size:18px; font-weight:600; }
+  /* The verdict the memo produced, stated before the sentence it produced. */
+  #verdict { display:flex; gap:10px; align-items:baseline; flex-wrap:wrap; margin:2px 0 10px; }
+  #verdict .tag { font-size:12px; font-weight:600; padding:2px 8px; border-radius:3px; letter-spacing:.04em; }
+  #verdict .tag.mine { background:#12301f; color:#56d364; }
+  #verdict .tag.needs_approval { background:#3a2a10; color:#e3b341; }
+  #verdict .tag.nothing_asked { background:#21262d; color:var(--muted); }
+  #verdict .asked { font-size:13px; color:var(--muted); }
   #commitWarn { color:var(--err); }
   .muted { color:var(--muted); }
   #log { max-height:160px; overflow:auto; font-family:ui-monospace, monospace; font-size:12px; }
@@ -53,6 +60,8 @@
   <section id="card">
     <h2>提案 <span id="latency" class="muted"></span></h2>
     <p id="summary">会話を受信すると、ここに確認事項を表示します。</p>
+    <h2>相手が求めていること</h2>
+    <div id="verdict"><span id="askedFor" class="asked">—</span></div>
     <h2>未確定</h2>
     <ul id="unconfirmed"></ul>
     <h2>次の一言</h2>

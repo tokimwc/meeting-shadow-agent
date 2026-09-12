@@ -96,6 +96,9 @@ function renderSuggestion(s, ms) {
   for (const id of ["adopt", "hold", "copy"]) $(id).disabled = false;
   $("latency").textContent = `${ms} ms (turn end → card)`;
   $("summary").textContent = s.summary_ja;
+  // The tag says whose decision this is. Without it the card is just a sentence, and the reader cannot
+  // see which half of the memo produced it.
+  renderVerdict(s.authority, s.asked_for);
   $("unconfirmed").innerHTML = s.unconfirmed.map((u) => `<li>${esc(u.item)} <span class="ev">${u.evidence_ids.join(" ")}</span></li>`).join("") || "<li class=\"muted\">未確定事項なし</li>";
   $("nextEn").textContent = s.next_line_en;
   $("nextJa").textContent = s.next_line_ja;
@@ -104,6 +107,31 @@ function renderSuggestion(s, ms) {
   $("commitWarn").hidden = !s.commits_to_something;
   for (const li of $("turns").children) li.classList.toggle("cited", s.evidence_ids.includes(li.id));
   log(`card ${ms} ms`, ms <= 3000 ? "ok" : "warn");
+}
+
+const VERDICT = {
+  mine: "自分の裁量で決められる",
+  needs_approval: "社内確認が必要",
+  nothing_asked: "まだ合意を求められていない",
+};
+
+function renderVerdict(authority, askedFor) {
+  const el = $("verdict");
+  const label = VERDICT[authority];
+  el.innerHTML = "";
+  if (askedFor) {
+    const asked = document.createElement("span");
+    asked.className = "asked";
+    asked.textContent = askedFor;
+    el.append(asked);
+  }
+  if (label) {
+    const tag = document.createElement("span");
+    tag.className = `tag ${authority}`;
+    tag.textContent = label;
+    el.append(tag);
+  }
+  if (!el.childElementCount) el.textContent = "—";
 }
 
 function esc(x) { return x.replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c])); }
@@ -179,6 +207,7 @@ async function start(action) {
   $("status").textContent = "接続中…";
   for (const id of ["adopt", "hold", "copy"]) $(id).disabled = true;
   $("summary").textContent = "会話を受信すると、ここに確認事項を表示します。";
+  renderVerdict(null, "");
   $("nextEn").textContent = "—"; $("nextJa").textContent = "";
   $("unconfirmed").innerHTML = ""; $("evidence").textContent = "";
   $("partial").textContent = ""; $("latency").textContent = "";
