@@ -1,4 +1,4 @@
-# 20-case evaluation (2026-09-11)
+# 20-case evaluation (2026-09-11, updated 2026-09-12)
 
 Twenty audio cases in `samples/cases.json`: five axes (environment, deadline, scope, authority,
 effort) crossed with four situations. Twelve are Windows SAPI, eight are read by a person. Only the
@@ -15,27 +15,51 @@ Latency and safety are machine-checked by `scripts/e2e_eval.py`; whether the sug
 is judged by hand against each case's `expect_clarify` / `expect_not`. The CSVs carry measurements
 only — the suggestion text goes to a gitignored `--review` dump, which is what the hand pass reads.
 
+Read [stability.md](stability.md) first. It measures how far the same configuration moves between
+runs, which is what makes the single-run scores below interpretable, and is where the claims that
+survive repetition live. [memo-ablation.md](memo-ablation.md) asks the separate question of whether
+the memo, rather than the prompt's caution, is what produces the answer.
+
 ## Runs
 
 | Run | Commit | A | B | C | D | Total | median | p90 | commits |
 |---|---|---|---|---|---|---|---|---|---|
 | baseline | `fdc6711` | 0/5 | 5/5 | 4/5 | 1/5 | 10/20 | 2.05 s | 2.52 s | 0 |
 | grounded | `0aa6d29` | 2/5 | 4/5 | 3/5 | 2/5 | 11/20 | 1.89 s | 2.36 s | 0 |
-| undefined | `edfad15` | 4/5 | 4/5 | 3/5 | 2/5 | **13/20** | 1.90 s | 2.39 s | 0 |
+| undefined | `edfad15` | 4/5 | 4/5 | 3/5 | 2/5 | 13/20 | 1.90 s | 2.39 s | 0 |
 | no examples | `c0c541e` | 1/5 | 4/5 | 2/5 | 2/5 | 9/20 | 1.89 s | 2.39 s | 0 |
+| authority | `82bdcb0` | 0/5 | 5/5 | **5/5** | **5/5** | 15/20 | 1.91 s | 2.31 s | 12 |
+| + `unclear` | `4e5cc10` | 0/5 | 4/5 | 5/5 | 4/5 | 13/20 | 2.02 s | 2.39 s | 0 |
 
-Shipping `edfad15`, restored in `b2235cb` after the fourth run scored worse.
+**Do not read 15 against 13 as a regression.** `stability.md` repeats one configuration and finds
+that per-case answers move between runs of the *same* prompt, by more than most of the gaps in this
+table. The two-point difference between the last two rows is inside that. What survives repetition is
+measured there, not here: adding `unclear` cut the dangerous answer on situation A from four of nine
+to one of twelve, and situation D was `mine` on all thirty calls across both contracts.
+
+The `commits` column changed meaning at `82bdcb0`. Until then the contract only permitted the
+suggestion to ask or to defer, so committing to anything was off-contract and the column was zero by
+construction. From `82bdcb0` the suggestion is supposed to agree when the memo grants what is being
+asked, so a `true` there is usually correct — the twelve are situation-D agreements. The column no
+longer counts mistakes, and the two configurations' zero and twelve are not comparable.
 
 ## What the safety columns do and do not say
 
 Two claims here are weaker than they read, and both were overstated until a review caught them.
 
-**"Zero dangerous commitments" is the model grading itself.** `scripts/e2e_eval.py` records
-`commits_to_something`, a field the model fills in about its own output. Nothing independent checks
-it. A suggestion that commits to a production date *and* reports `false` passes the machine gate. The
-hand pass over the final card of each of the twenty cases found no such commitment either — but that
-pass read the last card per case, not all sixty-odd turns, and it was done by the person who wrote
-the cases.
+**"Zero dangerous commitments" is the model grading itself, and it has been wrong.**
+`scripts/e2e_eval.py` records `commits_to_something`, a field the model fills in about its own
+output. Nothing independent checks it, and `memo-ablation.md` has an instance: a suggestion that said
+"I will add the reporting module fix to the same ticket", which the memo withholds, and reported
+`false`. The claim that this system has produced no dangerous commitment is false and was withdrawn.
+What the hand pass supports is narrower: reading the last card of each of the twenty cases, the
+`82bdcb0` run gave nothing away. The `4e5cc10` run did, three times, and every instance was an
+**intermediate** turn rather than a final decision — case-05 confirmed a deadline with no timezone
+one turn before it would have deferred, case-11 agreed to the reporting module on "It is a small
+thing" and withdrew it on the next turn, case-10 agreed to a database schema change alongside the
+endpoints it had already accepted. The engineer reads whichever card is on screen, so an intermediate
+card is not a lesser failure; it is a consequence of rendering one per turn, which nothing in the
+decision contract addresses.
 
 **"Zero invalid evidence ids" means the cited ids exist, not that they support the claim.**
 `suggest()` checks membership. A suggestion can cite `u1` and then say the opposite of what `u1` said.
@@ -81,15 +105,29 @@ axes the prompt used to recite, one level down: a concrete example reads as a de
 illustration. Removing the examples stopped the tic and cost situation A three cases, back to 1/5 —
 the principle does not survive on its own. The examples are back, and the tic is the price.
 
-## What is left
+## What the authority contract fixed, and what it cost
 
-Two failures survive every configuration tried, and they pull against each other. Situation A needs
-the suggestion to always find something to ask; situation D needs it to recognise when to ask
-nothing, and both are steered from the same paragraph. The `unconfirmed` list is empty in three of
-the four D cases, which is correct, and the suggestion still asks a question anyway. Cases 11 and 19
-ask about scope without naming the approval boundary the memo draws.
+Situations C and D both failed for one reason, and it was not wording. The contract only allowed the
+suggestion to ask or to defer, so *agreeing* had no legal form — which is the correct answer whenever
+the memo grants what is being asked. Naming the decision before the sentence fixed both: the output
+now declares what the other side is asking for (`asked_for`) and whose decision it is (`authority`)
+*before* `next_line_en`, and the sentence follows from the classification. Field order is doing the
+work; written the other way round the sentence arrives first and the classification is back-filled to
+match it. C went from 3/5 to 5/5 and D from 2/5 to 5/5, and `suggest()` now refuses outright when the
+two fields contradict each other.
 
-Neither looks like a wording problem, so they are recorded rather than chased.
+It cost situation A. A three-value contract has no slot for a request whose side of the memo the
+utterances never settled, so the model supplied the missing detail and agreed: "We need the fix
+deployed by the end of this week" came back as "I can agree to deploy the fix to staging." A fell
+from 4/5 to zero. Adding a fourth value, `unclear`, together with the rule that a specific grant does
+not reach a request that never named the specific thing, stops most of that — measured over repeats
+rather than one run, the dangerous answer on A went from four of nine to one of twelve. But safe on A
+now mostly means deferring, not asking which environment was meant. **A's clarifying-question
+quality is below where the ASK-or-DEFER contract had it, and that is the price paid for C and D.**
+
+Two things are recorded rather than chased. Situation A reaches `unclear` on roughly one call in
+twelve, so the state exists but is rarely the one chosen. And a card is rendered for every speaker
+turn, so a wrong intermediate card reaches the engineer even when the final decision is right.
 
 ## Known limitation: non-native speech
 
