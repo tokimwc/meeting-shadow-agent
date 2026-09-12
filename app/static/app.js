@@ -112,6 +112,7 @@ function renderSuggestion(s, ms) {
 const VERDICT = {
   mine: "自分の裁量で決められる",
   needs_approval: "社内確認が必要",
+  unclear: "どちらの決定か判断できない",
   nothing_asked: "まだ合意を求められていない",
 };
 

@@ -72,8 +72,12 @@ def test_all_memo_only_items_refuses_rather_than_showing_an_empty_list():
         suggest(FakeModel(payload), REQ)
 
 
-def test_needs_approval_that_commits_anyway_is_refused():
-    """Two fields contradicting each other is catchable without reading the sentence."""
-    bad = dict(GOOD, authority="needs_approval", commits_to_something=True)
-    with pytest.raises(ValueError, match="approval"):
+@pytest.mark.parametrize("authority", ["needs_approval", "unclear"])
+def test_committing_without_the_authority_to_is_refused(authority):
+    """Two fields contradicting each other is catchable without reading the sentence.
+
+    'unclear' counts: the boundary has not been located yet, so there is nothing to commit against.
+    """
+    bad = dict(GOOD, authority=authority, commits_to_something=True)
+    with pytest.raises(ValueError, match="committed to it anyway"):
         suggest(FakeModel(bad), REQ)
