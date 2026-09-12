@@ -89,5 +89,19 @@ Each of these cost a debugging session once. Details are in the vault
 |---|---|---|
 | 0.1.7 | `meeting-shadow-00008-698` | prompt separation, 450 ms turn batching, eval hardening, a11y |
 | 0.1.13 | `meeting-shadow-00014-26t` | the authority contract and the verdict on the card |
+| 0.1.14 | `meeting-shadow-00015-v4c` | structured events, so adoption can be measured |
 
-Rolling back 0.1.13 means naming `meeting-shadow-00013-88w`.
+Rolling back 0.1.14 means naming `meeting-shadow-00014-26t`.
+
+## Reading the events
+
+There is no database: `emit()` in [`app/main.py`](../app/main.py) writes one JSON line to stdout and
+Cloud Run parses it into `jsonPayload`. Nothing to provision, nothing to migrate.
+
+```bash
+gcloud logging read 'jsonPayload.msa_event="card"' --limit 200 --format=json   --project meeting-shadow-toki-260907
+```
+
+`msa_event` is `card` for what the engineer did with one, `suggested` for a generated suggestion and
+`refused` for one this code would not show. If the volume ever justifies it, a log sink into BigQuery
+is a console setting and needs no code.
