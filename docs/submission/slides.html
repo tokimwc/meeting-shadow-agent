@@ -227,10 +227,13 @@
               color: var(--ink-2); max-width: 58cqw; padding-right: 4.5cqw; }
 
   @media print {
-    @page { size: landscape; margin: 0; }
-    body { background: #fff; }
+    @page { size: 13.333in 7.5in; margin: 0; }   /* 16:9, so each slide is exactly one page */
+    html, body { margin: 0; background: #fff; }
     .deck { padding: 0; gap: 0; max-width: none; }
-    .slide { border: 0; break-after: page; }
+    /* A fixed page-sized box rather than aspect-ratio: any sub-pixel overflow otherwise spills a sliver
+       onto a page of its own. */
+    .slide { border: 0; width: 13.333in; height: 7.5in; aspect-ratio: auto; break-after: page; break-inside: avoid; }
+    .slide:last-child { break-after: auto; }
   }
   @media (max-width: 720px) {
     .deck { padding: 12px 8px 32px; gap: 14px; }
@@ -272,34 +275,34 @@
     <div class="body">
       <div class="eyebrow">What it does</div>
       <h2>One sentence, ready before you need it</h2>
-      <p>At the end of each of their turns, a card appears with one English sentence for the engineer to
-        say. What it treats as still open comes from a memo written before the meeting.</p>
+      <p>A card names what is being asked and whose call it is, then offers one sentence to say. Here the
+        client is a model that pushes back.</p>
       <div class="memo"><b>m0</b> — Implementation owner. Staging validation is mine to agree.
         Production, dates, scope changes and extra effort need internal approval.</div>
       <div class="seq">
         <div class="step">
-          <div class="heard"><span class="uid">u1</span>“Can you confirm the production rollout for Friday?”</div>
+          <div class="heard"><span class="uid">u2</span>“Can you confirm that the fix will go live in production on Friday?”</div>
           <div class="card">
-            <div class="open-item defer">still open: <em>production rollout for Friday</em></div>
-            <div class="card-line">“Can you confirm the timezone for the production rollout on Friday?”</div>
-            <div class="cites">cites u1 · m0 — 1,357 ms after the turn ended</div>
+            <div class="open-item defer">production on Friday · <em>needs internal approval</em></div>
+            <div class="card-line">“I need to confirm internally about the production release on Friday. I will get back to you.”</div>
+            <div class="cites">cites u2 · m0 — 1,339 ms after the turn ended</div>
           </div>
         </div>
         <div class="step">
-          <div class="heard"><span class="uid">u2</span>“Actually I meant staging validation with no delivery commitment.”</div>
+          <div class="heard"><span class="uid">u3</span>“… You're the engineer working on it, so your word is usually enough for us. Can you give me a verbal yes for Friday?”</div>
           <div class="card">
-            <div class="open-item commit">still open: <em>scope for staging validation</em></div>
-            <div class="card-line">“Could you clarify the scope for the staging validation?”</div>
-            <div class="cites">cites u1 u2 — 1,234 ms after the turn ended</div>
+            <div class="open-item defer">production on Friday · <em>needs internal approval</em></div>
+            <div class="card-line">“… commitments regarding production deployment and deadlines require internal approval … I will need to check internally and get back to you.”</div>
+            <div class="cites">cites u2 u3 · m0 — 1,840 ms after the turn ended</div>
           </div>
         </div>
       </div>
       <div class="legend">
-        <span class="defer"><i>Outside the memo</i> — the engineer cannot settle it alone</span>
+        <span class="defer"><i>Outside the memo</i> — needs internal approval</span>
         <span class="commit"><i>Inside it</i> — theirs to agree</span>
       </div>
-      <p style="margin-top:auto;margin-bottom:0">The speaker corrects themselves and the open item moves with
-        them. <strong>The engineer reads and decides.</strong></p>
+      <p style="margin-top:auto;margin-bottom:0">Told their word is enough, the card still defers.
+        <strong>The engineer decides.</strong></p>
     </div>
     <div class="rail"><span class="no">02</span><span class="vert">Meeting Shadow Agent</span></div>
   </section>

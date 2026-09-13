@@ -115,5 +115,12 @@ decision-support, cloud-run
 
 ## Cover image
 
-One frame: a Google Meet window with a suggestion card beside it, the card reading a conditional
-English sentence. No faces, no logos beyond the ones we are entitled to use, no stock "AI brain".
+`docs/submission/assets/cover-3200x1800.png`: the name, the one-line promise, and the first card from
+the video word for word — a client asking for production on Friday, marked as needing internal
+approval, and the sentence that defers. No faces, no logos beyond the ones we are entitled to use.
+
+## Video
+
+`samples/video/submission.mp4`, 109.9 s. Built by `scripts/make_video.py`; see `edit-plan.md`. Say in
+the video description: **both voices in the call are synthetic, the client is a model given a role,
+and the engineer's lines are the card's output verbatim.**

@@ -1,58 +1,50 @@
-# The 120-second cut
+# The submission video
 
-Runs 1:50, not 2:00. The two minutes lablab allows is a ceiling; ten seconds of filler costs more
-than it buys.
+`samples/video/submission.mp4`, 109.9 s, 1920x1080, built by one command and not edited by hand:
 
-Three sources: `samples/narration/*.wav` (Google Cloud TTS, `en-US-Chirp3-HD-Charon`), the masked
-demo clip, and whatever stills the title and closing cards need.
+```bash
+op run --env-file .env.op -- python -m scripts.live_counterpart diego --out samples/live/diego
+python scripts/make_narration.py
+python scripts/make_video.py --conversation samples/live/diego --exchanges 2
+```
 
-| At | Track | Source | Length |
-|---|---|---|---|
-| 0:00 | narration | `01-problem.wav` | 12.8 s |
-| 0:13 | narration | `02-demo-open.wav` | 6.6 s |
-| 0:20 | **demo footage starts** | `demo-final.mp4`, its own audio kept | 26 s |
-| 0:25 | *(in footage)* first turn ends | | |
-| 0:27 | *(in footage)* first card appears, 1,357 ms after the turn | | |
-| 0:27 | narration | `03-demo-card1.wav` | 5.0 s |
-| 0:38 | *(in footage)* correction ends | | |
-| 0:39 | *(in footage)* second card appears, 1,234 ms after the turn | | |
-| 0:39 | narration | `04-demo-card2.wav` | 6.1 s |
-| 0:46 | demo footage ends | | |
-| 0:47 | narration | `05-how.wav` | 24.6 s |
-| 1:12 | narration | `06-measured.wav` | 29.8 s |
-| 1:42 | narration | `07-closing.wav` | 7.9 s |
-| 1:50 | end | | |
+The first line is the only one that calls AssemblyAI and Gemini, and its output is kept, so the video
+can be rebuilt from the same conversation without paying for it again or getting a different one.
 
-The two narration cues inside the demo sit in gaps where nobody is speaking: 0:27–0:33 falls between
-the first card and the correction, and 0:39 onward falls after the second card. Neither talks over
-the synthetic voice, so the demo audio stays audible and unedited.
+| At | Screen | Sound |
+|---|---|---|
+| 0:00 | deck slide 1, the problem | `01-problem` |
+| 0:13 | the app, memo filled in, no card yet | `02-demo-open` — both voices are synthetic, the engineer says only what the card says |
+| 0:23 | **the call**: exchanges 1 and 2 with Diego | the call only, no narration over it |
+| 1:06 | deck slide 3, how it is built | `03-how` |
+| 1:24 | deck slide 4, the memo flips the decision | `04-measured` |
+| 1:40 | closing card with the replay and repository URLs | `05-closing` |
 
-Under the narration from 0:47 the demo can keep playing muted, or the slides can carry it — the
-architecture diagram under `05-how`, the run table under `06-measured`. What must not happen is a
-cut back to a card the recording never produced.
+## What is on screen during the call, and what is not
 
-Say once, on screen or in the description: **the remote participant is a synthetic voice.** The
-product's behaviour is real; a viewer should not have to guess whether a second person was there.
+Every frame is the app's own `index.html` and `app.js`, driven through `onMessage` and
+`renderSuggestion` with what the recorded run returned — the transcript from AssemblyAI, the card
+from `suggest()`. A strip along the bottom says it is a re-rendered recorded run, so it cannot pass
+for a screen recording. The debug log panel is hidden because its timestamps would be render time.
 
-## Already masked in `demo-final.mp4`
+Two simplifications, both named in `make_video.py`: a line that closed as several turns shows them
+at once with its last card only (the one intermediate card skipped in this cut was "nothing asked
+yet" on a greeting), and the partial transcript that streams while someone speaks is not drawn.
 
-The sharing bar across the top is filled black, and both participant name labels are blurred. The
-meeting code and the avatar initial are left as they are, deliberately.
+The card's latency label is the suggestion call alone (1,339 ms and 1,840 ms), which is what the
+app's own label measures from turn arrival; it has no HTTP round trip in it.
+
+## Why exchanges 1 and 2
+
+Exchange 1 is the request and the deferral. Exchange 2 is the client saying the engineer's word is
+enough, and the card deferring anyway — the one move a general-purpose assistant that wants to be
+helpful is worst at. Exchanges 3 and 4 repeat that under different pressure and would push the cut
+past two minutes. Exchanges 5 and 6 are where the card fails to notice the client changed the
+question, recorded in `docs/eval/stability.md`; they are not in the video, and the description says
+the defect exists.
 
 ## Cover image
 
-`docs/submission/cover.html`, rendered headless at 2× into
-`docs/submission/assets/cover-3200x1800.png` (1600×900 at 1×, the 16:9 lablab recommends):
-
-```
-& "$env:LOCALAPPDATA/ms-playwright/chromium-1234/chrome-win64/chrome.exe" `
-  --headless --disable-gpu --hide-scrollbars --force-device-scale-factor=2 `
-  --window-size=1600,900 --virtual-time-budget=6000 `
-  --screenshot=docs/submission/assets/cover-3200x1800.png `
-  "file:///$PWD/docs/submission/cover.html"
-```
-
-The card on it is the demo's first card word for word — utterance, open item, suggestion and the
-1,357 ms it took — so the cover, the deck and the video all show the same output rather than three
-different ones. At thumbnail width the title and the one-line promise carry it and the card reads as
-texture, which is what a card that small can honestly do.
+`docs/submission/cover.html`, rendered headless at 2x into `docs/submission/assets/cover-3200x1800.png`.
+The card on it is exchange 1's card word for word, so the cover, deck slide 2 and the video show the
+same output.
