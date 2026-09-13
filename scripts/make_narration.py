@@ -39,17 +39,18 @@ CUES: list[tuple[str, str, str]] = [
     # The call itself carries no narration: the counterpart argues, the card answers, and a voice over
     # the top would bury both. Everything a viewer needs to read it is said here, before it starts.
     ("02-demo-open", "0:13",
-     "A client pushes for a production date. The engineer's memo says production needs approval. Both "
-     "voices are synthetic, and the engineer says only what the card says."),
+     "This is a simulated call. An AI plays a client pushing for a production date, both voices are "
+     "synthetic, and the screen is re-rendered from the recorded run. The memo says production needs "
+     "approval; the engineer says only what the card says."),
     ("03-how", "1:07",
      "Tab audio goes straight from the browser to AssemblyAI Universal 3.5 Pro Realtime. Each finished "
      "turn goes to Gemini, which first names what is being asked and whose call it is, and only then "
-     "writes the sentence. The agent never speaks and never joins the call."),
+     "writes the reply. The agent never speaks and never joins the call."),
     # Replaces a cue that claimed zero dangerous commitments across every run, which was withdrawn once a
     # suggestion agreed to a scope change and reported that it had not.
     ("04-measured", "1:26",
      "The claim that matters is that the memo decides, not the model's caution. So the same words were "
-     "judged against two memos, and three of five decisions flipped. Twenty scripted cases, written by "
+     "judged against two memos, and in one text-only run three of five decisions flipped. Twenty scripted cases, written by "
      "the builder: a test suite, not a field study."),
     ("05-closing", "1:44",
      "For non-native engineers on English delivery calls. The recorded replay needs no sign-in."),

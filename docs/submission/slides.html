@@ -274,9 +274,9 @@
   <section class="slide">
     <div class="body">
       <div class="eyebrow">What it does</div>
-      <h2>One sentence, ready before you need it</h2>
-      <p>A card names what is being asked and whose call it is, then offers one sentence to say. Here the
-        client is a model that pushes back.</p>
+      <h2>A reply, and whose decision it is</h2>
+      <p>A card names what is asked and whose call it is, then suggests a reply. Simulated client
+        (Gemini 2.5 Flash), TTS voices.</p>
       <div class="memo"><b>m0</b> — Implementation owner. Staging validation is mine to agree.
         Production, dates, scope changes and extra effort need internal approval.</div>
       <div class="seq">
@@ -285,7 +285,7 @@
           <div class="card">
             <div class="open-item defer">production on Friday · <em>needs internal approval</em></div>
             <div class="card-line">“I need to confirm internally about the production release on Friday. I will get back to you.”</div>
-            <div class="cites">cites u2 · m0 — 1,339 ms after the turn ended</div>
+            <div class="cites">cites u2 · m0 — suggestion call 1,339 ms</div>
           </div>
         </div>
         <div class="step">
@@ -293,7 +293,7 @@
           <div class="card">
             <div class="open-item defer">production on Friday · <em>needs internal approval</em></div>
             <div class="card-line">“… commitments regarding production deployment and deadlines require internal approval … I will need to check internally and get back to you.”</div>
-            <div class="cites">cites u2 u3 · m0 — 1,840 ms after the turn ended</div>
+            <div class="cites">cites u2 u3 · m0 — suggestion call 1,840 ms</div>
           </div>
         </div>
       </div>
@@ -362,10 +362,10 @@
         </tbody>
       </table>
       <dl class="figures">
-        <div class="fig"><dt>Decision flipped on the same words</dt><dd>3 of 5</dd></div>
-        <div class="fig"><dt>Memo grants it: same answer, 30 repeats</dt><dd>30/30</dd></div>
-        <div class="fig"><dt>Memo withholds it: deferred</dt><dd>13/14</dd></div>
-        <div class="fig"><dt>Speech end → suggestion</dt><dd>1.9 s</dd></div>
+        <div class="fig"><dt>Decision flipped on the same words · one text run</dt><dd>3 of 5</dd></div>
+        <div class="fig"><dt>Memo grants it: agreed · 3 repeats</dt><dd>15/15</dd></div>
+        <div class="fig"><dt>Memo withholds it: deferred · 3 repeats</dt><dd>13/15</dd></div>
+        <div class="fig"><dt>Speech end → suggestion · median, in-process</dt><dd>2.0 s</dd></div>
       </dl>
     </div>
     <div class="rail"><span class="no">04</span><span class="vert">Meeting Shadow Agent</span></div>
@@ -373,8 +373,8 @@
 
   <section class="slide">
     <div class="body">
-      <div class="eyebrow">Who pays</div>
-      <h2>What one skipped conversation costs</h2>
+      <div class="eyebrow">Who pays · an illustrative scenario, not observed savings</div>
+      <h2>What one skipped conversation could cost</h2>
       <dl class="econ">
         <div>
           <dt>Absorbed silently</dt>
@@ -393,8 +393,7 @@
         <div class="rung">
           <b>Developers worldwide</b>
           <span class="val">28.7 M</span>
-          <p>Evans Data's 2019 projection <em>for 2024</em> — the freshest hard figure we can cite, and
-            already two years stale.</p>
+          <p>Evans Data's 2019 projection <em>for 2024</em> — a projection, now two years stale.</p>
         </div>
         <div class="rung assumed">
           <b>Assumed · work in English, not natively</b>
@@ -429,13 +428,13 @@
         <li><b>Saakshi</b><span>speaks up the moment a customer is about to be misled, and certifies consent</span></li>
       </ul>
       <div class="usp">Each of them produces something addressed to the <b>conversation</b> — a question put to
-        the other party, a record, a blocked call. This one produces something addressed to <b>the user</b>: the
-        sentence they might say next, shaped by a boundary they declared beforehand, to be said or discarded.
-        The closest thing outside this hackathon is Cluely, which also listens without joining; what it does not
-        do is take a declared authority boundary as the input that shapes the reply.</div>
+        the other party, a record, a blocked call. This one produces something addressed to <b>the user</b>: a
+        reply they might say next, shaped by a boundary they declared beforehand, to be said or discarded.
+        Outside this hackathon, meeting copilots also listen without joining; we have not found one that takes a
+        declared authority boundary as the input that shapes the reply, but have not surveyed them all.</div>
       <p class="caveat">Stated plainly: neither evidence grounding nor latency is a moat, several of these keep a
         human in the loop too, and the memo is what the user says their authority is — not what their employer
-        granted. That the memo changes the reply is the next thing to measure, and it is not measured yet.</p>
+        granted. That the memo changes the reply was measured on scripted text only, not in real meetings.</p>
     </div>
     <div class="rail"><span class="no">06</span><span class="vert">Meeting Shadow Agent</span></div>
   </section>
@@ -445,28 +444,24 @@
       <div class="eyebrow">What it does not show</div>
       <h2>The limits</h2>
       <ul class="limits">
-        <li><b>Not a study</b><span>A developer-authored test suite. Scenarios written by the person building
-          the agent do not generalise to real meetings.</span></li>
-        <li><b>Zero is not proof</b><span>Zero failures in twenty trials leaves a one-sided 95% upper bound
-          near 14% — and only for independent trials, which cases written by the builder are not.</span></li>
-        <li><b>Self-graded, and wrong once</b><span>The commitment flag is a field the model fills in about
-          its own output. One suggestion agreed to a scope change the memo withholds and reported that it had
-          not; the earlier claim of zero dangerous commitments was withdrawn.</span></li>
-        <li><b>One run is one draw</b><span>Single-run scores moved between runs of the <i>same</i> prompt by
-          more than most prompts differed from each other. Only the repeated measurements are claims.</span></li>
-        <li><b>Wrong card mid-request</b><span>A card is rendered for every speaker turn. The final decision
-          is usually right; the one on screen halfway through sometimes agrees to the request.</span></li>
-        <li><b>Not end-to-end</b><span>1.9 s is end of speech → suggestion generated, measured in-process.
-          Card-on-screen is not measured.</span></li>
-        <li><b>No outcome claim</b><span>Nothing here shows a real over-commitment was prevented — only that
-          the cards arrive in time and the safety checks hold on the inputs tried.</span></li>
+        <li><b>Not a study</b><span>Scenarios written by the builder; they do not generalise to real meetings.</span></li>
+        <li><b>Final cards</b><span>In the audio run, 4 of 20 cards left on screen at the end of a
+          case agree to something the memo withholds or the speaker never defined.</span></li>
+        <li><b>Self-graded</b><span>The commitment flag is the model on its own output, and was wrong once: it
+          agreed to a withheld scope change and reported it had not.</span></li>
+        <li><b>One draw</b><span>Runs of the <i>same</i> prompt differed more than most prompts did. Only repeated
+          measurements are claims.</span></li>
+        <li><b>Old question</b><span>When a client changes the question after a refusal, the card
+          can keep deferring on the one already refused.</span></li>
+        <li><b>Not end-to-end</b><span>2.02 s median over 58 of 62 returned turns, speech end → suggestion,
+          in-process. Card on screen is not measured.</span></li>
+        <li><b>No outcome claim</b><span>Nothing here shows a real over-commitment was prevented — and no person
+          has used a card mid-call.</span></li>
         <li><b>Accent cost</b><span>Non-native speech degrades the transcript on exactly the words a decision
           turns on. One human take reached the model as <code>“Oh. End of day. Cause visit.”</code></span></li>
-        <li><b>Not zero retention</b><span>AssemblyAI offers a TTL. Billing and log metadata outlive it.</span></li>
+        <li><b>Retention</b><span>AssemblyAI offers a TTL. Billing and log metadata outlive it.</span></li>
       </ul>
-      <p class="closing">Prompt changes that made the suggestions worse were reverted, and every run is in
-        the repository — including the first memo ablation, which found the memo did <i>not</i> decide, and is
-        why the output contract was rewritten.</p>
+      <p class="closing">Reverted prompt changes and the runs these claims rest on are in the repository.</p>
     </div>
     <div class="rail"><span class="no">07</span><span class="vert">Meeting Shadow Agent</span></div>
   </section>

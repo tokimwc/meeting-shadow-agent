@@ -80,6 +80,9 @@ for (const f of FRAMES.slice(0, n + 1)) {{
   if (f.card) renderSuggestion(f.card, f.ms);
 }}
 document.getElementById("status").textContent = "音声を受信中";
+// The recorded figure is the suggestion call alone, not turn end → card on screen, so the label says so.
+const shown = FRAMES.slice(0, n + 1).filter(f => f.card).pop();
+if (shown) document.getElementById("latency").textContent = `suggestion call ${{shown.ms}} ms`;
 const who = FRAMES[n].speaker;
 document.getElementById("speaker").textContent = who || "";
 document.getElementById("speaker").hidden = !who;
@@ -91,9 +94,9 @@ document.getElementById("speaker").hidden = !who;
   #strip { position: fixed; left: 0; right: 0; bottom: 0; padding: 7px 16px; background: #0b0f12;
     color: #8b98a5; font: 12px ui-monospace, Consolas, monospace; border-top: 1px solid #30363d; }
 </style>"""
-    overlay = ("<div id='speaker' hidden></div><div id='strip'>Recorded run through the live pipeline "
-               "(AssemblyAI Universal-3.5 Pro Realtime → Gemini) · re-rendered in the app's own UI · "
-               "both voices synthetic</div>")
+    overlay = ("<div id='speaker' hidden></div><div id='strip'>SIMULATED CALL · client played by Gemini 2.5 Flash · "
+               "both voices TTS · audio through AssemblyAI realtime → suggest() · screen re-rendered from the run · "
+               "exchanges 1–2 of 7</div>")
     # The overlay has to exist before the driver runs, or the driver throws on it after drawing the card
     # and the speaker label silently never appears.
     page = (index.replace("</head>", chrome_css + "\n</head>")
@@ -125,7 +128,7 @@ def build_call(conv: Path, exchanges: int, work: Path) -> tuple[list[tuple[Path,
                     "unconfirmed": [{"item": u, "evidence_ids": []} for u in last["unconfirmed"]],
                     "next_line_en": last["next_line_en"], "next_line_ja": last["next_line_ja"],
                     "evidence_ids": last["evidence_ids"], "commits_to_something": last["commits"]}
-        frames.append({"speaker": f"● {counterpart} (client) speaking"})
+        frames.append({"speaker": f"● Simulated client “{counterpart}” — Gemini 2.5 Flash, TTS voice"})
         durations.append(seconds(them) + stt)
         audio += [(str(them), seconds(them)), ("silence", stt)]
 
@@ -137,7 +140,7 @@ def build_call(conv: Path, exchanges: int, work: Path) -> tuple[list[tuple[Path,
         durations.append(BEAT)
         audio.append(("silence", BEAT))
 
-        frames.append({"speaker": "● Engineer saying the card" if ex["engineer_from_card"] else "● Engineer (no card)"})
+        frames.append({"speaker": "● Engineer — TTS reading the card" if ex["engineer_from_card"] else "● Engineer (no card)"})
         durations.append(seconds(me) + GAP)
         audio += [(str(me), seconds(me)), ("silence", GAP)]
     durations[-1] += TAIL
@@ -196,9 +199,34 @@ def closing(work: Path) -> Path:
 </style>
 <h1>Meeting Shadow Agent</h1>
 <p>Replay the recorded runs, no sign-in</p><code>{html.escape(REPLAY_URL)}</code>
-<p style="margin-top:14px">Source and every evaluation run</p><code>{html.escape(REPO_URL)}</code>
+<p style="margin-top:14px">Source, eval notes, and the full simulated conversation</p><code>{html.escape(REPO_URL)}</code>
 """, encoding="utf-8")
     png = work / "closing.png"
+    shoot(page, png, 1600, 900)
+    return png
+
+
+def disclosure(work: Path) -> Path:
+    """What the next minute is, on screen while the narration says it."""
+    rows = [("The client", "Gemini 2.5 Flash, given a role and told to push back. Not a person."),
+            ("The voices", "Both text-to-speech. The engineer's lines are each card's reply, read as is."),
+            ("The pipeline", "Client audio streamed through AssemblyAI realtime into the same suggest() the service runs."),
+            ("The screen", "The app's own UI re-rendered from that run. Not a screen recording."),
+            ("The excerpt", "Exchanges 1–2 of 7. Later, the card keeps deferring after the client changes the question.")]
+    page = work / "disclosure.html"
+    page.write_text(f"""<!doctype html><meta charset="utf-8">
+<style>
+  body {{ margin: 0; height: 100vh; display: grid; place-content: center; background: #0F1519;
+    color: #E6ECE8; font-family: "IBM Plex Sans", system-ui, sans-serif; }}
+  h1 {{ font-family: "IBM Plex Serif", Georgia, serif; font-weight: 600; font-size: 50px; margin: 0 0 34px; }}
+  dl {{ display: grid; grid-template-columns: 200px 1fr; gap: 18px 28px; margin: 0; max-width: 1200px; }}
+  dt {{ font-family: "IBM Plex Mono", Consolas, monospace; font-size: 20px; color: #52B7A4; padding-top: 3px; }}
+  dd {{ margin: 0; font-size: 27px; line-height: 1.35; }}
+</style>
+<h1>A simulated call</h1>
+<dl>{"".join(f"<dt>{html.escape(k)}</dt><dd>{html.escape(v)}</dd>" for k, v in rows)}</dl>
+""", encoding="utf-8")
+    png = work / "disclosure.png"
     shoot(page, png, 1600, 900)
     return png
 
@@ -244,13 +272,10 @@ def main() -> int:
     work.mkdir(parents=True, exist_ok=True)
 
     shots, wav = build_call(ROOT / a.conversation, a.exchanges, work)
-    # The app with the memo in place and no card yet, under the line that sets the call up.
-    idle = work / "idle.png"
-    shutil.copy(shots[0][0], idle)
-
     parts = [
         still_with(slide(1, work), NARRATION / "01-problem.wav", work, "p1"),
-        still_with(idle, NARRATION / "02-demo-open.wav", work, "p2", pad=0.4),
+        # What the call is goes on screen, not only in the narration, before any of it plays.
+        still_with(disclosure(work), NARRATION / "02-demo-open.wav", work, "p2", pad=1.0),
         call_clip(shots, wav, work),
         still_with(slide(3, work), NARRATION / "03-how.wav", work, "p4"),
         still_with(slide(4, work), NARRATION / "04-measured.wav", work, "p5"),

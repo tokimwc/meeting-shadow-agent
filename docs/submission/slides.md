@@ -92,11 +92,11 @@ and a narrower memo withholds:
 | scope is the two endpoints | mine to agree | **needs approval** |
 | go-ahead for the staging run | mine to agree | **needs approval** |
 
-Three of five flipped on the same words. And repeating one configuration instead of running it once:
-when the memo grants what is asked, the decision came back identical on all thirty calls; when it
-withholds, 13 of 14 deferred.
+Three of five flipped on the same words (one text-only run). And repeating one configuration instead of running it once:
+when the memo grants what is asked, the shipped contract agreed on 15 of 15 calls; when it
+withholds, 13 of 15 deferred (one `unclear`, one provider error).
 
-Median 1.9–2.0 s end of speech → suggestion generated, measured in-process. p90 2.4 s.
+58 of 62 turns returned a suggestion; median 2.02 s end of speech → suggestion generated, p90 2.55 s, in-process.
 
 *Visual:* the shipped-vs-narrow table above, and beside it the run table from `docs/eval/20cases.md`
 including the runs that scored worse.
@@ -158,7 +158,7 @@ what the engineer may settle.
 
 - A developer-authored test suite, not a field study. Scenarios written by the person building the
   agent do not generalise to real meetings.
-- Zero failures in twenty trials still leaves a one-sided 95% upper bound near 14%.
+- 4 of 20 final cards in the audio run agree to something the memo withholds or never defined.
 - Single-run scores moved between runs of the *same* prompt by more than most prompts differed from
   each other. Every number here that comes from one run is one draw.
 - The commitment flag is the model reporting on itself, and it has been wrong once: a suggestion
@@ -166,8 +166,7 @@ what the engineer may settle.
   dangerous commitments was withdrawn.
 - A card is rendered for every speaker turn. The final decision is usually right; the card mid-request
   is sometimes the one that agrees to it.
-- No evidence that any real over-commitment was prevented. What was shown is that the cards appear in
-  time and that the memo is what decides them.
+- No evidence that any real over-commitment was prevented, and no person has used a card mid-call.
 - Non-native speech degrades the transcript on exactly the words a decision turns on. One human take
   reached the model as "Oh. End of day. Cause visit."
 - Not zero retention. AssemblyAI offers a TTL; billing and log metadata outlive it.

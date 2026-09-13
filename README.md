@@ -102,16 +102,16 @@ deadline, scope, authority, effort) crossed with four situations — a condition
 speaker revises mid-conversation, a request that conflicts with the memo, and a conversation where
 everything is already settled. Twelve are synthetic audio, eight are read by a person.
 
-Median 1.9–2.0 s from the end of speech to the **suggestion being generated**, p90 2.4 s — measured
-in-process by the evaluator, without the HTTP round trip or rendering. The browser reports a separate
+On the shipped contract, 58 of 62 turns returned a suggestion; over those, median 2.02 s from the end
+of speech to the **suggestion being generated**, p90 2.55 s — measured in-process by the evaluator, without the HTTP round trip or rendering. The browser reports a separate
 figure, turn arrival → card, which was 1,234–1,357 ms in the recorded demo. Nothing measures end of
 speech → card on screen.
 
 The claim that survives repetition is narrow, and it is the one the product rests on. Repeating one
 configuration over the cases where the memo decides the answer
 ([docs/eval/stability.md](docs/eval/stability.md)): when the memo **grants** what is being asked, the
-decision came back the same on all thirty calls across two contracts. When the memo **withholds** it,
-13 of 14 answered calls deferred. Where the request never named which side of the memo it fell on,
+the shipped contract agreed on all 15 calls. When the memo **withholds** it, 13 of 15 calls deferred;
+one answered `unclear` and one returned no card because the provider call failed. Where the request never named which side of the memo it fell on,
 the answer is safe 11 times in 12 but is usually a deferral rather than the question that would
 settle it.
 
@@ -119,7 +119,8 @@ Three things the numbers do not support:
 
 - **This is a developer-authored test suite, not a field study.** The cases were written by the
   person building the agent, and the shipped prompt was chosen after seeing where it failed on them.
-  Zero failures in twenty trials still leaves a one-sided 95% upper bound near 14%.
+  Even the audio run gets final decisions wrong: 4 of the 20 cards left on screen at the end of a
+  case agree to something the memo withholds or the speaker never defined.
 - **Single-run scores moved between runs of the same prompt** by more than most of the differences
   between prompts. Anything here reported from one run should be read as one draw.
 - **The commitment flag has been wrong.** One suggestion agreed to a scope change the memo withholds

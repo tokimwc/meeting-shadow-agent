@@ -31,7 +31,7 @@ Two simplifications, both named in `make_video.py`: a line that closed as severa
 at once with its last card only (the one intermediate card skipped in this cut was "nothing asked
 yet" on a greeting), and the partial transcript that streams while someone speaks is not drawn.
 
-The card's latency label is the suggestion call alone (1,339 ms and 1,840 ms), which is what the
+The card's latency label is the suggestion call alone (1,339 ms and 1,840 ms, labelled "suggestion call"), which is what the
 app's own label measures from turn arrival; it has no HTTP round trip in it.
 
 ## Why exchanges 1 and 2
