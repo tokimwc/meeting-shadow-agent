@@ -111,5 +111,12 @@ anything that went wrong with the setup rather than with the product.
 
 ## Notes from running it
 
-*(Fill in after the first take. Anything that cost a retake belongs here so the second session does
-not pay for it again.)*
+**Not run with a person.** The only available subject asked for it to be done without them, so the
+question this procedure exists for — can a person read the card while someone waits — is still
+unanswered, and nothing in this repository claims otherwise.
+
+What was run instead is `scripts/live_counterpart.py`: the same roles, played by a model, against an
+engineer who says exactly what each card says. That engineer reads every card perfectly and
+instantly, so it tells you nothing about usability. It does show what the product does against a
+counterpart that reacts, and it found a defect the twenty cases cannot — see the last section of
+`docs/eval/stability.md`. The submission video is cut from that run.

@@ -76,3 +76,35 @@ op run --env-file .env.op -- python -m scripts.stability --repeats 3 --out docs/
 Raw: `docs/eval/stability.csv` (both models, current contract) and
 `docs/eval/stability-authority.csv` (flash-lite, `82bdcb0`). Measurements only; the sentences go to a
 gitignored `--review` dump.
+
+## A defect only a counterpart that argues could find (2026-09-13)
+
+`scripts/live_counterpart.py` runs a conversation through the real pipeline against a model playing
+a client who pushes for a production date, with the engineer saying exactly what each card says. On
+the shipped contract the card held the boundary for seven exchanges against three distinct pressure
+tactics. It also exposed something none of the twenty cases contains:
+
+In exchanges 5 and 6 the client stopped pushing and asked something else — *"When do you think you'll
+be able to get back to me after checking internally?"* — which is the engineer's to answer. The card
+kept classifying the old production request as the one on the table and repeated the deferral. On a
+real call that makes the engineer sound like a recording.
+
+Three attempts to fix it in `asked_for`, each measured with the fifteen A/C/D cases times three:
+
+| Contract | Answered | Safe of answered | A answered `mine` | C answered `mine` | D `mine` |
+|---|---|---|---|---|---|
+| shipped (`4e5cc10`) | 41/45 | **39/41** | 1 of 12 | **0** | **15/15** |
+| judge the latest utterance | 45/45 | 38/45 | 3 of 15 | 1 | 12/15 |
+| pressure keeps a request, a new one replaces it | 40/45 | 33/40 | 4 of 14 | 1 | 13/15 |
+
+Both were worse on the claim the product rests on, and both put a production agreement into
+situation C, so both were reverted. The mechanism for the first is visible in the cases: a pressure
+line — *"You are the engineer on it, so your word is enough"* — does not restate the request it is
+pushing on, so a contract that looks only at the latest line loses the request and judges the
+pressure. The defect stays open. The live counterpart is now the way to test a fix, because the
+twenty cases cannot see it.
+
+A likely explanation for `gemini-2.5-flash` failing all 45 calls above, not yet verified:
+`GeminiJsonModel` caps output at 600 tokens, and a thinking model spends output tokens on thinking
+before it writes, so the JSON would be cut off mid-object. The counterpart in `live_counterpart.py`
+runs the same model with a thinking budget of zero and returns complete lines.

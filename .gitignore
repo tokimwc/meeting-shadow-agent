@@ -26,3 +26,6 @@ docs/eval/review-*.json
 samples/demo-lines.wav
 .cache/
 samples/narration/
+# Generated conversations: model text and synthesised audio, reproducible from the script.
+samples/live/
+samples/video/
