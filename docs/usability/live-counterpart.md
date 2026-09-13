@@ -11,7 +11,11 @@ counterpart is a voice assistant given a role and no script — it pushes back o
 hears.
 
 This also produces the demo recording, which until now was planned as WAV playback. A counterpart
-that argues shows the thing the product exists for; a recording cannot.
+that argues shows the thing the product exists for; a recording cannot. **But the engineer's own voice
+must not be in anything published** — that was decided earlier, and is why the demo narration is
+synthesised. Record with the recorder's microphone input off and system audio on; the microphone still
+reaches the counterpart through the browser, which is a separate path. Write down what you said right
+after each take, because nothing else keeps it: those lines become the captions.
 
 ## What this can and cannot show
 
@@ -45,8 +49,13 @@ Two browser tabs. No Google Meet, no second account, no guest window.
 That is the product's own rule — it only ever hears the other side — and this setup satisfies it
 without any special handling.
 
-Start the screen recording on tab B with tab A audible, then speak. Answer as yourself, out loud, as
-you would on a real call.
+Use headphones. Through speakers the counterpart's voice reaches the microphone, it hears itself and
+the conversation falls apart.
+
+Start the screen recording on tab B with tab A audible, then speak. What to say is the card: read the
+sentence it shows, or your own version of it, and do not prepare answers in advance. If the card is not
+there in time, or you cannot read it and answer in your own words instead, that is the result — carry
+on.
 
 One prerequisite was already paid for: the deployed session cap was 90 seconds, and the client stops
 hard at it with no reconnection, so every take would have been cut off mid-conversation. It is now
