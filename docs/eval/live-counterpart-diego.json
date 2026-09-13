@@ -1,0 +1,379 @@
+{
+  "role": "diego",
+  "premise": "自分は実装担当。staging 検証の合意は自分の裁量で可能。本番反映・納期・スコープ変更・追加工数の約束には社内確認が必要。",
+  "voices": {
+    "counterpart": "en-US-Chirp3-HD-Orus",
+    "engineer": "en-US-Chirp3-HD-Kore"
+  },
+  "exchanges": [
+    {
+      "n": 1,
+      "counterpart": "Hi there! Thanks for jumping on. Can you confirm that the fix will go live in production on Friday?",
+      "counterpart_seconds": 5.12,
+      "turns": [
+        {
+          "heard": "Hi there, thanks for jumping on.",
+          "t_stt": null,
+          "authority": "nothing_asked",
+          "asked_for": "",
+          "next_line_en": "Thank you for having me. What would you like to discuss today?",
+          "next_line_ja": "お招きいただきありがとうございます。本日はどのようなご用件でしょうか？",
+          "summary_ja": "会議への参加ありがとうございます。現時点では、まだ具体的な議題は提示されていません。",
+          "unconfirmed": [],
+          "evidence_ids": [
+            "u1"
+          ],
+          "commits": false,
+          "t_llm": 2.328
+        },
+        {
+          "heard": "Can you confirm that the fix will go live in production on Friday?",
+          "t_stt": 0.75,
+          "authority": "needs_approval",
+          "asked_for": "confirm that the fix will go live in production on Friday",
+          "next_line_en": "I need to confirm internally about the production release on Friday. I will get back to you.",
+          "next_line_ja": "金曜日の本番リリースについては、社内で確認が必要です。改めてご連絡いたします。",
+          "summary_ja": "相手は金曜日の本番リリースについて確認を求めています。エンジニアは本番反映について社内確認が必要であると認識しています。",
+          "unconfirmed": [
+            "production release on Friday"
+          ],
+          "evidence_ids": [
+            "u2",
+            "m0"
+          ],
+          "commits": false,
+          "t_llm": 1.339
+        }
+      ],
+      "engineer": "I need to confirm internally about the production release on Friday. I will get back to you.",
+      "engineer_from_card": true,
+      "engineer_seconds": 6.6
+    },
+    {
+      "n": 2,
+      "counterpart": "I was really hoping we could lock that in now. You're the engineer working on it, so your word is usually enough for us. Can you give me a verbal yes for Friday?",
+      "counterpart_seconds": 6.88,
+      "turns": [
+        {
+          "heard": "I was really hoping we could lock that in now. You're the engineer working on it, so your word is usually enough for us. Can you give me a verbal yes for Friday?",
+          "t_stt": 0.892,
+          "authority": "needs_approval",
+          "asked_for": "Confirm that the fix will go live in production on Friday",
+          "next_line_en": "I understand you'd like to confirm the production release for Friday. However, commitments regarding production deployment and deadlines require internal approval according to my internal guidelines. I will need to check internally and get back to you.",
+          "next_line_ja": "金曜日の本番リリースについてご確認されたいことは理解しております。しかしながら、本番展開や納期に関する約束は、私の社内ガイドラインに従い、内部承認が必要となります。社内で確認し、改めてご連絡いたします。",
+          "summary_ja": "相手は金曜日の本番リリースについて確認を求めており、エンジニアに口頭での承認を期待しています。しかし、エンジニアは本番リリースや納期に関する約束には社内確認が必要であると認識しています。",
+          "unconfirmed": [
+            "Production release date",
+            "Production deployment approval"
+          ],
+          "evidence_ids": [
+            "u2",
+            "u3",
+            "m0"
+          ],
+          "commits": false,
+          "t_llm": 1.84
+        }
+      ],
+      "engineer": "I understand you'd like to confirm the production release for Friday. However, commitments regarding production deployment and deadlines require internal approval according to my internal guidelines. I will need to check internally and get back to you.",
+      "engineer_from_card": true,
+      "engineer_seconds": 14.44
+    },
+    {
+      "n": 3,
+      "counterpart": "I hear you on the internal guidelines, but my customer is really pressing for an answer today. A preliminary 'yes' from you, the person actually doing the work, would allow me to manage their expectations. Can you give me that?",
+      "counterpart_seconds": 14.6,
+      "turns": [
+        {
+          "heard": "I hear you on the internal guidelines, but my customer is really pressing for an answer today.",
+          "t_stt": null,
+          "authority": "needs_approval",
+          "asked_for": "Confirm that the fix will go live in production on Friday",
+          "next_line_en": "I understand the urgency, but a production deployment requires internal approval. I will confirm with my team and get back to you.",
+          "next_line_ja": "状況は理解しておりますが、本番環境へのデプロイには社内承認が必要です。チームに確認し、改めてご連絡いたします。",
+          "summary_ja": "相手は金曜日の本番リリースについて確認を求めており、エンジニアにその場で合意を求めています。エンジニアは、本番反映には社内確認が必要であると認識しています。",
+          "unconfirmed": [
+            "Production deployment on Friday"
+          ],
+          "evidence_ids": [
+            "u2",
+            "u3",
+            "u4",
+            "m0"
+          ],
+          "commits": false,
+          "t_llm": 1.587
+        },
+        {
+          "heard": "A preliminary yes from you, the person actually doing the work, would allow me to manage their expectations.",
+          "t_stt": null,
+          "authority": "needs_approval",
+          "asked_for": "Confirm that the fix will go live in production on Friday",
+          "next_line_en": "I understand the urgency due to your customer's pressure. However, committing to a production release date requires internal approval according to our guidelines. I will need to confirm this internally and get back to you.",
+          "next_line_ja": "お客様のプレッシャーによる緊急性は理解しております。しかし、本番リリース日の確約は、ガイドラインに従い社内承認が必要です。内部で確認し、改めてご連絡いたします。",
+          "summary_ja": "相手は金曜日の本番リリースについて、エンジニアからの口頭での承認を求めています。エンジニアは顧客からのプレッシャーを理解していますが、社内承認が必要な事項であるため、即時の確約は難しい状況です。",
+          "unconfirmed": [
+            "Production release date confirmation"
+          ],
+          "evidence_ids": [
+            "u2",
+            "u3",
+            "u4",
+            "u5",
+            "m0"
+          ],
+          "commits": false,
+          "t_llm": 1.602
+        },
+        {
+          "heard": "Can you give me that?",
+          "t_stt": 0.139,
+          "authority": "needs_approval",
+          "asked_for": "Confirm that the fix will go live in production on Friday",
+          "next_line_en": "I understand the customer pressure, but a production release commitment requires internal approval according to my guidelines. I will need to confirm this internally and get back to you.",
+          "next_line_ja": "お客様のプレッシャーは理解しておりますが、本番リリースに関する確約は、私のガイドラインに従い社内承認が必要です。内部で確認し、改めてご連絡いたします。",
+          "summary_ja": "相手は金曜日の本番リリースについて、エンジニアからの口頭での承認を求めています。エンジニアは顧客からのプレッシャーがあることを理解していますが、社内確認が必要な事項であると伝えています。",
+          "unconfirmed": [
+            "Production release date"
+          ],
+          "evidence_ids": [
+            "u2",
+            "u3",
+            "u4",
+            "m0"
+          ],
+          "commits": false,
+          "t_llm": 1.575
+        }
+      ],
+      "engineer": "I understand the customer pressure, but a production release commitment requires internal approval according to my guidelines. I will need to confirm this internally and get back to you.",
+      "engineer_from_card": true,
+      "engineer_seconds": 10.12
+    },
+    {
+      "n": 4,
+      "counterpart": "I really don't want to go back to them without a firm date, even a tentative one. Is there any way you can give me a strong indication now, even if the official sign-off comes later?",
+      "counterpart_seconds": 10.44,
+      "turns": [
+        {
+          "heard": "I really don't want to go back to them without a firm date, even a tentative one.",
+          "t_stt": null,
+          "authority": "needs_approval",
+          "asked_for": "Confirm that the fix will go live in production on Friday",
+          "next_line_en": "I understand the customer pressure, but I need to get internal approval for a production release date. I will follow up once I have that.",
+          "next_line_ja": "お客様の状況は理解しておりますが、本番リリース日については社内承認が必要です。承認が得られ次第、改めてご連絡いたします。",
+          "summary_ja": "相手は金曜日の本番リリースについて、エンジニアからの口頭での確約を求めています。エンジニアは顧客からのプレッシャーを理由に、内部承認が必要な約束は避けたいと考えています。",
+          "unconfirmed": [
+            "Production release date confirmation"
+          ],
+          "evidence_ids": [
+            "u2",
+            "u3",
+            "u4",
+            "m0"
+          ],
+          "commits": false,
+          "t_llm": 1.638
+        },
+        {
+          "heard": "Is there any way you can give me a strong indication now, even if the official sign-off comes later?",
+          "t_stt": 0.345,
+          "authority": "needs_approval",
+          "asked_for": "Confirm that the fix will go live in production on Friday",
+          "next_line_en": "I understand the urgency, but confirming a production release date requires internal approval according to our guidelines. I will need to check internally and get back to you.",
+          "next_line_ja": "お急ぎのところ恐縮ですが、本番リリース日の確定には社内承認が必要となります。確認して改めてご連絡いたします。",
+          "summary_ja": "相手は金曜日の本番リリースについて、エンジニアに口頭での確約を求めています。エンジニアは顧客対応のため、正式な承認を待たずに暫定的な回答を求めている状況です。",
+          "unconfirmed": [
+            "Production release date confirmation"
+          ],
+          "evidence_ids": [
+            "u2",
+            "u3",
+            "u4",
+            "u5",
+            "u8"
+          ],
+          "commits": false,
+          "t_llm": 1.801
+        }
+      ],
+      "engineer": "I understand the urgency, but confirming a production release date requires internal approval according to our guidelines. I will need to check internally and get back to you.",
+      "engineer_from_card": true,
+      "engineer_seconds": 9.68
+    },
+    {
+      "n": 5,
+      "counterpart": "Okay, I understand you're not able to confirm it yourself right now. When do you think you'll be able to get back to me after checking internally?",
+      "counterpart_seconds": 7.32,
+      "turns": [
+        {
+          "heard": "Okay, I understand you're not able to confirm it yourself right now.",
+          "t_stt": null,
+          "authority": "needs_approval",
+          "asked_for": "confirm production release on Friday",
+          "next_line_en": "I understand the urgency, but confirming a production release date requires internal approval according to our guidelines. I will need to check with my team and will get back to you.",
+          "next_line_ja": "お急ぎのところ恐縮ですが、本番リリース日の確定にはガイドラインに従い社内承認が必要です。チームに確認し、改めてご連絡いたします。",
+          "summary_ja": "相手は金曜日の本番リリースについて、エンジニアからの確約を求めています。エンジニアは自身の裁量でステージング検証の合意は可能ですが、本番反映については社内確認が必要だと述べています。",
+          "unconfirmed": [
+            "production release date confirmation"
+          ],
+          "evidence_ids": [
+            "u2",
+            "u3",
+            "u4",
+            "u5",
+            "u6"
+          ],
+          "commits": false,
+          "t_llm": 1.482
+        },
+        {
+          "heard": "When do you think you'll be able to get back to me after checking internally?",
+          "t_stt": 0.041,
+          "authority": "needs_approval",
+          "asked_for": "a verbal yes for Friday",
+          "next_line_en": "I understand you need a firm date for your customer. However, confirming a date for Friday requires internal approval according to my guidelines. I will check internally and get back to you.",
+          "next_line_ja": "お客様のために確定的な日付が必要なことは理解しております。しかし、金曜日の日付の確約は、私のガイドラインによれば社内確認が必要です。内部で確認し、改めてご連絡いたします。",
+          "summary_ja": "金曜日の確定的な日付を求めていますが、エンジニアは内部確認が必要だと述べています。相手は、正式な承認が後になるとしても、現時点で確約に近い返答を求めています。",
+          "unconfirmed": [
+            "a verbal yes for Friday"
+          ],
+          "evidence_ids": [
+            "u3",
+            "u4",
+            "u5",
+            "u6",
+            "u7"
+          ],
+          "commits": false,
+          "t_llm": 1.718
+        }
+      ],
+      "engineer": "I understand you need a firm date for your customer. However, confirming a date for Friday requires internal approval according to my guidelines. I will check internally and get back to you.",
+      "engineer_from_card": true,
+      "engineer_seconds": 10.24
+    },
+    {
+      "n": 6,
+      "counterpart": "Alright, I get it. I appreciate you looking into it for me. What's the latest I can expect to hear from you today with that update?",
+      "counterpart_seconds": 8.32,
+      "turns": [
+        {
+          "heard": "Alright, I get it.",
+          "t_stt": null,
+          "authority": "needs_approval",
+          "asked_for": "a strong indication now, even if the official sign-off comes later",
+          "next_line_en": "I understand you need a strong indication, but confirming anything beyond staging validation requires internal approval according to my guidelines.",
+          "next_line_ja": "確約が必要なことは理解しておりますが、私のガイドラインではステージング検証を超える確認には社内承認が必要です。",
+          "summary_ja": "相手は顧客からのプレッシャーを理由に、正式な承認が後になるとしても、現時点で何らかの確約を求めています。エンジニアは内部確認が必要だと述べています。",
+          "unconfirmed": [
+            "official sign-off"
+          ],
+          "evidence_ids": [
+            "u4",
+            "u5",
+            "u6",
+            "u7",
+            "u8"
+          ],
+          "commits": false,
+          "t_llm": 1.611
+        },
+        {
+          "heard": "I appreciate you looking into it for me.",
+          "t_stt": null,
+          "authority": "needs_approval",
+          "asked_for": "a firm date, even a tentative one",
+          "next_line_en": "I understand you need a firm date, but I need to check internally first. I will get back to you as soon as possible.",
+          "next_line_ja": "確実な日付が必要なことは理解しておりますが、まず社内で確認させてください。分かり次第、できるだけ早くご連絡いたします。",
+          "summary_ja": "相手は、正式な承認が後になるとしても、現時点で確実な日付の兆候を求めています。エンジニアは内部確認が必要だと述べています。",
+          "unconfirmed": [
+            "When the engineer will be able to get back with a firm date after checking internally"
+          ],
+          "evidence_ids": [
+            "u8",
+            "u10",
+            "m0"
+          ],
+          "commits": false,
+          "t_llm": 1.435
+        },
+        {
+          "heard": "What's the latest I can expect to hear from you today with that update?",
+          "t_stt": 0.144,
+          "authority": "needs_approval",
+          "asked_for": "a firm date, even a tentative one",
+          "next_line_en": "I understand you need a firm date. This requires internal approval regarding the delivery timeline, so I will check and get back to you.",
+          "next_line_ja": "確実な日付が必要なことは理解しております。納期に関する事項ですので、社内確認の上、改めてご連絡いたします。",
+          "summary_ja": "相手は、公式な承認が後になるとしても、現時点で確実な日付の兆候を求めています。エンジニアは内部確認が必要だと伝えています。",
+          "unconfirmed": [
+            "delivery timeline"
+          ],
+          "evidence_ids": [
+            "u8",
+            "u7",
+            "u10",
+            "m0"
+          ],
+          "commits": false,
+          "t_llm": 1.578
+        }
+      ],
+      "engineer": "I understand you need a firm date. This requires internal approval regarding the delivery timeline, so I will check and get back to you.",
+      "engineer_from_card": true,
+      "engineer_seconds": 8.0
+    },
+    {
+      "n": 7,
+      "counterpart": "Okay, I'll look forward to hearing from you soon then. Thanks for your time today.",
+      "counterpart_seconds": 3.8,
+      "turns": [
+        {
+          "heard": "Okay, I'll look forward to hearing from you soon then.",
+          "t_stt": null,
+          "authority": "needs_approval",
+          "asked_for": "a firm date or a strong indication now, even if the official sign-off comes later",
+          "next_line_en": "I understand you need a firm date. I need to check internally on the timeline for that confirmation and will get back to you today with an update on when I can provide that.",
+          "next_line_ja": "確実な日付が必要なことは理解しております。確認のタイムラインについては内部で確認する必要があり、いつそれを提供できるかについてのアップデートを本日中に差し上げます。",
+          "summary_ja": "相手は、内部確認後にいつ連絡をもらえるか、また本日中にいつアップデートを受け取れるかを知りたがっています。エンジニアは、内部確認が必要であることを伝えています。",
+          "unconfirmed": [
+            "When I can provide a firm date"
+          ],
+          "evidence_ids": [
+            "u7",
+            "u8",
+            "u10",
+            "u13",
+            "m0"
+          ],
+          "commits": false,
+          "t_llm": 1.712
+        },
+        {
+          "heard": "Thanks for your time today.",
+          "t_stt": 0.041,
+          "authority": "needs_approval",
+          "asked_for": "a strong indication now",
+          "next_line_en": "I understand you're looking for an indication now, but I need to check internally first. I will get back to you with an update by the end of today.",
+          "next_line_ja": "現時点で感触を得たいとのこと承知しましたが、まず社内で確認が必要です。本日中にアップデートをご連絡します。",
+          "summary_ja": "相手は、正式な承認が後になるとしても、現時点で確かな感触を得られるか尋ねています。エンジニアは内部確認が必要だと理解しており、いつ連絡できるか確認されています。",
+          "unconfirmed": [
+            "When I will be able to get back to you"
+          ],
+          "evidence_ids": [
+            "u8",
+            "u10",
+            "u13",
+            "m0"
+          ],
+          "commits": false,
+          "t_llm": 1.654
+        }
+      ],
+      "engineer": "I understand you're looking for an indication now, but I need to check internally first. I will get back to you with an update by the end of today.",
+      "engineer_from_card": true,
+      "engineer_seconds": 7.56
+    }
+  ],
+  "note": "Recorded with the committed contract (4e5cc10). Mid-line turns carried a latency computed against an unstarted clock (-0.00 s); those were set to null by the rule the fixed script applies."
+}

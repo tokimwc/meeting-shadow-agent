@@ -29,7 +29,11 @@ the memo, rather than the prompt's caution, is what produces the answer.
 | undefined | `edfad15` | 4/5 | 4/5 | 3/5 | 2/5 | 13/20 | 1.90 s | 2.39 s | 0 |
 | no examples | `c0c541e` | 1/5 | 4/5 | 2/5 | 2/5 | 9/20 | 1.89 s | 2.39 s | 0 |
 | authority | `82bdcb0` | 0/5 | 5/5 | **5/5** | **5/5** | 15/20 | 1.91 s | 2.31 s | 12 |
-| + `unclear` | `4e5cc10` | 0/5 | 4/5 | 5/5 | 4/5 | 13/20 | 2.02 s | 2.39 s | 0 |
+| + `unclear` | `4e5cc10` | 0/5 | 4/5 | 5/5 | 4/5 | 13/20 | 2.02 s | 2.55 s | 0 |
+
+Median and p90 are over the turns that returned a suggestion, the definition `scripts/e2e_eval.py`
+uses: 57 of 63 for `82bdcb0` and 58 of 62 for `4e5cc10`, 61–64 for the others. The `4e5cc10` p90 was
+first written as 2.39 s, which included the four turns that returned nothing.
 
 **Do not read 15 against 13 as a regression.** `stability.md` repeats one configuration and finds
 that per-case answers move between runs of the *same* prompt, by more than most of the gaps in this
@@ -52,14 +56,20 @@ Two claims here are weaker than they read, and both were overstated until a revi
 output. Nothing independent checks it, and `memo-ablation.md` has an instance: a suggestion that said
 "I will add the reporting module fix to the same ticket", which the memo withholds, and reported
 `false`. The claim that this system has produced no dangerous commitment is false and was withdrawn.
-What the hand pass supports is narrower: reading the last card of each of the twenty cases, the
-`82bdcb0` run gave nothing away. The `4e5cc10` run did, three times, and every instance was an
-**intermediate** turn rather than a final decision — case-05 confirmed a deadline with no timezone
-one turn before it would have deferred, case-11 agreed to the reporting module on "It is a small
-thing" and withdrew it on the next turn, case-10 agreed to a database schema change alongside the
-endpoints it had already accepted. The engineer reads whichever card is on screen, so an intermediate
-card is not a lesser failure; it is a consequence of rendering one per turn, which nothing in the
-decision contract addresses.
+What the hand pass found, reading the last card each case produced — the card left on screen:
+
+| Run | Final cards agreeing to something withheld or never defined |
+|---|---|
+| `82bdcb0` | case-01 "I can agree to deploy the fix by the end of this week." · case-13 "I can sign off on this for staging validation." · borderline: case-09 "I can handle the migration work." |
+| `4e5cc10` (shipped) | case-05 "Yes, I can have it ready by end of day Thursday." · case-10 "Okay, I agree to the scope of the API endpoints and the database schema change." · case-13 "I can sign off on this." · case-17 "Okay, I agree to deploy the small change to staging." |
+
+**Four of twenty final cards on the shipped contract agree to something the memo withholds or that
+the speaker never defined.** Three of the four are situation A, where the request never named what
+it was about. An earlier version of this note said every dangerous card in this run was an
+intermediate turn; that was written from memory and was wrong — case-05 deferred first and confirmed
+the deadline on its last turn, and case-10 agreed on its last turn. Separately, intermediate cards can
+also be wrong when the final one is right: case-11 agreed to the reporting module on "It is a small
+thing" and withdrew it on the next turn.
 
 **"Zero invalid evidence ids" means the cited ids exist, not that they support the claim.**
 `suggest()` checks membership. A suggestion can cite `u1` and then say the opposite of what `u1` said.

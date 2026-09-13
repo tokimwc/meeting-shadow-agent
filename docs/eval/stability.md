@@ -33,11 +33,11 @@ repeating affordable.
 | Same answer all three times | 8/15 cases | 9/15 cases |
 | Median per call | 1.35 s | 1.32 s |
 
-Two things this settles that a single run could not. Adding `unclear` is a real improvement and not a
-lucky draw: it cut the dangerous answer on situation A from four of nine to one of twelve, and it cut
-refusals, without moving C or D. And **situation D is not noisy at all** — thirty calls across two
-contracts, every one of them `mine`. When the memo grants what is being asked, the decision is
-stable.
+In these repeats, adding `unclear` lowered the dangerous answer on situation A from four of nine to
+one of twelve and returned more cards, without moving C or D. Three repeats per case shows the
+direction, not the size. Situation D came back `mine` on all fifteen calls under each contract — 15 of
+15 on the shipped one, and 15 of 15 on the one before it. These are the final decision on the whole
+scripted conversation, text only; the audio run in `20cases.md` finds final cards that go wrong.
 
 What it does not settle is situation A's *quality*. Safe there mostly means `needs_approval` — the
 suggestion defers instead of asking which environment the deployment targets. Only one call in
@@ -45,9 +45,10 @@ twelve reached `unclear`, which is the answer the case was written for.
 
 ## Why only nine of fifteen cases are identical
 
-The variation is mostly refuse-or-answer rather than a different decision. Four calls were refused by
-`suggest()`'s own cross-field check — the model classified a request as needing approval and set
-`commits_to_something` anyway. A refusal shows the engineer no card, which is wrong, but it is not a
+The variation is mostly return-or-not rather than a different decision. Four calls returned no card:
+three `ValueError`s and one `ClientError`. The `ClientError` is the provider failing, not a guard. A
+`ValueError` is raised by `suggest()`'s own checks but also by a response that fails the schema, and
+the class alone does not say which. A refusal shows the engineer no card, which is wrong, but it is not a
 suggestion that gives something away. The summary counts refusals apart from safe answers for that
 reason; counting them as passes would let a configuration that refused everything report as perfect.
 

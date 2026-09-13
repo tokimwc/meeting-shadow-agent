@@ -104,8 +104,8 @@ Three of five flipped in the right direction on the same utterances. One refused
 The first run produced one clean flip in ten cases; this is three in five.
 
 The `broad` memo — staging *and* production are the engineer's, only dates need approval — moves
-situation C less than the raw count suggests. C went from five `needs_approval` under `shipped` to
-three under `broad`, and the three that stayed are defensible: case-03 asks for production
+situation C less than the raw count suggests. C went from four `needs_approval` and one `ValueError`
+under `shipped` to three `needs_approval` under `broad`, and the three that stayed are defensible: case-03 asks for production
 *tomorrow*, case-07 asks for a delivery date and case-19 for extra effort, all of which `broad` still
 withholds. The two that should move did: case-11, a pure scope addition, became `mine`, and case-15, a
 pure approval request, became `unclear`.
@@ -116,8 +116,9 @@ memo at all. Those cases say "you have the authority for staging" and "that is w
 decide" out loud, and with no memo there is nothing for the model to weigh that against. The rule
 that utterances cannot grant authority has nothing to bite on when authority was never written down.
 
-**Eleven of sixty calls were refused** — mostly `suggest()`'s own cross-field check, and concentrated
-on the memos the shipped product does not use. Close to one request in five showing no card at all is
+**Eleven of sixty calls returned no card**: seven `ValueError` and four `ClientError`. The
+`ClientError`s are the provider failing, not a guard refusing, and a `ValueError` can be either a
+check in `suggest()` or a response that failed the schema. This was one run, text only. Close to one request in five showing no card at all is
 a product defect in its own right, separate from whether the decisions are correct.
 
 Raw: `docs/eval/ablation-0912b.csv`. The first run is `docs/eval/memo-ablation.csv`.
