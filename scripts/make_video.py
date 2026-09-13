@@ -33,7 +33,8 @@ REPLAY_URL = "tokimwc.github.io/meeting-shadow-agent/replay"
 REPO_URL = "github.com/tokimwc/meeting-shadow-agent"
 
 # Pacing of the call. The card's arrival is measured; these are only the pauses around speech.
-LEAD, BEAT, GAP, TAIL = 0.6, 1.0, 0.6, 1.0
+# BEAT is a pause after the card lands so its verdict can be read; it is not part of any measured time.
+LEAD, BEAT, GAP, TAIL = 0.6, 2.2, 0.6, 1.0
 
 
 def chrome() -> str:
@@ -83,6 +84,28 @@ document.getElementById("status").textContent = "音声を受信中";
 // The recorded figure is the suggestion call alone, not turn end → card on screen, so the label says so.
 const shown = FRAMES.slice(0, n + 1).filter(f => f.card).pop();
 if (shown) document.getElementById("latency").textContent = `suggestion call ${{shown.ms}} ms`;
+// Where to look: a red box around the part of the screen this moment is about, with a label in English
+// because the app's own headings are Japanese.
+const FOCUS = {{
+  listen: [["#turns", "#partial"], "① The client speaks — AssemblyAI transcribes it here, live"],
+  verdict: [["#verdict"], "② The card: what is being asked, and whose decision it is"],
+  reply: [["#nextEn", "#nextJa"], "③ The reply the engineer says, read straight from the card"],
+}};
+const focus = FOCUS[FRAMES[n].focus];
+if (focus) {{
+  const els = focus[0].map(s => document.querySelector(s));
+  if (focus[0][0] === "#turns") els.push([...document.querySelectorAll("main h2")].find(h => h.textContent.includes("聞こえている英語")));
+  if (focus[0][0] === "#verdict") els.push(els[0].previousElementSibling);
+  if (focus[0][0] === "#nextEn") els.push(els[0].previousElementSibling);
+  const rs = els.filter(Boolean).map(e => e.getBoundingClientRect());
+  const top = Math.min(...rs.map(r => r.top)) - 10, left = Math.min(...rs.map(r => r.left)) - 12;
+  const right = Math.max(...rs.map(r => r.right)) + 12;
+  const bottom = Math.max(Math.max(...rs.map(r => r.bottom)) + 10, top + 90);
+  const box = document.getElementById("focus");
+  Object.assign(box.style, {{ top: top + "px", left: left + "px", width: (right - left) + "px", height: (bottom - top) + "px" }});
+  box.querySelector("span").textContent = focus[1];
+  box.hidden = false;
+}}
 const who = FRAMES[n].speaker;
 document.getElementById("speaker").textContent = who || "";
 document.getElementById("speaker").hidden = !who;
@@ -93,8 +116,12 @@ document.getElementById("speaker").hidden = !who;
     background: #1f2a33; color: #e6edf3; font: 600 13px system-ui, sans-serif; letter-spacing: .02em; }
   #strip { position: fixed; left: 0; right: 0; bottom: 0; padding: 7px 16px; background: #0b0f12;
     color: #8b98a5; font: 12px ui-monospace, Consolas, monospace; border-top: 1px solid #30363d; }
+  #focus { position: fixed; border: 4px solid #ff3b30; border-radius: 6px; box-shadow: 0 0 0 9999px rgba(0,0,0,.28);
+    pointer-events: none; }
+  #focus span { position: absolute; left: -4px; bottom: 100%; margin-bottom: 6px; white-space: nowrap;
+    background: #ff3b30; color: #fff; font: 700 15px system-ui, sans-serif; padding: 5px 10px; border-radius: 4px; }
 </style>"""
-    overlay = ("<div id='speaker' hidden></div><div id='strip'>SIMULATED CALL · client played by Gemini 2.5 Flash · "
+    overlay = ("<div id='focus' hidden><span></span></div><div id='speaker' hidden></div><div id='strip'>SIMULATED CALL · client played by Gemini 2.5 Flash · "
                "both voices TTS · audio through AssemblyAI realtime → suggest() · screen re-rendered from the run · "
                "exchanges 1–2 of 7</div>")
     # The overlay has to exist before the driver runs, or the driver throws on it after drawing the card
@@ -128,19 +155,19 @@ def build_call(conv: Path, exchanges: int, work: Path) -> tuple[list[tuple[Path,
                     "unconfirmed": [{"item": u, "evidence_ids": []} for u in last["unconfirmed"]],
                     "next_line_en": last["next_line_en"], "next_line_ja": last["next_line_ja"],
                     "evidence_ids": last["evidence_ids"], "commits_to_something": last["commits"]}
-        frames.append({"speaker": f"● Simulated client “{counterpart}” — Gemini 2.5 Flash, TTS voice"})
+        frames.append({"focus": "listen", "speaker": f"● Simulated client “{counterpart}” — Gemini 2.5 Flash, TTS voice"})
         durations.append(seconds(them) + stt)
         audio += [(str(them), seconds(them)), ("silence", stt)]
 
-        frames.append({"heard": [t["heard"] for t in ex["turns"]], "speaker": None})
+        frames.append({"heard": [t["heard"] for t in ex["turns"]], "focus": "listen", "speaker": None})
         durations.append(last["t_llm"])
         audio.append(("silence", last["t_llm"]))
 
-        frames.append({"card": card, "ms": round(last["t_llm"] * 1000), "speaker": None})
+        frames.append({"card": card, "ms": round(last["t_llm"] * 1000), "focus": "verdict", "speaker": None})
         durations.append(BEAT)
         audio.append(("silence", BEAT))
 
-        frames.append({"speaker": "● Engineer — TTS reading the card" if ex["engineer_from_card"] else "● Engineer (no card)"})
+        frames.append({"focus": "reply", "speaker": "● Engineer — TTS reading the card" if ex["engineer_from_card"] else "● Engineer (no card)"})
         durations.append(seconds(me) + GAP)
         audio += [(str(me), seconds(me)), ("silence", GAP)]
     durations[-1] += TAIL
