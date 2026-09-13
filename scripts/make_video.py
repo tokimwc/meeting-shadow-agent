@@ -220,9 +220,12 @@ def call_clip(shots: list[tuple[Path, float]], wav: Path, work: Path) -> Path:
     lines = [f"file '{p.as_posix()}'\nduration {d:.3f}" for p, d in shots]
     listing.write_text("\n".join(lines) + f"\nfile '{shots[-1][0].as_posix()}'\n", encoding="utf-8")
     out = work / "call.mp4"
+    # -shortest does not reliably stop a filter_complex output: the concat demuxer's repeated last frame ran
+    # the video 2.6 s past the audio, and every segment after it played its narration ~2 s ahead of its
+    # slide. Cut to the audio's own length instead.
     run("-f", "concat", "-safe", "0", "-i", str(listing), "-i", str(wav),
         "-filter_complex", f"[0:v]scale={W}:{H}:flags=lanczos,format=yuv420p,fps=30[v]",
-        "-map", "[v]", "-map", "1:a", "-shortest", "-c:v", "libx264", "-preset", "medium", "-crf", "18",
+        "-map", "[v]", "-map", "1:a", "-t", f"{seconds(wav):.3f}", "-c:v", "libx264", "-preset", "medium", "-crf", "18",
         "-c:a", "aac", "-b:a", "192k", str(out))
     return out
 
@@ -255,7 +258,16 @@ def main() -> int:
     ]
     listing = work / "parts.txt"
     listing.write_text("".join(f"file '{p.as_posix()}'\n" for p in parts), encoding="utf-8")
-    run("-f", "concat", "-safe", "0", "-i", str(listing), "-c", "copy", "-movflags", "+faststart", str(out))
+    # Speech at -21 LUFS is too quiet on laptop speakers; -16 is the usual target for spoken web video.
+    run("-f", "concat", "-safe", "0", "-i", str(listing), "-c:v", "copy",
+        "-af", "loudnorm=I=-16:TP=-1.5:LRA=11", "-ar", str(RATE), "-c:a", "aac", "-b:a", "192k",
+        "-movflags", "+faststart", str(out))
+    for part in parts:
+        v, a = (float(subprocess.run(["ffprobe", "-v", "error", "-select_streams", s, "-show_entries", "stream=duration",
+                                      "-of", "csv=p=0", str(part)], capture_output=True, text=True).stdout.strip())
+                for s in ("v", "a"))
+        # Any segment whose picture outlasts its sound shifts every later narration off its slide.
+        assert abs(v - a) < 0.1, f"{part.name}: video {v:.2f}s against audio {a:.2f}s"
 
     total = float(subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", str(out)],
                                  capture_output=True, text=True).stdout.strip())
