@@ -61,12 +61,13 @@ against accuracy.
 
 ## What this changes about the other numbers
 
-The turn-by-turn run in `20cases.md` produces a card per speaker turn, and its dangerous cards were
-**intermediate** turns, not final decisions: case-05 confirmed an undefined deadline one turn before
-it would have deferred, case-11 agreed to fix the reporting module on "It is a small thing" and
-withdrew it on the next turn. This measurement only covers the final state, so it says nothing about
-those. Both are real — the engineer reads whichever card is on screen — and they are a property of
-showing a card per turn rather than of the decision contract.
+The turn-by-turn run in `20cases.md` produces a card per speaker turn. An earlier version of this
+paragraph said its dangerous cards were all intermediate turns; that was wrong, and `20cases.md` has the
+correction: four of twenty **final** cards agree to something the memo withholds or never defined.
+Intermediate cards can also be wrong when the final one is right — case-11 agreed to fix the reporting
+module on "It is a small thing" and withdrew it on the next turn. This measurement only covers the
+final state of a text-only conversation, so it says nothing about either, and 15/15 here does not
+contradict 4 of 20 there.
 
 Reproduce:
 

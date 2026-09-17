@@ -58,7 +58,7 @@ engineer's authority.
 
 ## 3 — How it is built
 
-**Title:** The server never holds the audio
+**Title:** Our server never receives the audio
 
 ```
 Chrome tab audio ──WebSocket, one-time token──▶ AssemblyAI Universal-3.5 Pro Realtime
@@ -70,6 +70,7 @@ Chrome tab audio ──WebSocket, one-time token──▶ AssemblyAI Universal-3
 Two guards, both refusals rather than repairs:
 
 - Every claim cites the utterance ids behind it. A suggestion citing an id nobody spoke is rejected.
+  The check is that the id exists, not that it supports the reply.
 - An open item whose only evidence is the engineer's own memo is dropped. The memo says what needs
   approval; it is not evidence that anyone asked for it.
 
@@ -92,9 +93,12 @@ and a narrower memo withholds:
 | scope is the two endpoints | mine to agree | **needs approval** |
 | go-ahead for the staging run | mine to agree | **needs approval** |
 
-Three of five flipped on the same words (one text-only run). And repeating one configuration instead of running it once:
-when the memo grants what is asked, the shipped contract agreed on 15 of 15 calls; when it
-withholds, 13 of 15 deferred (one `unclear`, one provider error).
+Three of five flipped on the same words (one text-only run); of the other two, one returned no card
+and one did not move. Repeating one configuration instead of running it once, and scoring the decision
+label rather than the sentence: when the memo grants what is asked, 15 of 15 calls labelled it `mine`;
+when it withholds, 13 of 15 labelled it `needs_approval` (one `unclear`, one provider error). Beside
+them, the failure: in the audio run, 4 of 20 final cards agree to something the memo withholds or the
+speaker never defined.
 
 58 of 62 turns returned a suggestion; median 2.02 s end of speech → suggestion generated, p90 2.55 s, in-process.
 

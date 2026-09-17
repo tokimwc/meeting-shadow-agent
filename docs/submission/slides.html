@@ -212,7 +212,8 @@
   tr.ship th::after { content: " ← shipped"; font-family: var(--mono); font-size: 0.85em; color: var(--commit); font-weight: 400; }
   .figures { display: flex; gap: 3.4cqw; margin-top: auto; padding-top: 2cqw; border-top: 1px solid var(--rule); }
   .fig dt { font-family: var(--mono); font-size: 1.05cqw; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-3); }
-  .fig dd { margin: 0.4cqw 0 0; font-family: var(--mono); font-size: 2cqw; color: var(--ink); font-variant-numeric: tabular-nums; }
+  .fig { flex: 1; display: flex; flex-direction: column; }
+  .fig dd { margin: auto 0 0; padding-top: 0.4cqw; font-family: var(--mono); font-size: 2cqw; color: var(--ink); font-variant-numeric: tabular-nums; }
 
   .limits { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.7cqw;
              max-width: 62cqw; }
@@ -310,7 +311,7 @@
   <section class="slide">
     <div class="body">
       <div class="eyebrow">How it is built</div>
-      <h2>The server never holds the audio</h2>
+      <h2>Our server never receives the audio</h2>
       <div class="flow">
         <div class="node"><span class="what">Chrome tab audio</span>
           <span class="how">getDisplayMedia<br>PCM16 · 16 kHz</span></div>
@@ -329,7 +330,7 @@
         <div class="guard">
           <h3>Refuse, do not repair</h3>
           <p>Every claim cites the utterance ids behind it. A suggestion citing an id nobody spoke is
-            rejected outright — a card with invented evidence is worse than no card.</p>
+            rejected outright. The check is that the id exists, not that it supports the reply.</p>
         </div>
         <div class="guard">
           <h3>The memo is not a witness</h3>
@@ -362,10 +363,10 @@
         </tbody>
       </table>
       <dl class="figures">
-        <div class="fig"><dt>Decision flipped on the same words · one text run</dt><dd>3 of 5</dd></div>
-        <div class="fig"><dt>Memo grants it: agreed · 3 repeats</dt><dd>15/15</dd></div>
-        <div class="fig"><dt>Memo withholds it: deferred · 3 repeats</dt><dd>13/15</dd></div>
-        <div class="fig"><dt>Speech end → suggestion · median, in-process</dt><dd>2.0 s</dd></div>
+        <div class="fig"><dt>Flipped, same words · 1 text run · 1 no card, 1 unmoved</dt><dd>3 of 5</dd></div>
+        <div class="fig"><dt>Memo grants · labelled “mine” · label, not reply</dt><dd>15/15</dd></div>
+        <div class="fig"><dt>Memo withholds · labelled “needs approval”</dt><dd>13/15</dd></div>
+        <div class="fig"><dt>Audio run · final cards that agree to what they should not</dt><dd>4 of 20</dd></div>
       </dl>
     </div>
     <div class="rail"><span class="no">04</span><span class="vert">Meeting Shadow Agent</span></div>

@@ -47,7 +47,7 @@ sentence that commits. A request outside it gets a sentence that defers, naming 
 that needs internal approval — not a generic "let me get back to you".
 
 **How it is built.** Chrome tab audio (`getDisplayMedia`) goes straight from the browser to
-AssemblyAI Universal-3.5 Pro Realtime over WebSocket, using a one-time token; the server never holds
+AssemblyAI Universal-3.5 Pro Realtime over WebSocket, using a one-time token; our server never receives
 the stream. Each finalized turn goes to Gemini 2.5 Flash-Lite under a JSON schema that forces every
 claim to cite the utterance ids behind it. A suggestion citing an id that was never spoken is refused
 rather than repaired — whether a cited utterance actually supports the reply is not checked, and an open item whose only evidence is the engineer's own memo is dropped —
@@ -63,9 +63,11 @@ a suggestion; over those, median 2.02 s from end of speech to suggestion, p90 2.
 The claim worth testing is not the latency, it is that the *memo* decides rather than the model
 simply being cautious. So the same utterances were put past four different memos. The five requests
 that ask for staging-only things — granted by the shipped memo, withheld by a narrower one — flipped
-from "yours to agree" to "needs internal approval" in three of five cases on identical words, in a single text-only run.
+from "yours to agree" to "needs internal approval" in three of five cases on identical words, in a single text-only run;
+of the other two, one returned no card and one did not move.
 Repeating one configuration rather than running it once: when the memo grants what is asked, the
-shipped contract agreed on 15 of 15 calls; when it withholds, 13 of 15 deferred (one `unclear`, one
+shipped contract labelled the request its own to agree on 15 of 15 calls; when it withholds, 13 of 15
+labelled it as needing approval (one `unclear`, one
 provider error).
 
 **What it does not show.** This is a developer-authored test suite, not a field study. In the audio
@@ -123,6 +125,6 @@ approval, and the sentence that defers. No faces, no logos beyond the ones we ar
 
 ## Video
 
-`samples/video/submission.mp4`, 109.9 s. Built by `scripts/make_video.py`; see `edit-plan.md`. Say in
+`samples/video/submission.mp4`, 115.1 s. Built by `scripts/make_video.py`; see `edit-plan.md`. Say in
 the video description: **both voices in the call are synthetic, the client is a model given a role,
 and the engineer's lines are the card's output verbatim.**

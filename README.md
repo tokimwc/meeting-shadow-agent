@@ -38,7 +38,7 @@ Chrome (Meet tab audio | sample audio)
   -> finalized Turn (end_of_turn + formatted)
   -> POST /api/suggest on Cloud Run         recent turns + your memo
   -> Gemini 2.5 Flash-Lite                  JSON schema output
-  -> suggestion card, citing the utterances behind it
+  -> suggestion card, citing the utterances behind it (the ids must exist; support is not checked)
 ```
 
 Two guards, both refusals rather than repairs:
@@ -110,8 +110,9 @@ speech → card on screen.
 The claim that survives repetition is narrow, and it is the one the product rests on. Repeating one
 configuration over the cases where the memo decides the answer
 ([docs/eval/stability.md](docs/eval/stability.md)): when the memo **grants** what is being asked, the
-the shipped contract agreed on all 15 calls. When the memo **withholds** it, 13 of 15 calls deferred;
-one answered `unclear` and one returned no card because the provider call failed. Where the request never named which side of the memo it fell on,
+shipped contract labelled it `mine` on all 15 calls. When the memo **withholds** it, 13 of 15 calls
+labelled it `needs_approval`; one answered `unclear` and one returned no card because the provider call
+failed. These score the decision label on the whole scripted conversation, text only, not the sentence. Where the request never named which side of the memo it fell on,
 the answer is safe 11 times in 12 but is usually a deferral rather than the question that would
 settle it.
 
