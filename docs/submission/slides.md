@@ -107,76 +107,53 @@ including the runs that scored worse.
 
 ---
 
-## 5 — Who pays
+## 5 — Who it is for
 
-**Title:** What one skipped conversation costs
+**Title:** The engineer feels it. The delivery lead pays for it.
 
-The cost being avoided, as arithmetic rather than a claim:
+A hypothesis, not yet tested with buyers:
 
-| | |
-|---|---|
-| A scope change agreed on a call and never renegotiated | ~2 engineer-weeks |
-| At a loaded cost of $100k/yr | $3,800 |
-| A seat at $15/month | $180/yr — one prevented commitment covers 21 seat-years |
+- **Uses it:** a Japanese-speaking engineer on English client calls, who follows the request but cannot
+  approve dates, production or scope.
+- **Pays for it:** the delivery lead at a software services firm, who absorbs the unpaid rework when a
+  quick yes becomes a commitment.
+- **Has to allow it:** information security — client audio goes to AssemblyAI, the text and the memo to
+  Gemini.
 
-Market, with the cited figure and the assumed narrowing kept visibly apart:
-
-| | | |
-|---|---|---|
-| Developers worldwide | **28.7 M** | Evans Data, 21 May 2019, projecting 2024 — already two years stale |
-| *Assumed* — work in English, not natively | ≈ 14 M | Half. Our assumption. The US alone holds 4.4 M |
-| *Assumed* — on external delivery calls | ≈ 2.9 M | One in five → **$520 M** serviceable against a $5.2 B total |
-
-Revenue: per seat at $15/month, inside the $10–30 band meeting assistants already occupy; an org tier
-where the memo is maintained centrally as a delegation policy. Not a revenue stream: conversations
-are never resold or used to train anything of ours.
-
-*Visual:* the dashed rules mark the two rungs that are assumptions, so a judge can see at a glance
-which number is cited and which is ours.
+Price hypothesis: $15 per seat per month. Willingness to pay, usage cost and avoided rework have not
+been measured. The market-size arithmetic of the earlier deck was removed: it jumped from developer
+headcount to buyers without evidence for either step.
 
 ---
 
-## 6 — Where this sits
+## 6 — What it is up against
 
-**Title:** Evidence grounding is not the differentiator
+**Title:** What the engineer could use instead
 
-Four agents in this same hackathon already tie their output back to what was said — VerbaTrace AI,
-QuoteReady, Voice Action Gate, Saakshi. Naming them is the point: the category is crowded and
-pretending otherwise would be the easiest thing for a judge to check.
+| Instead | What it gives | What it misses |
+|---|---|---|
+| "Let me check and get back to you" | Safe, instant, free | Defers what the engineer may agree to as well |
+| The memo, kept beside the call | The boundary in view | Matching it to the request, in English, mid-call |
+| Copilot in Teams · Ask Gemini in Meet | Private answers about the meeting | Waits to be asked; Copilot only in meetings your own organisation hosts |
+| **This agent** | A reply shaped by the boundary the engineer declared, after every turn of the other side | |
 
-Every one of them **acts** — questions the other party, writes a record, or blocks a call. This one
-does not. It prepares **the user's own next sentence**, shaped by a boundary the user declared before
-the meeting, and hands it over to be said or discarded.
+Not yet measured: whether engineers prefer it to any of the three.
 
-Stated plainly: neither evidence grounding nor latency is a moat. What is defensible is the authority
-memo as the shaping input, and the discipline of never acting.
-
-*Visual:* the competitor list in mono, the differentiator in the one colour the deck reserves for
-what the engineer may settle.
+Sources for row 3: Microsoft Support, "Frequently asked questions about Copilot in Microsoft Teams" and
+Microsoft Q&A on externally hosted meetings; Google Meet Help, "Ask Gemini in Google Meet".
 
 ---
 
 ## 7 — What it does not show
 
-**Title:** The limits, stated plainly
+**Title:** Three limits, and the check each needs next
 
-- A developer-authored test suite, not a field study. Scenarios written by the person building the
-  agent do not generalise to real meetings.
-- 4 of 20 final cards in the audio run agree to something the memo withholds or never defined.
-- Single-run scores moved between runs of the *same* prompt by more than most prompts differed from
-  each other. Every number here that comes from one run is one draw.
-- The commitment flag is the model reporting on itself, and it has been wrong once: a suggestion
-  agreed to a scope change the memo withholds and reported that it had not. The earlier claim of zero
-  dangerous commitments was withdrawn.
-- A card is rendered for every speaker turn. The final decision is usually right; the card mid-request
-  is sometimes the one that agrees to it.
-- No evidence that any real over-commitment was prevented, and no person has used a card mid-call.
-- Non-native speech degrades the transcript on exactly the words a decision turns on. One human take
-  reached the model as "Oh. End of day. Cause visit."
-- Not zero retention. AssemblyAI offers a TTL; billing and log metadata outlive it.
+- **Wrong agreements.** In the audio run, 4 of 20 final cards agree to what the memo withholds or never
+  defined, and the model's own commitment flag has been wrong once. *Next: score every card, not only
+  the last.*
+- **Old question.** When the client changes the question after a refusal, the card can keep deferring
+  on the old one. *Next: test a fix against a model client that argues back.*
+- **Not tried live.** The cases were written by the builder, and no engineer has read a card during a
+  live call. *Next: mock calls against a memorised line and a memo on paper.*
 
-Prompt changes that made the suggestions worse were reverted, and every run is in the repository —
-including the first memo ablation, which found that the memo did *not* decide, and is why the output
-contract was rewritten.
-
-*Visual:* plain text. This slide earns its place by not being decorated.
+Latency, accent errors, retention and reverted prompts are in `docs/eval` and the README.

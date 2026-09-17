@@ -131,50 +131,17 @@
   .legend .defer  i { color: var(--defer); }
 
 
-  /* Slides 5 and 6: every number is either cited or shown as arithmetic from a stated assumption. */
-  .econ { display: flex; align-items: stretch; gap: 0; margin-bottom: 1.9cqw; }
-  .econ div { flex: 1; padding: 0 1.8cqw 0 0; }
-  .econ div + div { border-left: 1px solid var(--rule); padding-left: 1.8cqw; }
-  .econ dt {
-    font-family: var(--mono); font-size: 1.02cqw; letter-spacing: 0.12em; text-transform: uppercase;
-    color: var(--ink-3); margin-bottom: 0.6cqw;
+  /* Slide 5: three people, one line each. Slide 6 uses the table styles. */
+  .roles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2.6cqw; padding-right: 4.5cqw; margin-top: 1.2cqw; }
+  .roles div { border-top: 2px solid var(--rule); padding-top: 1.3cqw; }
+  .roles .pays { border-top-color: var(--commit); }
+  .roles b {
+    display: block; font-family: var(--mono); font-size: 1.1cqw; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--ink-3); font-weight: 400; margin-bottom: 0.8cqw;
   }
-  .econ dd { margin: 0; font-family: var(--mono); font-size: 1.9cqw; color: var(--ink); font-variant-numeric: tabular-nums; }
-  .econ dd small { display: block; font-family: var(--sans); font-size: 1.15cqw; color: var(--ink-2); margin-top: 0.5cqw; line-height: 1.4; }
-  .econ .lead dd { color: var(--commit); }
-
-  .funnel { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2.2cqw; margin-bottom: 1.4cqw;
-           padding-right: 4.5cqw; }
-  .rung { border-top: 2px solid var(--rule); padding-top: 1.2cqw; }
-  .rung.assumed { border-top-style: dashed; border-top-color: var(--defer); }
-  .rung b {
-    display: block; font-family: var(--mono); font-size: 1.02cqw; letter-spacing: 0.12em;
-    text-transform: uppercase; color: var(--ink-3); font-weight: 400; margin-bottom: 0.6cqw;
-  }
-  .rung.assumed b { color: var(--defer); }
-  .rung .val { font-family: var(--mono); font-size: 1.9cqw; color: var(--ink); font-variant-numeric: tabular-nums; }
-  .rung p { font-size: 1.2cqw; margin: 0.5cqw 0 0; max-width: none; }
-
-  .streams { display: flex; gap: 2.6cqw; margin-top: auto; padding-top: 1.5cqw; padding-right: 4.5cqw;
-             border-top: 1px solid var(--rule); }
-  .streams div { flex: 1; }
-  .streams b { display: block; font-size: 1.3cqw; color: var(--ink); font-weight: 500; margin-bottom: 0.5cqw; }
-  .streams span { font-size: 1.18cqw; color: var(--ink-2); line-height: 1.45; }
-  .src { font-family: var(--mono); font-size: 0.92cqw; color: var(--ink-3); margin-top: 0.9cqw; }
-
-  .rivals { display: flex; flex-direction: column; gap: 1cqw; margin-bottom: 1.8cqw; }
-  .rivals li { display: grid; grid-template-columns: 14cqw 1fr; gap: 1.6cqw; align-items: baseline;
-                padding-right: 4.5cqw; }
-  .rivals { list-style: none; padding: 0; }
-  .rivals b { font-family: var(--mono); font-size: 1.15cqw; color: var(--ink); font-weight: 500; }
-  .rivals span { font-size: 1.3cqw; color: var(--ink-2); line-height: 1.45; }
-  .usp {
-    border-left: 3px solid var(--commit); background: var(--commit-bg); padding: 1.6cqw 1.9cqw;
-    margin-right: 4.5cqw;
-    font-size: 1.5cqw; line-height: 1.5; color: var(--ink);
-  }
-  .usp b { font-weight: 500; }
-  .caveat { font-size: 1.25cqw; color: var(--ink-3); margin-top: auto; padding-top: 1.4cqw; max-width: 60cqw; }
+  .roles .pays b { color: var(--commit); }
+  .roles p { font-size: 1.55cqw; margin: 0; max-width: none; }
+  .caveat { font-size: 1.3cqw; color: var(--ink-3); margin-top: auto; padding-top: 1.4cqw; max-width: 60cqw; }
 
   .flow { display: flex; align-items: stretch; gap: 0; margin: 0.6cqw 0 2.6cqw; }
   .node {
@@ -209,20 +176,22 @@
   td.n, th.n { text-align: right; font-family: var(--mono); font-variant-numeric: tabular-nums; padding-right: 0; }
   tbody th { font-weight: 500; color: var(--ink-2); }
   tr.ship th, tr.ship td { color: var(--ink); font-weight: 500; }
+  tr.us th, tr.us td { color: var(--commit); font-weight: 500; border-bottom: 0; }
   tr.ship th::after { content: " ← shipped"; font-family: var(--mono); font-size: 0.85em; color: var(--commit); font-weight: 400; }
   .figures { display: flex; gap: 3.4cqw; margin-top: auto; padding-top: 2cqw; border-top: 1px solid var(--rule); }
   .fig dt { font-family: var(--mono); font-size: 1.05cqw; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-3); }
   .fig { flex: 1; display: flex; flex-direction: column; }
   .fig dd { margin: auto 0 0; padding-top: 0.4cqw; font-family: var(--mono); font-size: 2cqw; color: var(--ink); font-variant-numeric: tabular-nums; }
 
-  .limits { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.7cqw;
-             max-width: 62cqw; }
+  .limits { list-style: none; padding: 0; margin: 0.6cqw 0 0; display: flex; flex-direction: column; gap: 2cqw;
+             max-width: 64cqw; }
   .limits li { display: grid; grid-template-columns: 13cqw 1fr; gap: 1.8cqw; align-items: baseline; }
   .limits b {
     font-family: var(--mono); font-size: 1.05cqw; letter-spacing: 0.12em; text-transform: uppercase;
     color: var(--ink-3); font-weight: 400;
   }
-  .limits span { font-size: 1.14cqw; line-height: 1.4; color: var(--ink-2); }
+  .limits span { font-size: 1.45cqw; line-height: 1.45; color: var(--ink-2); }
+  .limits span i { font-style: normal; color: var(--ink); }
   .limits code { font-family: var(--mono); font-size: 0.92em; color: var(--ink); }
   .closing { margin-top: auto; padding-top: 1cqw; border-top: 1px solid var(--rule); font-size: 1.12cqw;
               color: var(--ink-2); max-width: 58cqw; padding-right: 4.5cqw; }
@@ -374,68 +343,39 @@
 
   <section class="slide">
     <div class="body">
-      <div class="eyebrow">Who pays · an illustrative scenario, not observed savings</div>
-      <h2>What one skipped conversation could cost</h2>
-      <dl class="econ">
-        <div>
-          <dt>Absorbed silently</dt>
-          <dd>2 wks<small>A scope change agreed on a call, never renegotiated</small></dd>
-        </div>
-        <div>
-          <dt>At a loaded cost of $100k/yr</dt>
-          <dd>$3,800<small>What those two engineer-weeks cost the team</small></dd>
-        </div>
-        <div class="lead">
-          <dt>A seat at $15/month</dt>
-          <dd>$180/yr<small>One prevented commitment covers twenty-one seat-years</small></dd>
-        </div>
-      </dl>
-      <div class="funnel">
-        <div class="rung">
-          <b>Developers worldwide</b>
-          <span class="val">28.7 M</span>
-          <p>Evans Data's 2019 projection <em>for 2024</em> — a projection, now two years stale.</p>
-        </div>
-        <div class="rung assumed">
-          <b>Assumed · work in English, not natively</b>
-          <span class="val">≈ 14 M</span>
-          <p>Half. Our assumption, not a measurement — the US alone holds 4.4 M.</p>
-        </div>
-        <div class="rung assumed">
-          <b>Assumed · on external delivery calls</b>
-          <span class="val">≈ 2.9 M</span>
-          <p>One in five. At $15 a seat that is a <strong>$520 M</strong> serviceable market against a $5.2 B total.</p>
-        </div>
+      <div class="eyebrow">Who it is for · a hypothesis, not yet tested with buyers</div>
+      <h2>The engineer feels it.<br>The delivery lead pays for it.</h2>
+      <div class="roles">
+        <div><b>Uses it</b><p>A Japanese-speaking engineer on English client calls, who follows the request but
+          cannot approve dates, production or scope.</p></div>
+        <div class="pays"><b>Pays for it</b><p>The delivery lead at a software services firm, who absorbs the
+          unpaid rework when a quick yes becomes a commitment.</p></div>
+        <div><b>Has to allow it</b><p>Information security: client audio goes to AssemblyAI, the text and the
+          memo to Gemini.</p></div>
       </div>
-      <div class="streams">
-        <div><b>Per seat</b><span>$15/month, inside the $10–30 band meeting assistants already occupy.</span></div>
-        <div><b>Org tier</b><span>The memo is a delegation policy — who may commit to what — maintained centrally.</span></div>
-        <div><b>Not a revenue stream</b><span>Conversations are never resold or used to train anything of ours.</span></div>
-      </div>
-      <div class="src">Sources: Evans Data press release, 21 May 2019 (projection for 2024); SlashData counts 47 M for 2025. Seats: Fireflies $10, Granola $14, Otter Business $30</div>
+      <p class="caveat">Price hypothesis: $15 per seat per month. Willingness to pay, usage cost and avoided
+        rework have not been measured.</p>
     </div>
     <div class="rail"><span class="no">05</span><span class="vert">Meeting Shadow Agent</span></div>
   </section>
 
   <section class="slide">
     <div class="body">
-      <div class="eyebrow">Where this sits</div>
-      <h2>Evidence grounding is not the differentiator</h2>
-      <p>Four agents in this hackathon already tie their output back to what was said:</p>
-      <ul class="rivals">
-        <li><b>VerbaTrace AI</b><span>interviews, detects incomplete answers, converts the conversation into traceable evidence</span></li>
-        <li><b>QuoteReady</b><span>turns vague enquiries into reviewable drafts with transcript evidence and follow-up gaps</span></li>
-        <li><b>Voice Action Gate</b><span>refuses any irreversible action whose arguments cannot be traced to the user's words</span></li>
-        <li><b>Saakshi</b><span>speaks up the moment a customer is about to be misled, and certifies consent</span></li>
-      </ul>
-      <div class="usp">Each of them produces something addressed to the <b>conversation</b> — a question put to
-        the other party, a record, a blocked call. This one produces something addressed to <b>the user</b>: a
-        reply they might say next, shaped by a boundary they declared beforehand, to be said or discarded.
-        Outside this hackathon, meeting copilots also listen without joining; we have not found one that takes a
-        declared authority boundary as the input that shapes the reply, but have not surveyed them all.</div>
-      <p class="caveat">Stated plainly: neither evidence grounding nor latency is a moat, several of these keep a
-        human in the loop too, and the memo is what the user says their authority is — not what their employer
-        granted. That the memo changes the reply was measured on scripted text only, not in real meetings.</p>
+      <div class="eyebrow">What it is up against</div>
+      <h2>What the engineer could use instead</h2>
+      <table>
+        <thead><tr><th>Instead</th><th>What it gives</th><th>What it misses</th></tr></thead>
+        <tbody>
+          <tr><th>“Let me check and get back to you”</th><td>Safe, instant, free</td>
+            <td>Defers what the engineer may agree to as well</td></tr>
+          <tr><th>The memo, kept beside the call</th><td>The boundary in view</td>
+            <td>Matching it to the request, in English, mid-call</td></tr>
+          <tr><th>Copilot in Teams · Ask Gemini in Meet</th><td>Private answers about the meeting</td>
+            <td>Waits to be asked; Copilot only in meetings your own organisation hosts</td></tr>
+          <tr class="us"><th>This agent</th><td colspan="2">A reply shaped by the boundary the engineer declared, after every turn of the other side</td></tr>
+        </tbody>
+      </table>
+      <p class="caveat">Not yet measured: whether engineers prefer it to any of the three.</p>
     </div>
     <div class="rail"><span class="no">06</span><span class="vert">Meeting Shadow Agent</span></div>
   </section>
@@ -443,28 +383,20 @@
   <section class="slide">
     <div class="body">
       <div class="eyebrow">What it does not show</div>
-      <h2>The limits</h2>
+      <h2>Three limits, and the check each needs next</h2>
       <ul class="limits">
-        <li><b>Not a study</b><span>Scenarios written by the builder; they do not generalise to real meetings.</span></li>
-        <li><b>Final cards</b><span>In the audio run, 4 of 20 cards left on screen at the end of a
-          case agree to something the memo withholds or the speaker never defined.</span></li>
-        <li><b>Self-graded</b><span>The commitment flag is the model on its own output, and was wrong once: it
-          agreed to a withheld scope change and reported it had not.</span></li>
-        <li><b>One draw</b><span>Runs of the <i>same</i> prompt differed more than most prompts did. Only repeated
-          measurements are claims.</span></li>
-        <li><b>Old question</b><span>When a client changes the question after a refusal, the card
-          can keep deferring on the one already refused.</span></li>
-        <li><b>Not end-to-end</b><span>2.02 s median over 58 of 62 returned turns, speech end → suggestion,
-          in-process. Card on screen is not measured.</span></li>
-        <li><b>No outcome claim</b><span>Nothing here shows a real over-commitment was prevented — and no person
-          has used a card mid-call.</span></li>
-        <li><b>Accent cost</b><span>Non-native speech degrades the transcript on exactly the words a decision
-          turns on. One human take reached the model as <code>“Oh. End of day. Cause visit.”</code></span></li>
-        <li><b>Retention</b><span>AssemblyAI offers a TTL. Billing and log metadata outlive it.</span></li>
+        <li><b>Wrong agreements</b><span>In the audio run, 4 of 20 final cards agree to what the memo withholds
+          or never defined, and the model's own commitment flag has been wrong once.
+          <i>Next: score every card, not only the last.</i></span></li>
+        <li><b>Old question</b><span>When the client changes the question after a refusal, the card can keep
+          deferring on the old one. <i>Next: test a fix against a model client that argues back.</i></span></li>
+        <li><b>Not tried live</b><span>The cases were written by the builder, and no engineer has read a card
+          during a live call. <i>Next: mock calls against a memorised line and a memo on paper.</i></span></li>
       </ul>
-      <p class="closing">Reverted prompt changes and the runs these claims rest on are in the repository.</p>
+      <p class="closing">Latency, accent errors, retention and reverted prompts: <code>docs/eval</code> in the repository.</p>
     </div>
     <div class="rail"><span class="no">07</span><span class="vert">Meeting Shadow Agent</span></div>
   </section>
+
 
 </div>

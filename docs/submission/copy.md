@@ -6,8 +6,7 @@ Meeting Shadow Agent
 
 ## Short description
 
-Watches an English meeting you are in and hands you the one line to say before you agree to something
-you cannot approve.
+For non-native engineers on English delivery calls: from a memo of what they may agree to, it suggests a private reply after each turn of the other side, before they agree to something they cannot approve. It never speaks, joins or sends.
 
 ## Links
 
