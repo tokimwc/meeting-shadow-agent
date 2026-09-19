@@ -29,30 +29,22 @@ The cost does not appear in the meeting. It appears three weeks later.
 
 ## 2 — What it does
 
-**Title:** One sentence, ready before you need it
+**Title:** A reply, and whose decision it is
 
-The other participants speak. At the end of each of their turns, a card appears with one English
-sentence for the engineer to say.
-
-It never speaks. It never joins the call. It never sends anything. The engineer reads and decides.
-
-What it treats as still open comes from a memo written before the meeting:
+After each turn of the other side, a card names what is asked and whose call it is, then suggests a
+reply. Simulated client (Gemini 2.5 Flash), TTS voices. The memo written before the meeting:
 
 > Implementation owner. Staging validation is mine to agree. Production, dates, scope changes and
 > extra effort need internal approval.
 
-Both cards on this slide are transcribed from the recorded demo — nothing composed:
+One card, transcribed from the recorded demo:
 
-| | |
-|---|---|
-| u1 "Can you confirm the production rollout for Friday?" | still open: **production rollout for Friday** → "Can you confirm the timezone for the production rollout on Friday?" |
-| u2 "Actually I meant staging validation with no delivery commitment." | still open: **scope for staging validation** → "Could you clarify the scope for the staging validation?" |
+- u2 "Can you confirm that the fix will go live in production on Friday?"
+- production on Friday · **needs internal approval** → "I need to confirm internally about the
+  production release on Friday. I will get back to you." (cites u2 · m0, suggestion call 1,339 ms)
 
-The speaker corrects themselves and the open item moves with them: production leaves the card once it
-is no longer what is being asked for.
-
-*Visual:* the two cards side by side, the open item coloured by whether the memo places it inside the
-engineer's authority.
+The engineer reads it and decides. Nothing is spoken or sent. The client's pushback on the next turn
+is in the video, not on the slide.
 
 ---
 
