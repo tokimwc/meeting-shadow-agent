@@ -34,8 +34,8 @@ API = "https://texttospeech.googleapis.com/v1/text:synthesize"
 # (cue id, where it lands in the cut, what is said). Spoken length is roughly words / 2.5 seconds.
 CUES: list[tuple[str, str, str]] = [
     ("01-problem", "0:00",
-     "An engineer on an English delivery call understands every word, and still says yes before the "
-     "conditions are settled. Which environment. Whose approval. By when. The cost arrives weeks later."),
+     "An engineer on an English delivery call can follow the request, and still say yes before the "
+     "conditions are settled. Which environment. Whose approval. By when. The cost can arrive weeks later."),
     # The call itself carries no narration: the counterpart argues, the card answers, and a voice over
     # the top would bury both. Everything a viewer needs to read it is said here, before it starts.
     ("02-demo-open", "0:13",

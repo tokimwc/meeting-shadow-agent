@@ -6,7 +6,7 @@ Meeting Shadow Agent
 
 ## Short description
 
-For non-native engineers on English delivery calls: from a memo of what they may agree to, it suggests a private reply after each turn of the other side, before they agree to something they cannot approve. It never speaks, joins or sends.
+A prototype for non-native engineers on English delivery calls: from a memo of what they may agree to, it suggests a private reply after each turn of the other side. It never speaks or messages anyone in the meeting.
 
 ## Links
 
@@ -124,6 +124,6 @@ approval, and the sentence that defers. No faces, no logos beyond the ones we ar
 
 ## Video
 
-`samples/video/submission.mp4`, 115.1 s. Built by `scripts/make_video.py`; see `edit-plan.md`. Say in
+`samples/video/submission.mp4`, 113.4 s. Built by `scripts/make_video.py`; see `edit-plan.md`. Say in
 the video description: **both voices in the call are synthetic, the client is a model given a role,
 and the engineer's lines are the card's output verbatim.**
